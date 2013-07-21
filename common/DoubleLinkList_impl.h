@@ -94,4 +94,37 @@ T* DoubleLinkList<T>::popLast ( void )
 	return res-1;
 }
 
+/*******************  FUNCTION  *********************/
+template <class T>
+DoubleLinkList<T> * DoubleLinkList<T>::remove(T * value)
+{
+	assert(value != NULL);
+	ListElement * elt = (ListElement*)(value+1);
+	
+	return remove(elt);
+}
+
+
+/*******************  FUNCTION  *********************/
+template <class T>
+DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value)
+{
+	DoubleLinkList<T> * res = NULL;
+
+	assert(value->next->prev == value);
+	assert(value->prev->next == value);
+	
+	value->next->prev = value->prev;
+	value->prev->next = value->next;
+	
+	if (value->prev == value->next)
+		res = (DoubleLinkList<T> *)value->next;
+	
+	#ifndef OPTIMIZED
+	value->next = NULL;
+	value->prev = NULL;
+	#endif
+	
+	return res;
+}
 #endif //DOUBLELINKLIST_IMPL_H

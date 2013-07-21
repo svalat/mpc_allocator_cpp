@@ -3,7 +3,9 @@ project(mpc_allocator_cpp)
 
 find_package(GTest)
 
-add_library(alloc StdPool.cpp Chunk.cpp)
+include_directories(common medium)
+
+add_library(alloc medium/MediumFreePool.cpp medium/MediumChunk.cpp common/Spinlock.cpp medium/MediumAllocator.cpp)
 add_executable(mpc_allocator_cpp main.cpp)
 target_link_libraries(mpc_allocator_cpp alloc)
 

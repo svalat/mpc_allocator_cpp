@@ -1,5 +1,5 @@
 include_directories(${GTEST_INCLUDE_DIRS})
-set(TEST_LIST TestLinkList TestChunk)
+set(TEST_LIST TestLinkList TestMediumChunk)
 
 FOREACH(test ${TEST_LIST})
 	add_executable(${test} ${test}.cpp)

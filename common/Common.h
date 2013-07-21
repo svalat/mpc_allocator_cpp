@@ -14,6 +14,10 @@ typedef uint64_t Size;
 #define BASIC_ALIGN sizeof(Addr)
 #define MAGICK_VALUE 42
 #define NB_FREE_LIST 48
+#define UNSUPPORTED -1
+#define ALLOC_MIN_SIZE BASIC_ALIGN
+//TODO setup value
+#define REALLOC_THREASHOLD 64
 
 /*******************  FUNCTION  *********************/
 static inline Size ceilToPowOf2(Size size,Size align)
@@ -38,6 +42,16 @@ T * addrOffset(T * value,Size offset)
 {
 	assert(value != NULL);
 	return (T*)((Addr)value + offset);
+}
+
+/*******************  FUNCTION  *********************/
+template <class T>
+T max(T a,T b)
+{
+	if (a>b)
+		return a;
+	else
+		return b;
 }
 
 #endif //COMMON_H

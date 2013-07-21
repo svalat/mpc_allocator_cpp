@@ -1,5 +1,5 @@
 /********************  HEADERS  *********************/
-#include "../DoubleLinkList.h"
+#include "DoubleLinkList.h"
 #include "gtest/gtest.h"
 
 /*******************  FUNCTION  *********************/
@@ -89,4 +89,40 @@ TEST(DoubleLinkList, popLast) {
 	ASSERT_EQ(data1,data);
 	data = list.popLast();
 	ASSERT_EQ(NULL,data);
+}
+
+/*******************  FUNCTION  *********************/
+TEST(DoubleLinkList, remove_1) {
+	int data1[32] = {1};
+	int data2[32] = {2};
+	int data3[32] = {3};
+	DoubleLinkList<int> list;
+	
+	list.putLast(data1);
+	list.putLast(data2);
+	list.putLast(data3);
+	DoubleLinkList<int> * res = list.remove(data2);
+	ASSERT_EQ(NULL,res);
+	
+	int * data = list.popFirst();
+	ASSERT_EQ(data1,data);
+	data = list.popFirst();
+	ASSERT_EQ(data3,data);
+	data = list.popFirst();
+	ASSERT_EQ(NULL,data);
+	ASSERT_TRUE(list.isEmpty());
+}
+
+/*******************  FUNCTION  *********************/
+TEST(DoubleLinkList, remove_2) {
+	int data1[32] = {1};
+	DoubleLinkList<int> list;
+	
+	list.putLast(data1);
+	DoubleLinkList<int> * res = list.remove(data1);
+	ASSERT_EQ(&list,res);
+	
+	int * data = list.popFirst();
+	ASSERT_EQ(NULL,data);
+	ASSERT_TRUE(list.isEmpty());
 }
