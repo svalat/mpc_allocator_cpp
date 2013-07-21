@@ -40,7 +40,7 @@ Spinlock::TakeLock::TakeLock ( Spinlock& lock, bool test )
 /*******************  FUNCTION  *********************/
 Spinlock::TakeLock::~TakeLock ( void )
 {
-	unlock();
+	this->unlock();
 }
 
 /*******************  FUNCTION  *********************/

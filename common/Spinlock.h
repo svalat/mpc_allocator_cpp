@@ -26,7 +26,8 @@ class Spinlock
 		pthread_spinlock_t spinlock;
 };
 
-#define OPTINAL_CRITICAL(lock,test) { Spinlock::TakeLock _local_##lock##__(lock,test);
-#define END_CRITICAL }while(1);
+#define OPTINAL_CRITICAL(lock,test) do { Spinlock::TakeLock _local_##lock##__(lock,test);
+#define CRITICAL(lock) { Spinlock::TakeLock _local_##lock##__(lock);
+#define END_CRITICAL }while(0);
 
 #endif //LOCKS
