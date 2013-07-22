@@ -1,4 +1,4 @@
-
+include(${CMAKE_SOURCE_DIR}/cmake/unittest-macros.cmake)
 include_directories(${GTEST_INCLUDE_DIRS})
 find_package(OpenMP REQUIRED)
 find_package(GTest  REQUIRED)
@@ -18,5 +18,5 @@ endif()
 FOREACH(test ${TEST_LIST})
 	add_executable(${test} ${test}.cpp)
 	target_link_libraries(${test} alloc ${GTEST_BOTH_LIBRARIES} ${GMOCK_BOTH_LIBRARIES})
-	add_test(${test} ${test})
+	cmr_add_test(${test} ${test})
 ENDFOREACH(test ${TEST_LIST})
