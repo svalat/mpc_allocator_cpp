@@ -1,6 +1,59 @@
 /********************  HEADERS  *********************/
 #include "MediumFreePool.h"
 
+//////////////////////////////////////////////////////////////////////////////////TODO
+int sctk_alloc_optimized_log2_size_t(Size value)
+{
+        //vars
+        Size res = 0;
+
+        #if defined(__GNUC__) && defined(__x86_64__)
+                if (value != 0)
+                        asm volatile ("bsr %1, %0":"=r" (res):"r"(value));
+        #else
+                /** @TODO find equivalent for others compiler. Maybe arch x86 is also OK as for x86_64, but need to check. **/
+                #ifndef _MSC_VER
+                #warning "ASM bsr was tested only on gcc x64_64, fallback on default slower C implementation."
+                #endif
+                while (value > 1) {value = value >> 1 ; res++;};
+        #endif
+
+        return (int)res;
+}
+
+const Size cstDefaultFreeSizes[NB_FREE_LIST] = {8, 16, 24,
+        32,    64,   96,  128,  160,   192,   224,   256,    288,    320,
+        352,  384,  416,  448,  480,   512,   544,   576,    608,    640,
+        672,  704,  736,  768,  800,   832,   864,   896,    928,    960,
+        992, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144,
+        524288, 1048576, 2*1024*1024, -1, -1,-1,-1
+};
+
+int reverseDefaultFreeSizes(Size size,const Size * sizeList,int nbLists)
+{
+	//errors
+	assert(sizeList == cstDefaultFreeSizes);
+	assert(64 >> 5 == 2);
+	assert(sizeList[46] == -1);
+	assert(size >= 8);
+
+	if (size < 32)
+		return (int)(size/8) - 1;
+	else if (size <= 1024)
+		//divide by 32 and fix first element ID as we start to indexes by 0
+		// +3 for thre startpoint 8/16/24
+		return (int)((size >> 5) - 1) + 3;
+	else if (size > SCTK_MACRO_BLOC_SIZE)
+		// +3 for thre startpoint 8/16/24
+		return 43 + 3;
+	else
+		//1024/32 :  starting offset of the exp zone
+		// >> 10: ( - log2(1024)) remote the start of the exp
+		// +3 for thre startpoint 8/16/24
+	return 1024/32 + sctk_alloc_optimized_log2_size_t(size >> 10) - 1 + 3;
+}
+//////////////////////////////////////////////////////////////////////////////////TODO
+
 /*******************  FUNCTION  *********************/
 MediumFreePool::MediumFreePool ( void )
 {
@@ -51,21 +104,21 @@ void MediumFreePool::init ( const Size freeSizes[48], ReverseAnalyticFreeSize an
 }
 
 /*******************  FUNCTION  *********************/
-ChunkFreeList* MediumFreePool::getFreeList ( Size size )
+ChunkFreeList* MediumFreePool::getFreeList ( Size innerSize )
 {
 	//errors
 	assert(this != NULL);
 	assert(sizes != NULL);
-	assert(size > 0);
+	assert( innerSize > 0);
 	
 	if (analyticRevers == NULL)
-		return getFreeListByDichotomy(size);
+		return getFreeListByDichotomy( innerSize );
 	else
-		return getFreeListByAnalytic(size);
+		return getFreeListByAnalytic( innerSize );
 }
 
 /*******************  FUNCTION  *********************/
-ChunkFreeList* MediumFreePool::getFreeListByDichotomy ( Size size )
+ChunkFreeList* MediumFreePool::getFreeListByDichotomy ( Size innerSize )
 {
 	//local vars
 	Size seg_size = nbLists;
@@ -75,17 +128,18 @@ ChunkFreeList* MediumFreePool::getFreeListByDichotomy ( Size size )
 	//errors
 	assert(ptr != NULL);
 	assert(this != NULL);
-	assert(size > 0);
+	assert( innerSize > 0);
 	assert(4 >> 1 == 2);//required property to quickly divide by 2
+	assert(innerSize >= ptr[0]);
 	
-	if (ptr[0] >= size)
+	if (ptr[0] >= innerSize )
 	{
 		i = 0;
 	} else {
 		//use dicotomic search, it's faster as we know the list sizes are sorted.
-		while((ptr[i-1] >= size || ptr[i] < size))
+		while((ptr[i-1] >= innerSize || ptr[i] < innerSize ))
 		{
-			if (ptr[i] < size)
+			if (ptr[i] < innerSize )
 			{
 				seg_size -= i;
 				ptr += i;
@@ -101,7 +155,7 @@ ChunkFreeList* MediumFreePool::getFreeListByDichotomy ( Size size )
 }
 
 /*******************  FUNCTION  *********************/
-ChunkFreeList* MediumFreePool::getFreeListByAnalytic ( Size size )
+ChunkFreeList* MediumFreePool::getFreeListByAnalytic ( Size innerSize )
 {
 	//vars
 	const Size * sizeList = this->sizes;
@@ -109,21 +163,21 @@ ChunkFreeList* MediumFreePool::getFreeListByAnalytic ( Size size )
 	int pos;
 	
 	//errors
-	assert(size > 0);
+	assert( innerSize > 0);
 	assert(this != NULL);
 	assert(sizeList != NULL);
 	assert(analyticRevers != NULL);
 
 	//get position by reverse analytic computation.
-	pos = analyticRevers(size, sizeList,nbLists);
+	pos = analyticRevers( innerSize, sizeList,nbLists);
 
 	//check size of current cell, if too small, take the next one
-	if (sizeList[pos] < size)
+	if (sizeList[pos] < innerSize )
 		pos++;
 
 	//check
 	assert(pos >= 0 && pos <= nbLists);
-	assert(lists + pos == getFreeListByDichotomy(size));
+	assert(lists + pos == getFreeListByDichotomy( innerSize ));
 
 	//return position
 	return lists + pos;
@@ -145,7 +199,7 @@ void MediumFreePool::insert ( MediumChunk* chunk,ChunkInsertMode mode )
 {
 	//get size
 	chunk->check();
-	Size totalSize = chunk->getTotalSize();
+	Size innerSize = chunk->getInnerSize();
 
 	//errors
 	assert(this != NULL);
@@ -153,11 +207,11 @@ void MediumFreePool::insert ( MediumChunk* chunk,ChunkInsertMode mode )
 	assert(chunk->getStatus() == CHUNK_ALLOCATED);
 	
 	//get the free list
-	ChunkFreeList * flist = getFreeList(totalSize);
+	ChunkFreeList * flist = getFreeList(innerSize);
 	assert(flist != NULL);
 	
 	Size listClass = getListClass(flist);
-	if (flist != lists && listClass != -1 && listClass != totalSize)
+	if (flist != lists && listClass != -1 && listClass != innerSize)
 		flist--;
 	
 	//mark free
@@ -216,9 +270,8 @@ MediumChunk* MediumFreePool::findAdaptedChunk ( ChunkFreeList * list, Size inner
 	assert( list >= lists && list < lists + nbLists);
 
 	//first in the list fo oldest one -> FIFO
-	MediumChunk * chunk = list->popFirst();
 	ChunkFreeList::Iterator it = list->begin();
-	while (it != list->end() && it->getInnerSize() < innerSize );
+	while (it != list->end() && it->getInnerSize() < innerSize )
 		++it;
 	
 	if (it == list->end())
@@ -325,4 +378,13 @@ MediumChunk* MediumFreePool::merge ( MediumChunk* chunk )
 	//calc final bloc size
 	first->merge(last);
 	return first;
+}
+
+/*******************  FUNCTION  *********************/
+void MediumFreePool::setEmptyStatus ( ChunkFreeList* flist, bool filled )
+{
+	int id = (int)(flist - lists);
+	assert(id >= 0 && id < NB_FREE_LIST);
+	
+	status[id] = filled;
 }

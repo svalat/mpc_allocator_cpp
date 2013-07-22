@@ -127,4 +127,5 @@ DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value)
 	
 	return res;
 }
+
 #endif //DOUBLELINKLIST_IMPL_H

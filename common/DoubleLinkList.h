@@ -20,7 +20,7 @@ class DoubleLinkList
 		class Iterator
 		{
 			public:
-				Iterator(ListElement * elt) {this->cur = cur;};
+				Iterator(ListElement * elt) {this->cur = elt;};
 				Iterator & operator=(const Iterator & it) {this->cur = it.cur;};
 				Iterator & operator++(void) {this->cur = this->cur->next;};
 				Iterator & operator--(void) {this->cur = this->cur->prev;};
@@ -41,8 +41,8 @@ class DoubleLinkList
 		static DoubleLinkList<T> * remove(T * value);
 		T * popFirst(void);
 		T * popLast(void);
-		Iterator begin(void);
-		Iterator end(void);
+		Iterator begin(void) {Iterator it(root.next); return it;};
+		Iterator end(void) {Iterator it(&root); return it;};
 	private:
 		static DoubleLinkList<T> * remove(ListElement * value);
 		DoubleLinkList ( const DoubleLinkList& other );

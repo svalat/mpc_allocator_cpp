@@ -13,11 +13,12 @@ typedef uint64_t Size;
 /********************  MACRO  ***********************/
 #define BASIC_ALIGN sizeof(Addr)
 #define MAGICK_VALUE 42
-#define NB_FREE_LIST 48
+#define NB_FREE_LIST 50
 #define UNSUPPORTED -1
 #define ALLOC_MIN_SIZE BASIC_ALIGN
 //TODO setup value
 #define REALLOC_THREASHOLD 64
+#define SCTK_MACRO_BLOC_SIZE (2*1024*1024)
 
 /*******************  FUNCTION  *********************/
 static inline Size ceilToPowOf2(Size size,Size align)

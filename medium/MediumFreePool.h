@@ -1,5 +1,5 @@
-#ifndef CHUNK_FREE_POOL_H
-#define CHUNK_FREE_POOL_H
+#ifndef MEDIUM_FREE_POOL_H
+#define MEDIUM_FREE_POOL_H
 
 /********************  HEADERS  *********************/
 #include "Common.h"
@@ -34,9 +34,9 @@ class MediumFreePool
 		MediumChunk * merge(MediumChunk * chunk);
 	private:
 		void init(const Size freeSizes[NB_FREE_LIST],ReverseAnalyticFreeSize analyticRevers);
-		ChunkFreeList * getFreeList(Size size);
-		ChunkFreeList * getFreeListByDichotomy(Size size);
-		ChunkFreeList * getFreeListByAnalytic(Size size);
+		ChunkFreeList * getFreeList(Size innerSize);
+		ChunkFreeList * getFreeListByDichotomy(Size innerSize);
+		ChunkFreeList * getFreeListByAnalytic(Size innerSize);
 		Size getListClass(const ChunkFreeList * list) const;
 		void setEmptyStatus(ChunkFreeList * flist,bool filled);
 		MediumChunk * findAdaptedChunk( ChunkFreeList* list, Size totalSize );
@@ -44,7 +44,7 @@ class MediumFreePool
 	private:
 		//forbidden copy/=
 		MediumFreePool ( const MediumFreePool& other );
-		virtual MediumFreePool& operator= ( const MediumFreePool& other );
+		MediumFreePool& operator= ( const MediumFreePool& other );
 	private:
 		const Size * sizes;
 		bool status[NB_FREE_LIST];
@@ -53,4 +53,4 @@ class MediumFreePool
 		ReverseAnalyticFreeSize analyticRevers;
 };
 
-#endif // CHUNK_FREE_POOL_H
+#endif // MEDIUM_FREE_POOL_H

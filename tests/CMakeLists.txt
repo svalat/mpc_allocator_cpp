@@ -1,6 +1,6 @@
 include_directories(${GTEST_INCLUDE_DIRS})
 FIND_PACKAGE( OpenMP REQUIRED)
-set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock)
+set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock TestMediumFreePool)
 
 if(OPENMP_FOUND)
 	message("OPENMP FOUND")

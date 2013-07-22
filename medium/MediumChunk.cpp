@@ -7,7 +7,7 @@
 MediumChunk* MediumChunk::setup ( void* ptr, Size totalSize )
 {
 	//errors
-	assert( totalSize >= 2*sizeof(MediumChunk));
+	assert( totalSize >= sizeof(MediumChunk) + BASIC_ALIGN);
 	assert( totalSize % BASIC_ALIGN == 0);
 	
 	//setup first bloc
@@ -40,7 +40,7 @@ MediumChunk* MediumChunk::setup ( void* ptr, MediumChunk* prev, MediumChunk* nex
 MediumChunk* MediumChunk::setup ( void* ptr, MediumChunk* prev, Size totalSize )
 {
 	assert(prev < ptr);
-	assert( totalSize == 0 || totalSize >= 2*sizeof(MediumChunk));
+	assert( totalSize == 0 || totalSize >= sizeof(MediumChunk) + BASIC_ALIGN);
 	
 	MediumChunk * res = setup(ptr);
 
