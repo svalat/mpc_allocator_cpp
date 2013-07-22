@@ -34,7 +34,7 @@ TEST_F(TestMediumChunk, constructor_1) {
 /*******************  FUNCTION  *********************/
 TEST_F(TestMediumChunk, constructor_2) {
 	MediumChunk * chunk = MediumChunk::setup(buffer,NULL,512);
-	MediumChunk * chunk2 = MediumChunk::setup(chunk->getNext(),chunk,512);
+	MediumChunk::setup(chunk->getNext(),chunk,512);
 	
 	EXPECT_EQ(buffer,(void*)chunk);
 	EXPECT_EQ(512,chunk->getTotalSize());
@@ -105,27 +105,22 @@ TEST_F(TestMediumChunk, split_1) {
 
 /*******************  FUNCTION  *********************/
 TEST_F(TestMediumChunk, split_2) {
-	MediumChunk * last = chunk->getNext();
-	
 	EXPECT_EQ(NULL,chunk->split(2048));
 }
 
 /*******************  FUNCTION  *********************/
 TEST_F(TestMediumChunk, isSingle) {
-	MediumChunk * last = chunk->getNext();
-	
-	EXPECT_FALSE(chunk->isSingle());
+	EXPECT_TRUE(chunk->isSingle());
 	chunk->setStatus(CHUNK_FREE);
 	EXPECT_TRUE(chunk->isSingle());
 	
-	MediumChunk * res = chunk->split(256);
+	chunk->split(256);
 	
 	EXPECT_FALSE(chunk->isSingle());
 }
 
 /*******************  FUNCTION  *********************/
 TEST_F(TestMediumChunk, getPtr) {
-	MediumChunk * last = chunk->getNext();
 	MediumChunk * invalid = NULL;
 	
 	EXPECT_EQ(NULL,invalid->getPtr());
@@ -134,18 +129,12 @@ TEST_F(TestMediumChunk, getPtr) {
 
 /*******************  FUNCTION  *********************/
 TEST_F(TestMediumChunk, getChunk) {
-	MediumChunk * last = chunk->getNext();
-	MediumChunk * invalid = NULL;
-	
 	EXPECT_EQ(NULL,MediumChunk::getChunk(NULL));
 	EXPECT_EQ(chunk,MediumChunk::getChunk(chunk->getPtr()));
 }
 
 /*******************  FUNCTION  *********************/
 TEST_F(TestMediumChunk, merge) {
-	MediumChunk * last = chunk->getNext();
-	MediumChunk * invalid = NULL;
-	
 	MediumChunk * c2 = chunk->split(128);
 	MediumChunk * c3 = c2->split(128);
 	MediumChunk * c4 = c3->split(128);

@@ -33,7 +33,7 @@ TEST(TestMediumFreePool, findChunk_3) {
 	MediumChunk * c1 = c0->split(64);
 	MediumChunk * c2 = c1->split(32);
 	MediumChunk * c3 = c2->split(64);
-	MediumChunk * c4 = c3->split(64);
+	c3->split(64);
 	
 	pool.insert(c0,CHUNK_INSERT_LIFO);
 	pool.insert(c1,CHUNK_INSERT_LIFO);
@@ -52,7 +52,7 @@ TEST(TestMediumFreePool, findChunk_4) {
 	MediumChunk * c1 = c0->split(64);
 	MediumChunk * c2 = c1->split(32);
 	MediumChunk * c3 = c2->split(64);
-	MediumChunk * c4 = c3->split(64);
+	c3->split(64);
 	
 	pool.insert(c0,CHUNK_INSERT_LIFO);
 	pool.insert(c1,CHUNK_INSERT_LIFO);
@@ -69,8 +69,8 @@ TEST(TestMediumFreePool, insert_1) {
 	char buffer[1024];
 	MediumFreePool pool(TEST_SIZE_LIST,NULL);;
 	
-	pool.insert(buffer,56,CHUNK_INSERT_FIFO);
-	EXPECT_EQ(NULL,pool.findChunk(16));
+	pool.insert(buffer,64,CHUNK_INSERT_FIFO);
+	EXPECT_EQ(NULL,pool.findChunk(24));
 }
 
 TEST(TestMediumFreePool, insert_2) {
@@ -88,7 +88,7 @@ TEST(TestMediumFreePool, insert_3) {
 	MediumChunk * c0 = MediumChunk::setup(buffer,1024);
 	MediumChunk * c1 = c0->split(16);
 	MediumChunk * c2 = c1->split(16);
-	MediumChunk * c3 = c2->split(16);
+	c2->split(16);
 	
 	pool.insert(c0,CHUNK_INSERT_LIFO);
 	pool.insert(c1,CHUNK_INSERT_LIFO);
@@ -104,7 +104,7 @@ TEST(TestMediumFreePool, insert_4) {
 	MediumChunk * c0 = MediumChunk::setup(buffer,1024);
 	MediumChunk * c1 = c0->split(16);
 	MediumChunk * c2 = c1->split(16);
-	MediumChunk * c3 = c2->split(16);
+	c2->split(16);
 	
 	pool.insert(c0,CHUNK_INSERT_FIFO);
 	pool.insert(c1,CHUNK_INSERT_FIFO);
@@ -159,7 +159,7 @@ TEST(TestMediumFreePool, merge_2) {
 	MediumFreePool pool(TEST_SIZE_LIST,NULL);;
 	MediumChunk * c0 = MediumChunk::setup(buffer,1024);
 	MediumChunk * c1 = c0->split(16);
-	MediumChunk * c2 = c1->split(16);
+	c1->split(16);
 
 	MediumChunk * c = pool.merge(c1);
 	
@@ -167,7 +167,7 @@ TEST(TestMediumFreePool, merge_2) {
 }
 
 TEST(TestMediumFreePool, analyticFunc) {
-	for (int i = 0 ; i < 45 ; i++)
+	for (int i = 0 ; i < 44 ; i++)
 	{
 		if (cstDefaultFreeSizes[i] > 0)
 		{
@@ -178,9 +178,9 @@ TEST(TestMediumFreePool, analyticFunc) {
 		}
 	}
 	
-	EXPECT_EQ(2*1024*1024,cstDefaultFreeSizes[45]);
-	EXPECT_EQ(-1,cstDefaultFreeSizes[46]);
-	EXPECT_EQ(45,reverseDefaultFreeSizes(2*1024*1024,cstDefaultFreeSizes,45));
-	EXPECT_EQ(46,reverseDefaultFreeSizes(2*1024*1024+1,cstDefaultFreeSizes,45));
-	EXPECT_EQ(46,reverseDefaultFreeSizes(20*1024*1024+1,cstDefaultFreeSizes,45));
+	EXPECT_EQ(2*1024*1024,cstDefaultFreeSizes[44]);
+	EXPECT_EQ(-1,cstDefaultFreeSizes[45]);
+	EXPECT_EQ(44,reverseDefaultFreeSizes(2*1024*1024,cstDefaultFreeSizes,45));
+	EXPECT_EQ(45,reverseDefaultFreeSizes(2*1024*1024+1,cstDefaultFreeSizes,45));
+	EXPECT_EQ(45,reverseDefaultFreeSizes(20*1024*1024+1,cstDefaultFreeSizes,45));
 }

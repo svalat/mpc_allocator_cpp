@@ -10,7 +10,7 @@
 class MediumAllocator : public IChunkManager
 {
 	public:
-		MediumAllocator(bool useLocks,IAllocator * memorySource = NULL);
+		MediumAllocator(bool useLocks = false,IAllocator * memorySource = NULL);
 		//required public interface
 		void * malloc(size_t size,size_t align = BASIC_ALIGN,bool * zeroFilled = NULL);
 		virtual void free ( void* ptr );
@@ -18,9 +18,10 @@ class MediumAllocator : public IChunkManager
 		virtual size_t getRequestedSize ( void* ptr );
 		virtual size_t getTotalSize ( void* ptr );
 		virtual void* realloc ( void* ptr, size_t size );
+		void fill(void * ptr, size_t size);
 	private:
 		MediumChunk * refill(size_t size,bool * zeroFilled = NULL);
-		MediumChunk * split(MediumChunk * chunk);
+		MediumChunk * split( MediumChunk* chunk, size_t innerSize );
 	private:
 		MediumFreePool pool;
 		Spinlock spinlock;

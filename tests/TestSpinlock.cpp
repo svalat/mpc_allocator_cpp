@@ -24,7 +24,7 @@ TEST(TestSpinlock, correctness) {
 	
 	#pragma omp parallel
 	{
-		#pragma omp singe
+		#pragma omp single
 		nbthread = omp_get_num_threads();
 		
 		lock.lock();
@@ -44,7 +44,7 @@ TEST(TestSpinlock, correctnessOfARIIMode_1) {
 	
 	#pragma omp parallel
 	{
-		#pragma omp singe
+		#pragma omp single
 		nbthread = omp_get_num_threads();
 		
 		CRITICAL(lock)
@@ -64,7 +64,7 @@ TEST(TestSpinlock, correctnessOfARIIMode_2) {
 	
 	#pragma omp parallel
 	{
-		#pragma omp singe
+		#pragma omp single
 		nbthread = omp_get_num_threads();
 		
 		OPTINAL_CRITICAL(lock,true)
@@ -84,7 +84,7 @@ TEST(TestSpinlock, correctnessOfARIIMode_3) {
 	
 	#pragma omp parallel
 	{
-		#pragma omp singe
+		#pragma omp single
 		nbthread = omp_get_num_threads();
 		
 		//already lock to check optional false (if true it will deadlock)

@@ -21,12 +21,12 @@ int sctk_alloc_optimized_log2_size_t(Size value)
         return (int)res;
 }
 
-const Size cstDefaultFreeSizes[NB_FREE_LIST] = {8, 16, 24,
+const Size cstDefaultFreeSizes[NB_FREE_LIST] = {16, 24,
         32,    64,   96,  128,  160,   192,   224,   256,    288,    320,
         352,  384,  416,  448,  480,   512,   544,   576,    608,    640,
         672,  704,  736,  768,  800,   832,   864,   896,    928,    960,
         992, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144,
-        524288, 1048576, 2*1024*1024, -1, -1,-1,-1
+        524288, 1048576, 2*1024*1024, -1, -1,-1,-1,-1
 };
 
 int reverseDefaultFreeSizes(Size size,const Size * sizeList,int nbLists)
@@ -34,23 +34,23 @@ int reverseDefaultFreeSizes(Size size,const Size * sizeList,int nbLists)
 	//errors
 	assert(sizeList == cstDefaultFreeSizes);
 	assert(64 >> 5 == 2);
-	assert(sizeList[46] == -1);
-	assert(size >= 8);
+	assert(sizeList[45] == -1UL);
+	assert(size >= 16);
 
 	if (size < 32)
-		return (int)(size/8) - 1;
+		return (int)(size/8) - 2;
 	else if (size <= 1024)
 		//divide by 32 and fix first element ID as we start to indexes by 0
-		// +3 for thre startpoint 8/16/24
-		return (int)((size >> 5) - 1) + 3;
+		// +2 for thre startpoint 16/24
+		return (int)((size >> 5) - 1) + 2;
 	else if (size > SCTK_MACRO_BLOC_SIZE)
-		// +3 for thre startpoint 8/16/24
-		return 43 + 3;
+		// +2 for thre startpoint 16/24
+		return 43 + 2;
 	else
 		//1024/32 :  starting offset of the exp zone
 		// >> 10: ( - log2(1024)) remote the start of the exp
-		// +3 for thre startpoint 8/16/24
-	return 1024/32 + sctk_alloc_optimized_log2_size_t(size >> 10) - 1 + 3;
+		// +2 for thre startpoint 16/24
+	return 1024/32 + sctk_alloc_optimized_log2_size_t(size >> 10) - 1 + 2;
 }
 //////////////////////////////////////////////////////////////////////////////////TODO
 
@@ -71,7 +71,7 @@ void MediumFreePool::init ( const Size freeSizes[48], ReverseAnalyticFreeSize an
 {
 	assert(freeSizes != NULL);
 	assert(this != NULL);
-	assert(freeSizes[NB_FREE_LIST-1]==-1);
+	assert(freeSizes[NB_FREE_LIST-1]==-1UL);
 	
 	//setup sizes
 	this->sizes = freeSizes;
@@ -82,7 +82,7 @@ void MediumFreePool::init ( const Size freeSizes[48], ReverseAnalyticFreeSize an
 	for (int i = 0 ; i < NB_FREE_LIST ; i++)
 	{
 		status[i] = false;
-		if (sizes[i] != -1)
+		if (sizes[i] != -1UL)
 			nbLists=i+1;
 	}
 	
@@ -203,6 +203,7 @@ void MediumFreePool::insert ( MediumChunk* chunk,ChunkInsertMode mode )
 
 	//errors
 	assert(this != NULL);
+	assert(chunk->getInnerSize() >= sizeof(ChunkFreeList));
 	assert(chunk->getTotalSize() > 0);
 	assert(chunk->getStatus() == CHUNK_ALLOCATED);
 	
@@ -211,7 +212,7 @@ void MediumFreePool::insert ( MediumChunk* chunk,ChunkInsertMode mode )
 	assert(flist != NULL);
 	
 	Size listClass = getListClass(flist);
-	if (flist != lists && listClass != -1 && listClass != innerSize)
+	if (flist != lists && listClass != -1UL && listClass != innerSize)
 		flist--;
 	
 	//mark free
@@ -326,10 +327,10 @@ ChunkFreeList* MediumFreePool::getFirstNextNonEmptyList ( ChunkFreeList* list )
 	assert(list >= lists && list < lists + nbLists);
 	
 	//get free list id
-	Size id = (list - lists);
+	int id = (list - lists);
 	assert(id < nbLists);
 	
-	for (Size i = id ; i < nbLists ; i++)
+	for (int i = id ; i < nbLists ; i++)
 	{
 		if (status[i])
 			return lists+i;
@@ -372,7 +373,7 @@ MediumChunk* MediumFreePool::merge ( MediumChunk* chunk )
 		//can remove current one from free list to be merged at the end of the function
 		remove(cur);
 		//move to next one
-		last = cur->getNext();
+		cur = cur->getNext();
 	}
 	
 	//calc final bloc size

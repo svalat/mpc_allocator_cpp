@@ -22,8 +22,8 @@ class DoubleLinkList
 			public:
 				Iterator(ListElement * elt) {this->cur = elt;};
 				Iterator & operator=(const Iterator & it) {this->cur = it.cur;};
-				Iterator & operator++(void) {this->cur = this->cur->next;};
-				Iterator & operator--(void) {this->cur = this->cur->prev;};
+				Iterator & operator++(void) {this->cur = this->cur->next; return *this;};
+				Iterator & operator--(void) {this->cur = this->cur->prev; return *this;};
 				bool operator==(const Iterator & it) {return this->cur == it.cur;};
 				bool operator!=(const Iterator & it) {return this->cur != it.cur;};
 				T * operator->(void) {T* res = (T*)cur;return res-1;};

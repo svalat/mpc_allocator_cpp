@@ -17,7 +17,7 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 
 	//errors
 	assert(this != NULL);
-	assert(size >= BASIC_ALIGN);
+	assert(size >= MEDIUM_MIN_INNER_SIZE);
 	assert(align == BASIC_ALIGN);//TODO need support
 	assert(align >= BASIC_ALIGN);
 	
@@ -44,10 +44,10 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 			return NULL;
 		
 		//try to split
-		MediumChunk * residut = split(chunk);
+		MediumChunk * residut = split(chunk,size);
+		assert(chunk->getInnerSize() >= size);
 		if (residut != NULL)
 			pool.insert(residut,CHUNK_INSERT_LIFO);
-		assert(chunk->getInnerSize() >= size);
 		//assume_m(sctk_alloc_get_size(vchunk) >= sctk_alloc_calc_chunk_size(size), "Size error in chunk spliting function.");
 	END_CRITICAL
 	
@@ -57,6 +57,27 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 
 	//ok this is good
 	return chunk->getPtr();
+}
+
+/*******************  FUNCTION  *********************/
+MediumChunk* MediumAllocator::split ( MediumChunk* chunk,size_t innerSize )
+{
+	//trivial
+	if (chunk == NULL)
+		return NULL;
+	
+	//align request size
+	innerSize = upToPowOf2(innerSize,MEDIUM_MIN_INNER_SIZE);
+	
+	//get avail size
+	Size availSize = chunk->getInnerSize();
+	
+	//check minimal size
+	if (availSize - innerSize <= MEDIUM_MIN_INNER_SIZE + sizeof(MediumChunk))
+		return NULL;
+	
+	//resize
+	return chunk->split(innerSize);
 }
 
 /*******************  FUNCTION  *********************/
@@ -83,10 +104,30 @@ MediumChunk* MediumAllocator::refill ( size_t size, bool * zeroFilled )
 	
 	//build chunk
 	Size innerSize = memorySource->getInnerSize(ptr);
-	MediumChunk * chunk = MediumChunk::setup(ptr,size);
+	MediumChunk * chunk = MediumChunk::setup(ptr,innerSize);
 	
 	//ok return it
 	return chunk;
+}
+
+/*******************  FUNCTION  *********************/
+void MediumAllocator::fill ( void* ptr, size_t size )
+{
+	//errors
+	assert(ptr != NULL);
+	assert(size > 0);
+	
+	//trivial
+	if (ptr == NULL || size == 0)
+		return;
+	
+	//create chunk
+	MediumChunk * chunk = MediumChunk::setup(ptr,size);
+
+	//add to registry TODO
+	
+	//put in free list
+	pool.insert(chunk,CHUNK_INSERT_FIFO);
 }
 
 /*******************  FUNCTION  *********************/
@@ -149,7 +190,7 @@ size_t MediumAllocator::getTotalSize ( void* ptr )
 	if (chunk == NULL)	
 		return 0;
 	else
-		return chunk->getInnerSize();
+		return chunk->getTotalSize();
 }
 
 /*******************  FUNCTION  *********************/
@@ -177,7 +218,7 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	assert(chunk != NULL);
 	//TODO assume
 	Size oldSize = chunk->getInnerSize();
-	Size delta = size - oldSize;
+	Size delta = oldSize - size;
 	
 	//if can resuse old one without resize
 	if (oldSize >= size && delta <= REALLOC_THREASHOLD)
@@ -185,7 +226,8 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	
 	//ok do alloc/copy/free
 	void * new_ptr = this->malloc(size);
-	memcpy(new_ptr,ptr,max(size,oldSize));
+	if (new_ptr != NULL)
+		memcpy(new_ptr,ptr,max(size,oldSize));
 	free(ptr);
 	
 	return new_ptr;

@@ -27,7 +27,7 @@ class MediumChunk
 		MediumChunk * getPrev(void) const;//checked
 		ChunkStatus getStatus(void) const;//checked
 		void setStatus(ChunkStatus status);//checked
-		MediumChunk * split(Size size);//checked
+		MediumChunk * split(Size innerSize);//checked
 		bool isSingle(void) const;//checked
 		void * getPtr(void);
 		void merge( MediumChunk* last );

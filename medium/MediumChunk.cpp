@@ -127,17 +127,17 @@ void MediumChunk::setStatus ( ChunkStatus status )
 }
 
 /*******************  FUNCTION  *********************/
-MediumChunk* MediumChunk::split ( Size size )
+MediumChunk* MediumChunk::split ( Size innerSize )
 {
 	//round size to multiple of 8
-	size = upToPowOf2(size,BASIC_ALIGN) + sizeof(MediumChunk);
+	Size totalSize = upToPowOf2(innerSize,BASIC_ALIGN) + sizeof(MediumChunk);
 	
 	//check size
-	if (size > getTotalSize() - sizeof(MediumChunk))
+	if (totalSize > getInnerSize())
 		return NULL;
 	
 	//split
-	MediumChunk * chunk = setup(addrOffset(this,size),this,next);
+	MediumChunk * chunk = setup(addrOffset(this,totalSize),this,next);
 	
 	//update
 	if (this->next != NULL);
@@ -154,7 +154,8 @@ MediumChunk* MediumChunk::split ( Size size )
 bool MediumChunk::isSingle ( void ) const
 {
 	assert(this != NULL);
-	return (this->status == CHUNK_FREE && this->prev == NULL && this->next->next == NULL);
+	//this->status == CHUNK_FREE && 
+	return (this->prev == NULL && this->next->next == NULL);
 }
 
 /*******************  FUNCTION  *********************/
@@ -204,7 +205,7 @@ void MediumChunk::merge ( MediumChunk* last )
 		return;
 	
 	//compute size
-	Size totalSize = last->next - first;
+	//Size totalSize = last->next - first;
 
 	if (last->next != NULL)
 		last->next->prev = first;
