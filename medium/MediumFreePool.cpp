@@ -2,25 +2,6 @@
 #include "MediumFreePool.h"
 
 //////////////////////////////////////////////////////////////////////////////////TODO
-int sctk_alloc_optimized_log2_size_t(Size value)
-{
-        //vars
-        Size res = 0;
-
-        #if defined(__GNUC__) && defined(__x86_64__)
-                if (value != 0)
-                        asm volatile ("bsr %1, %0":"=r" (res):"r"(value));
-        #else
-                /** @TODO find equivalent for others compiler. Maybe arch x86 is also OK as for x86_64, but need to check. **/
-                #ifndef _MSC_VER
-                #warning "ASM bsr was tested only on gcc x64_64, fallback on default slower C implementation."
-                #endif
-                while (value > 1) {value = value >> 1 ; res++;};
-        #endif
-
-        return (int)res;
-}
-
 const Size cstDefaultFreeSizes[NB_FREE_LIST] = {16, 24,
         32,    64,   96,  128,  160,   192,   224,   256,    288,    320,
         352,  384,  416,  448,  480,   512,   544,   576,    608,    640,
@@ -50,7 +31,7 @@ int reverseDefaultFreeSizes(Size size,const Size * sizeList,int nbLists)
 		//1024/32 :  starting offset of the exp zone
 		// >> 10: ( - log2(1024)) remote the start of the exp
 		// +2 for thre startpoint 16/24
-	return 1024/32 + sctk_alloc_optimized_log2_size_t(size >> 10) - 1 + 2;
+	return 1024/32 + fastLog2(size >> 10) - 1 + 2;
 }
 //////////////////////////////////////////////////////////////////////////////////TODO
 
@@ -388,4 +369,46 @@ void MediumFreePool::setEmptyStatus ( ChunkFreeList* flist, bool filled )
 	assert(id >= 0 && id < NB_FREE_LIST);
 	
 	status[id] = filled;
+}
+
+/*******************  FUNCTION  *********************/
+MediumChunk* MediumFreePool::tryMergeForSize ( MediumChunk* chunk, Size findInnerSize )
+{
+	//errors
+	assert(chunk != NULL);
+	assert( findInnerSize > 0);
+	assert( findInnerSize > chunk->getInnerSize());
+	
+	//start to search
+	MediumChunk * cur = chunk->getNext();
+	MediumChunk * last = chunk;
+	Size size = chunk->getInnerSize();
+	
+	//loop until enought
+	while(cur != NULL && cur->getStatus() == CHUNK_FREE && size < findInnerSize)
+	{
+		size += cur->getTotalSize();
+		last = cur;
+		//move to next one
+		cur = cur->getNext();
+	}
+	
+	//if not enought, return NULL
+	if (size < findInnerSize)
+		return NULL;
+	
+	//free all from chunk to last
+	MediumChunk * lastNext = cur;
+	cur = chunk->getNext();
+	//loop until enought
+	while(cur != NULL && cur->getStatus() == CHUNK_FREE && cur != lastNext)
+	{
+		remove(cur);
+		//move to next one
+		cur = cur->getNext();
+	}
+	
+	//final merge
+	chunk->merge(last);
+	return chunk;
 }

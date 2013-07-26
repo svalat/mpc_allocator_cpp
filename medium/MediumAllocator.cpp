@@ -224,6 +224,27 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	if (oldSize >= size && delta <= REALLOC_THREASHOLD)
 		return ptr;
 	
+	//check if can realloc the next one
+	//TODO maybe find a way to avoid to retake the lock for next malloc call
+	OPTINAL_CRITICAL(spinlock,useLocks);
+		MediumChunk * merged = pool.tryMergeForSize(chunk,size);
+		if (merged != NULL)
+		{
+			//check
+			assert(merged == chunk);
+			assert(merged->getInnerSize() >= size);
+	
+			//check for split
+			MediumChunk * residut = split(merged,size);
+			assert(merged->getInnerSize() >= size);
+			if (residut != NULL)
+				pool.insert(residut,CHUNK_INSERT_LIFO);
+			
+			//ok return, the lock is auto removed by TakeLock destructor
+			return merged->getPtr();
+		}
+	END_CRITICAL
+	
 	//ok do alloc/copy/free
 	void * new_ptr = this->malloc(size);
 	if (new_ptr != NULL)

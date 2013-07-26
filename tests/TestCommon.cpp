@@ -33,3 +33,13 @@ TEST(TestCommon,max)
 	EXPECT_EQ(10,max(10,1));
 	EXPECT_EQ(10,max(10,10));
 }
+
+TEST(TestCommon,fastLog2)
+{
+	for (int i = 0 ; i < 32 ; i++)
+	{
+		EXPECT_EQ(i,fastLog2(1UL<<i));
+		if (i > 0)
+			EXPECT_EQ(i,fastLog2((1UL<<i)+1));
+	}
+}

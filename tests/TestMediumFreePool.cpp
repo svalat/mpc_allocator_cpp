@@ -166,6 +166,55 @@ TEST(TestMediumFreePool, merge_2) {
 	EXPECT_EQ(c1,c);
 }
 
+TEST(TestMediumFreePool, merge_3) {
+	char buffer[1024];
+	MediumFreePool pool(TEST_SIZE_LIST,NULL);;
+	MediumChunk * c0 = MediumChunk::setup(buffer,1024);
+	MediumChunk * c1 = c0->split(16);
+	c1->split(16);
+	
+	//pool.insert(c1,CHUNK_INSERT_LIFO);
+// 	pool.insert(c2,CHUNK_INSERT_LIFO);
+
+	MediumChunk * res = pool.tryMergeForSize(c0,34);
+	EXPECT_EQ(NULL,res);
+}
+
+TEST(TestMediumFreePool, merge_4) {
+	char buffer[1024];
+	MediumFreePool pool(TEST_SIZE_LIST,NULL);;
+	MediumChunk * c0 = MediumChunk::setup(buffer,1024);
+	MediumChunk * c1 = c0->split(16);
+	MediumChunk * c2 = c1->split(16);
+	
+	pool.insert(c1,CHUNK_INSERT_LIFO);
+	pool.insert(c2,CHUNK_INSERT_LIFO);
+
+	MediumChunk * res = pool.tryMergeForSize(c0,34);
+	EXPECT_EQ(c0,res);
+	EXPECT_EQ(16*2+sizeof(MediumChunk),res->getInnerSize());
+	
+	EXPECT_EQ(c2,pool.findChunk(16));
+}
+
+TEST(TestMediumFreePool, merge_5) {
+	char buffer[1024];
+	MediumFreePool pool(TEST_SIZE_LIST,NULL);;
+	MediumChunk * c0 = MediumChunk::setup(buffer,1024);
+	MediumChunk * c1 = c0->split(16);
+	MediumChunk * c2 = c1->split(16);
+	c2->split(16);
+	
+	pool.insert(c1,CHUNK_INSERT_LIFO);
+	pool.insert(c2,CHUNK_INSERT_LIFO);
+
+	MediumChunk * res = pool.tryMergeForSize(c0,64);
+	EXPECT_EQ(c0,res);
+	EXPECT_EQ(16*3+2*sizeof(MediumChunk),res->getInnerSize());
+	
+	EXPECT_EQ(NULL,pool.findChunk(16));
+}
+
 TEST(TestMediumFreePool, analyticFunc) {
 	for (int i = 0 ; i < 44 ; i++)
 	{

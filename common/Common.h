@@ -54,4 +54,24 @@ T max(T a,T b)
 		return b;
 }
 
+/*******************  FUNCTION  *********************/
+static inline int fastLog2(Size value)
+{
+	//vars
+	Size res = 0;
+
+	#if defined(__GNUC__) && defined(__x86_64__)
+		if (value != 0)
+			asm volatile ("bsr %1, %0":"=r" (res):"r"(value));
+	#else
+		/** @TODO find equivalent for others compiler. Maybe arch x86 is also OK as for x86_64, but need to check. **/
+		#ifndef _MSC_VER
+			#warning "ASM bsr was tested only on gcc x64_64, fallback on default slower C implementation."
+		#endif
+		while (value > 1) {value = value >> 1 ; res++;};
+	#endif
+
+	return (int)res;
+}
+
 #endif //COMMON_H
