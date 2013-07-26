@@ -27,7 +27,7 @@ class Spinlock
 };
 
 #define OPTINAL_CRITICAL(lock,test) do { Spinlock::TakeLock _local_##lock##__(lock,test);
-#define CRITICAL(lock) { Spinlock::TakeLock _local_##lock##__(lock);
+#define START_CRITICAL(lock) { Spinlock::TakeLock _local_##lock##__(lock);
 #define END_CRITICAL }while(0);
 
 #endif //LOCKS

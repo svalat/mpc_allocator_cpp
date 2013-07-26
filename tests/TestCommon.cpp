@@ -1,6 +1,6 @@
 /********************  HEADERS  *********************/
-#include "Common.h"
-#include "gtest/gtest.h"
+#include <Common.h>
+#include <gtest/gtest.h>
 
 TEST(TestCommon,ceilToPowOf2)
 {

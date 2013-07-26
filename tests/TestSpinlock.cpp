@@ -47,7 +47,7 @@ TEST(TestSpinlock, correctnessOfARIIMode_1) {
 		#pragma omp single
 		nbthread = omp_get_num_threads();
 		
-		CRITICAL(lock)
+		START_CRITICAL(lock)
 			for (int i = 0 ; i < REPEAT ; i++)
 				sum ++;
 		END_CRITICAL

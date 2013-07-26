@@ -3,7 +3,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 find_package(OpenMP REQUIRED)
 find_package(GTest  REQUIRED)
 find_package(GMock  REQUIRED)
-set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock TestMediumFreePool TestCommon TestMediumAllocator)
+set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock TestMediumFreePool TestCommon TestMediumAllocator TestRegionRegistry TestOS)
 
 include_directories(${GMOCK_INCLUDE_DIRS})
 include_directories(${GTEST_INCLUDE_DIRS})

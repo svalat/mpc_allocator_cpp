@@ -24,7 +24,7 @@ int reverseDefaultFreeSizes(Size size,const Size * sizeList,int nbLists)
 		//divide by 32 and fix first element ID as we start to indexes by 0
 		// +2 for thre startpoint 16/24
 		return (int)((size >> 5) - 1) + 2;
-	else if (size > SCTK_MACRO_BLOC_SIZE)
+	else if (size > MACRO_BLOC_SIZE)
 		// +2 for thre startpoint 16/24
 		return 43 + 2;
 	else

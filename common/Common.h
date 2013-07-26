@@ -18,8 +18,9 @@ typedef uint64_t Size;
 #define ALLOC_MIN_SIZE BASIC_ALIGN
 //TODO setup value
 #define REALLOC_THREASHOLD 64
-#define SCTK_MACRO_BLOC_SIZE (2*1024*1024)
+#define MACRO_BLOC_SIZE (2*1024*1024)
 #define MEDIUM_MIN_INNER_SIZE 16
+#define ADDR_NULL 0
 
 /*******************  FUNCTION  *********************/
 static inline Size ceilToPowOf2(Size size,Size align)
