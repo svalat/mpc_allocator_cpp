@@ -9,7 +9,7 @@ class OSLinux
 {
 	public:
 		static void * mmap( void* addr, size_t size );
-		static void munmap(void * addr, size_t size);
+		static int munmap( void* addr, size_t size );
 };
 
 #endif //OS_H

@@ -50,6 +50,7 @@ class RegionRegistry
 	public:
 		RegionRegistry(void);
 		~RegionRegistry(void);
+		RegionSegmentHeader * setEntry( void * ptr,Size totalSize,IChunkManager * manager);
 		void setEntry( RegionSegmentHeader * segment );
 		void remove(void * ptr);
 		void remove( RegionSegmentHeader* segment );

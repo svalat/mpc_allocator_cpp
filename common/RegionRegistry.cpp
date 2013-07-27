@@ -122,7 +122,11 @@ RegionEntry* RegionRegistry::getRegionEntry ( Addr ptr , bool createIdNotExist)
 
 	//get the local region
 	struct Region * region = getRegion(ptr);
-
+	if (region == NULL && createIdNotExist)
+		region = setupNewRegion(ptr);
+	
+	if (region == NULL)
+		return NULL;
 
 	//compute ID in regino
 	id = (((Addr)ptr) % REGION_SIZE) / REGION_SPLITTING;
@@ -141,21 +145,23 @@ RegionSegmentHeader* RegionRegistry::getSegment ( void* ptr )
 {
 	//get addr for search
 	Addr addr = (Addr)ptr;
-	if (!isOnSplttingLimit(addr))
-		addr += REGION_SPLITTING;
 	
 	RegionEntry * entry = getRegionEntry(addr,false);
 	
-	//no entry
+	//try previous
+	if (entry == NULL || *entry == NULL || *entry > ptr)
+		entry = getRegionEntry(addr-REGION_SPLITTING,false);
+	
 	if (entry == NULL)
+		return NULL;
+	else if (*entry == NULL || *entry > ptr)
 		return NULL;
 
 	//check
-	assert(*entry != NULL);
-	assert((*entry)->contain(ptr));
-	
-	//return
-	return *entry;
+	if ((*entry)->contain(ptr))
+		return *entry;
+	else
+		return NULL;
 }
 
 /*******************  FUNCTION  *********************/
@@ -209,16 +215,14 @@ void RegionRegistry::setEntry ( RegionSegmentHeader* segment )
 	
 	//TODO can be optimized by playing with REGIN size multiples with ++
 	Size entrySize = segment->getTotalSize();
-	for (Size offset = 0 ; offset < entrySize ; offset += REGION_SPLITTING)
+	Addr endPtr = ceilToPowOf2(ptr + entrySize,REGION_SPLITTING);
+	for (Size offset = 0 ; ptr + offset < endPtr ; offset += REGION_SPLITTING)
 	{
-		if (offset > 0 || isOnSplttingLimit(ptr+offset))
-		{
-			RegionEntry * localEntry = getRegionEntry(ptr + offset,true);
-			//TODO assume
-			assert(localEntry != NULL);
-			assert(*localEntry == NULL);
-			*localEntry = segment;
-		}
+		RegionEntry * localEntry = getRegionEntry(ptr + offset,true);
+		//TODO assume
+		assert(localEntry != NULL);
+		assert(*localEntry == NULL);
+		*localEntry = segment;
 	}
 }
 
@@ -232,8 +236,8 @@ bool RegionRegistry::hasEntry ( void* ptr )
 bool RegionRegistry::isOnSplttingLimit ( Addr ptr ) const
 {
 	//TODO optimize for power of 2
-	assert( (ptr % REGION_SPLITTING == 0) == ((ptr & (~(REGION_SPLITTING-1))) == 0));
-	return ((ptr & (~(REGION_SPLITTING-1))) == 0);
+	assert( (ptr % REGION_SPLITTING == 0) == ((ptr & (REGION_SPLITTING-1)) == 0));
+	return ((ptr & (REGION_SPLITTING-1)) == 0);
 }
 
 /*******************  FUNCTION  *********************/
@@ -244,9 +248,9 @@ void RegionRegistry::clearAll ( void )
 		{
 			if (regions[i] != NULL)
 			{
-				//TODO assume
-				if (regions[i]->isEmpty() == false)
-					assert(false);
+				//TODO warning
+				//if (regions[i]->isEmpty() == false)
+				//	assert(false);
 				
 				//free mem
 				OS::mmap(regions[i],sizeof(Region));
@@ -285,4 +289,17 @@ void Region::clear ( void )
 {
 	assert(this != NULL);
 	memset(entries,0,sizeof(entries));
+}
+
+/*******************  FUNCTION  *********************/
+RegionSegmentHeader* RegionRegistry::setEntry ( void* ptr, Size totalSize, IChunkManager* manager )
+{
+	//errors
+	assert(ptr != NULL);
+	assert(totalSize >= REGION_SPLITTING);
+	assert(manager != NULL);
+
+	RegionSegmentHeader * res = RegionSegmentHeader::setup(ptr,totalSize,manager);
+	setEntry(res);
+	return res;
 }

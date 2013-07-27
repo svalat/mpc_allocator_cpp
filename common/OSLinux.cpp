@@ -20,8 +20,11 @@ void* OSLinux::mmap ( void* addr, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-void OSLinux::munmap ( void* addr, size_t size )
+int OSLinux::munmap ( void* addr, size_t size )
 {
 	//TODO check error
-	::munmap(addr,size);
+	int res = ::munmap(addr,size);
+	if (res != 0)
+		perror("Out of memory, failed to request memory to the OS via mmap.");
+	return res;
 }
