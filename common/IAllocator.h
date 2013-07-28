@@ -29,10 +29,10 @@ class IAllocator : public IChunkManager
 class IMMSource
 {
 	public:
-		virtual RegionSegmentHeader * map(size_t size, bool * zeroFilled) = 0;
-		virtual RegionSegmentHeader * remap(RegionSegmentHeader * oldSegment,size_t newSize) = 0;
+		virtual RegionSegmentHeader * map(size_t innerSize, bool * zeroFilled, IChunkManager * manager) = 0;
+		virtual RegionSegmentHeader * remap(RegionSegmentHeader * oldSegment,size_t newInnerSize, IChunkManager * manager) = 0;
 		virtual void unmap(RegionSegmentHeader * segment) = 0;
-		virtual bool haveEfficientRemap(void) const = 0;
+		//virtual bool haveEfficientRemap(void) const = 0;
 };
 
 #endif //IALLOCATOR_H

@@ -3,17 +3,18 @@
 
 /********************  HEADERS  *********************/
 #include <IAllocator.h>
+#include <RegionRegistry.h>
 
 /*******************  FUNCTION  *********************/
-class DummyMMSource : public IAllocator
+class DummyMMSource : public IMMSource
 {
 	public:
-		virtual size_t getTotalSize ( void* ptr );
-		virtual size_t getRequestedSize ( void* ptr );
-		virtual size_t getInnerSize ( void* ptr );
-		virtual void free ( void* ptr );
-		virtual void* malloc ( size_t size, size_t align, bool* zeroFilled = 0 );
-		virtual void* realloc ( void* ptr, size_t size );
+		DummyMMSource(RegionRegistry * registry);
+		virtual RegionSegmentHeader* map ( size_t innerSize, bool* zeroFilled, IChunkManager * manager = NULL );
+		virtual RegionSegmentHeader* remap ( RegionSegmentHeader* oldSegment, size_t newInnerSize, IChunkManager * manager = NULL );
+		virtual void unmap ( RegionSegmentHeader* segment);
+	private:
+		RegionRegistry * registry;
 };
 
 #endif //DUMMY_MM_SOURCE_H

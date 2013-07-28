@@ -21,6 +21,7 @@ typedef uint64_t Size;
 #define MACRO_BLOC_SIZE (2*1024*1024)
 #define MEDIUM_MIN_INNER_SIZE 16
 #define ADDR_NULL 0
+#define PAGE_SIZE 4096
 
 /*******************  FUNCTION  *********************/
 static inline Size ceilToPowOf2(Size size,Size align)
