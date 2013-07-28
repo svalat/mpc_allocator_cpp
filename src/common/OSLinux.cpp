@@ -1,6 +1,7 @@
 /********************  HEADERS  *********************/
 #include "OSLinux.h"
 #include "Common.h"
+#include "Debug.h"
 //standard
 #include <cassert>
 #include <cstdio>
@@ -14,12 +15,16 @@
 void* OSLinux::mmap ( void* addr, size_t size )
 {
 	void * res = NULL;
+
 	if (addr == NULL)
 		res = ::mmap(NULL,size,PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,-1,0);
 	else
 		res = ::mmap(addr,size,PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE|MAP_FIXED,-1,0);
-	if (res == MAP_FAILED)
-		perror("Out of memory, failed to request memory to the OS via mmap.");
+	
+	//check error
+	allocAssumePerror(res != MAP_FAILED,"Out of memory, failed to request memory to the OS via mmap.");
+	
+	//ok return
 	return res;
 }
 
@@ -28,8 +33,7 @@ int OSLinux::munmap ( void* addr, size_t size )
 {
 	//TODO check error
 	int res = ::munmap(addr,size);
-	if (res != 0)
-		perror("Out of memory, failed to request memory to the OS via mmap.");
+	allocAssumePerror(res == 0,"Failed to return memory to the OS via munmap.");
 	return res;
 }
 
@@ -43,8 +47,7 @@ void* OSLinux::mremap ( void* addr, size_t old_size, size_t new_size, void* dest
 	
 	void * res = ::mremap(addr,old_size,new_size,MREMAP_MAYMOVE);
 	
-	if (res == MAP_FAILED)
-		perror("Out of memory, failed to remap memory via mremap.");
+	allocAssumePerror(res != MAP_FAILED,"Failed to remap memory via mremap.");
 	
 	return res;
 }
