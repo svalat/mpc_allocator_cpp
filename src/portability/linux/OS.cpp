@@ -1,7 +1,7 @@
 /********************  HEADERS  *********************/
-#include "OSLinux.h"
-#include "Common.h"
-#include "Debug.h"
+#include "OS.h"
+#include <Common.h>
+#include <Debug.h>
 //standard
 #include <cassert>
 #include <cstdio>
@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 /*******************  FUNCTION  *********************/
-void* OSLinux::mmap ( void* addr, size_t size )
+void* OSUnix::mmap ( void* addr, size_t size )
 {
 	void * res = NULL;
 
@@ -29,12 +29,19 @@ void* OSLinux::mmap ( void* addr, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-int OSLinux::munmap ( void* addr, size_t size )
+int OSUnix::munmap ( void* addr, size_t size )
 {
 	//TODO check error
 	int res = ::munmap(addr,size);
 	allocAssumePerror(res == 0,"Failed to return memory to the OS via munmap.");
 	return res;
+}
+
+/*******************  FUNCTION  *********************/
+size_t OSUnix::safeWrite ( int fd, const char* value, size_t size )
+{
+	return write(fd,value,size);
+	//TODO make check, see MPC version of this
 }
 
 /*******************  FUNCTION  *********************/
@@ -50,11 +57,4 @@ void* OSLinux::mremap ( void* addr, size_t old_size, size_t new_size, void* dest
 	allocAssumePerror(res != MAP_FAILED,"Failed to remap memory via mremap.");
 	
 	return res;
-}
-
-/*******************  FUNCTION  *********************/
-size_t OSLinux::safeWrite ( int fd, const char* value, size_t size )
-{
-	return write(fd,value,size);
-	//TODO make check, see MPC version of this
 }

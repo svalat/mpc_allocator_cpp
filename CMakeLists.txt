@@ -18,6 +18,7 @@ enable_testing()
 add_definitions(-DVERSION="${CMR_VERSION}")
 add_definitions(-D_GNU_SOURCE)
 add_definitions(-DHAVE_COLOR)
+set(PORTABILITY_OS linux)
 
 ######################################################
 #Add internal search path for scripts
@@ -36,6 +37,7 @@ include_directories(src/common)
 include_directories(src/chunks)
 include_directories(src/json)
 include_directories(src/mmsource)
+include_directories(src/portability/${PORTABILITY_OS})
 
 ######################################################
 #manage subdirs
