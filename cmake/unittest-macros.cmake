@@ -1,7 +1,7 @@
 ######################################################
-#            PROJECT  : CartesianMeshRuntime         #
+#            PROJECT  : MPC_Allocator_CPP            #
 #            VERSION  : 0.0.0                        #
-#            DATE     : 02/2013                      #
+#            DATE     : 07/2013                      #
 #            AUTHOR   : Valat Sébastien              #
 #            LICENSE  : CeCILL-C                     #
 ######################################################

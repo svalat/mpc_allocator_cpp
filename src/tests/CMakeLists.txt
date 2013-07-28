@@ -1,8 +1,5 @@
 include(${CMAKE_SOURCE_DIR}/cmake/unittest-macros.cmake)
 include_directories(${GTEST_INCLUDE_DIRS})
-find_package(OpenMP REQUIRED)
-find_package(GTest  REQUIRED)
-find_package(GMock  REQUIRED)
 set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock TestMediumFreePool TestCommon TestMediumAllocator TestRegionRegistry TestOS TestDummyMMSource)
 
 include_directories(${GMOCK_INCLUDE_DIRS})
