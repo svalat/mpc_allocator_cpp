@@ -17,6 +17,7 @@ set(ALLOC_VERSION "0.0.0-dev")
 enable_testing()
 add_definitions(-DVERSION="${CMR_VERSION}")
 add_definitions(-D_GNU_SOURCE)
+add_definitions(-DHAVE_COLOR)
 
 ######################################################
 #Add internal search path for scripts

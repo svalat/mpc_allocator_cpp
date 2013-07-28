@@ -5,8 +5,10 @@
 #include <cassert>
 #include <cstdio>
 //for mmap/munmap
-//TODO MOVE GNU_SOURCE in compile system, not put in source
+//for mremap require -D_GNU_SOURCE on compiler
 #include <sys/mman.h>
+//for write
+#include <unistd.h>
 
 /*******************  FUNCTION  *********************/
 void* OSLinux::mmap ( void* addr, size_t size )
@@ -45,4 +47,11 @@ void* OSLinux::mremap ( void* addr, size_t old_size, size_t new_size, void* dest
 		perror("Out of memory, failed to remap memory via mremap.");
 	
 	return res;
+}
+
+/*******************  FUNCTION  *********************/
+size_t OSLinux::safeWrite ( int fd, const char* value, size_t size )
+{
+	return write(fd,value,size);
+	//TODO make check, see MPC version of this
 }
