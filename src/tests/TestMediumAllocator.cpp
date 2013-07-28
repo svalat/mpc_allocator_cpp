@@ -1,20 +1,14 @@
 /********************  HEADERS  *********************/
 #include <MediumAllocator.h>
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include "mocks/MockMMSource.h"
+#include <RegionRegistry.h>
 
+/**********************  USING  *********************/
 using namespace testing;
 
-/*********************  CLASS  **********************/
-class MockMMSrc : public IAllocator {
-	public:
-		MOCK_METHOD1(free,void( void* ptr ));
-		MOCK_METHOD1(getInnerSize, size_t( void* ptr ));
-		MOCK_METHOD1(getRequestedSize,size_t( void* ptr ));
-		MOCK_METHOD3(malloc,void* ( size_t size, size_t align, bool* zeroFilled ));
-		MOCK_METHOD1(getTotalSize, size_t( void* ptr ));
-		MOCK_METHOD2(realloc,void* ( void* ptr, size_t size ));
-};
+/********************  GLOBALS  *********************/
+static char gblBuffer[REGION_SPLITTING];
 
 /*******************  FUNCTION  *********************/
 TEST(TestMediumAllocator,constructor)
@@ -207,30 +201,28 @@ TEST(TestMediumAllocator,getRequestedSize)
 /*******************  FUNCTION  *********************/
 TEST(TestMediumAllocator,testMemorySourceRefill)
 {
-	char buffer[4096];
-	MockMMSrc mm;
+	MockMMSource mm;
 	MediumAllocator alloc(false,&mm);
+	RegionSegmentHeader * segment = RegionSegmentHeader::setup(gblBuffer,sizeof(gblBuffer),&alloc);
 	
-	EXPECT_CALL(mm,malloc(32,BASIC_ALIGN,_)).WillOnce(Return(buffer));
-	EXPECT_CALL(mm,getInnerSize(buffer)).WillOnce(Return(sizeof(buffer)));
+	EXPECT_CALL(mm,map(32,NULL,&alloc)).WillOnce(Return(segment));
 	
 	void * ptr = alloc.malloc(32);
-	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
+	EXPECT_EQ((char*)segment->getPtr()+sizeof(MediumChunk),ptr);
 }
 
 /*******************  FUNCTION  *********************/
 TEST(TestMediumAllocator,testMemorySourceFree)
 {
-	char buffer[4096];
-	MockMMSrc mm;
+	MockMMSource mm;
 	MediumAllocator alloc(false,&mm);
+	RegionSegmentHeader * segment = RegionSegmentHeader::setup(gblBuffer,sizeof(gblBuffer),&alloc);
 	
-	EXPECT_CALL(mm,malloc(32,BASIC_ALIGN,_)).WillOnce(Return(buffer));
-	EXPECT_CALL(mm,getInnerSize(buffer)).WillOnce(Return(sizeof(buffer)));
+	EXPECT_CALL(mm,map(32,NULL,&alloc)).WillOnce(Return(segment));
 	
 	void * ptr = alloc.malloc(32);
-	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
+	EXPECT_EQ((char*)segment->getPtr()+sizeof(MediumChunk),ptr);
 	
-	EXPECT_CALL(mm,free(buffer)).Times(1);
+	EXPECT_CALL(mm,unmap(segment)).Times(1);
 	alloc.free(ptr);
 }

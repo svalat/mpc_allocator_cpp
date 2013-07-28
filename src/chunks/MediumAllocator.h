@@ -10,7 +10,7 @@
 class MediumAllocator : public IChunkManager
 {
 	public:
-		MediumAllocator(bool useLocks = false,IAllocator * memorySource = NULL);
+		MediumAllocator(bool useLocks = false,IMMSource * memorySource = NULL);
 		//required public interface
 		void * malloc(size_t size,size_t align = BASIC_ALIGN,bool * zeroFilled = NULL);
 		virtual void free ( void* ptr );
@@ -25,7 +25,7 @@ class MediumAllocator : public IChunkManager
 	private:
 		MediumFreePool pool;
 		Spinlock spinlock;
-		IAllocator * memorySource;
+		IMMSource * memorySource;
 		bool useLocks;
 };
 

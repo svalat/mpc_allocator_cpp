@@ -2,6 +2,7 @@
 #include <Common.h>
 #include <gtest/gtest.h>
 
+/*******************  FUNCTION  *********************/
 TEST(TestCommon,ceilToPowOf2)
 {
 	EXPECT_EQ(8,ceilToPowOf2(8,8));
@@ -11,6 +12,7 @@ TEST(TestCommon,ceilToPowOf2)
 	EXPECT_EQ(0,ceilToPowOf2(8,16));
 }
 
+/*******************  FUNCTION  *********************/
 TEST(TestCommon,upToPowOf2)
 {
 	EXPECT_EQ(8,upToPowOf2(8,8));
@@ -20,6 +22,7 @@ TEST(TestCommon,upToPowOf2)
 	EXPECT_EQ(16,upToPowOf2(8,16));
 }
 
+/*******************  FUNCTION  *********************/
 TEST(TestCommon,addrOffset)
 {
 	char tmp[128];
@@ -27,6 +30,7 @@ TEST(TestCommon,addrOffset)
 	EXPECT_EQ((uint64_t*)(tmp+1),addrOffset(s,1));
 }
 
+/*******************  FUNCTION  *********************/
 TEST(TestCommon,max)
 {
 	EXPECT_EQ(10,max(1,10));
@@ -34,6 +38,7 @@ TEST(TestCommon,max)
 	EXPECT_EQ(10,max(10,10));
 }
 
+/*******************  FUNCTION  *********************/
 TEST(TestCommon,fastLog2)
 {
 	for (int i = 0 ; i < 32 ; i++)

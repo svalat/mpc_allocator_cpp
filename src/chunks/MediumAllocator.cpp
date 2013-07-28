@@ -1,9 +1,10 @@
 /********************  HEADERS  *********************/
 #include <cstring>
 #include "MediumAllocator.h"
+#include <RegionRegistry.h>
 
 /*******************  FUNCTION  *********************/
-MediumAllocator::MediumAllocator ( bool useLocks, IAllocator* memorySource )
+MediumAllocator::MediumAllocator ( bool useLocks, IMMSource* memorySource )
 {
 	this->memorySource = memorySource;
 	this->useLocks = useLocks;
@@ -83,9 +84,6 @@ MediumChunk* MediumAllocator::split ( MediumChunk* chunk,size_t innerSize )
 /*******************  FUNCTION  *********************/
 MediumChunk* MediumAllocator::refill ( size_t size, bool * zeroFilled )
 {
-	//vars
-	void * ptr;
-
 	//errors
 	assert(size > 0);
 	
@@ -94,17 +92,19 @@ MediumChunk* MediumAllocator::refill ( size_t size, bool * zeroFilled )
 		return NULL;
 	
 	//request mem
-	ptr = memorySource->malloc(size,BASIC_ALIGN,zeroFilled );
-	
-	//errors
-	if (ptr == NULL)
+	RegionSegmentHeader * segment = memorySource->map(size,zeroFilled,this);
+	if (segment == NULL)
 		return NULL;
+	assert(segment->getInnerSize() >= size);
 	
-	//add to registry TODO
+	//get inner segment
+	void * ptr = segment->getPtr();
+	assert(segment == RegionSegmentHeader::getSegment(ptr));
 	
 	//build chunk
-	Size innerSize = memorySource->getInnerSize(ptr);
+	Size innerSize = segment->getInnerSize();
 	MediumChunk * chunk = MediumChunk::setup(ptr,innerSize);
+	assert(segment == RegionSegmentHeader::getSegment(chunk));
 	
 	//ok return it
 	return chunk;
@@ -161,7 +161,7 @@ void MediumAllocator::free ( void* ptr )
 	if (memorySource != NULL && chunk != NULL)
 	{
 		assert(chunk->isSingle());
-		memorySource->free(chunk);
+		memorySource->unmap(RegionSegmentHeader::getSegment(chunk));
 	}
 }
 

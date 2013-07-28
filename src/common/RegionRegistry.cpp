@@ -303,3 +303,10 @@ RegionSegmentHeader* RegionRegistry::setEntry ( void* ptr, Size totalSize, IChun
 	setEntry(res);
 	return res;
 }
+
+/*******************  FUNCTION  *********************/
+RegionSegmentHeader* RegionSegmentHeader::getSegment ( void* ptr )
+{
+	RegionSegmentHeader * segment = (RegionSegmentHeader *)ptr;
+	return segment - 1;
+}

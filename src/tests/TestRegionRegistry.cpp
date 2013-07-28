@@ -2,7 +2,7 @@
 #include <RegionRegistry.h>
 #include <OS.h>
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include "mocks/MockChunkManager.h"
 
 /**********************  USING  *********************/
 using namespace testing;
@@ -10,16 +10,6 @@ using namespace testing;
 /********************  GLOBALS  *********************/
 #define SIZE (4*1024*1024)
 static char gblBuffer[SIZE];
-
-/*********************  CLASS  **********************/
-class MockChunkManager : public IChunkManager {
-	public:
-		MOCK_METHOD1(free,void( void* ptr ));
-		MOCK_METHOD1(getInnerSize, size_t( void* ptr ));
-		MOCK_METHOD1(getRequestedSize,size_t( void* ptr ));
-		MOCK_METHOD1(getTotalSize, size_t( void* ptr ));
-		MOCK_METHOD2(realloc,void* ( void* ptr, size_t size ));
-};
 
 /*******************  FUNCTION  *********************/
 TEST(RegionSegmentHeader,setup)

@@ -24,6 +24,7 @@ class RegionSegmentHeader
 		Size getInnerSize(void) const;
 		bool contain(void * ptr) const;
 		void * getPtr(void);
+		static RegionSegmentHeader * getSegment(void * ptr);
 	private:
 		RegionSegmentHeader(void);
 		RegionSegmentHeader(RegionSegmentHeader & orig);
