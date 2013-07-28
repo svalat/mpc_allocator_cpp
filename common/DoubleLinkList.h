@@ -3,6 +3,7 @@
 
 /********************  HEADERS  *********************/
 #include "Common.h"
+#include <JsonState.h>
 
 /*********************  STRUCT  *********************/
 struct ListElement
@@ -49,6 +50,9 @@ class DoubleLinkList
 		DoubleLinkList& operator= ( const DoubleLinkList& other );
 	private:
 		ListElement root;
+	public:
+		template <class U> friend void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<U> & value);
+		template <class U> friend void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<U> & value,const ListElement & elt);
 };
 
 /********************  HEADERS  *********************/

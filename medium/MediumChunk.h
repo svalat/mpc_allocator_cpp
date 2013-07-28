@@ -3,6 +3,7 @@
 
 /********************  HEADERS  *********************/
 #include "Common.h"
+#include <JsonState.h>
 
 /********************  ENUM  ************************/
 enum ChunkStatus
@@ -44,6 +45,9 @@ class MediumChunk
 		MediumChunk * prev;
 		uint32_t status;
 		uint32_t magick;
+	public:
+		friend void typeToJson(htopml::JsonState& json, std::ostream& stream, const MediumChunk & value);
+		friend void typeToJsonInner ( htopml::JsonState& json, std::ostream& stream, const MediumChunk& value );
 };
 
 #endif // CHUNK_H

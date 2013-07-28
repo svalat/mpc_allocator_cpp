@@ -1,5 +1,6 @@
 /********************  HEADERS  *********************/
 #include "MediumFreePool.h"
+#include <TypeToJson.h>
 
 //////////////////////////////////////////////////////////////////////////////////TODO
 const Size cstDefaultFreeSizes[NB_FREE_LIST] = {16, 24,
@@ -411,4 +412,40 @@ MediumChunk* MediumFreePool::tryMergeForSize ( MediumChunk* chunk, Size findInne
 	//final merge
 	chunk->merge(last);
 	return chunk;
+}
+
+/*******************  FUNCTION  *********************/
+void typeToJson ( htopml::JsonState& json, std::ostream& stream, const MediumFreePool& value )
+{
+	json.openStruct();
+	json.printField("nbList",value.nbLists);
+	json.printField("analyticRevers",(void*)value.analyticRevers);
+	json.printField("__class_name__","MediumFreePool");
+	json.printField("__mem_address__",(void*)&value);
+	
+	json.openField("lists");
+	json.openArray();
+	
+	bool first = true;
+	for ( int i = 0 ; i < value.nbLists ; i++)
+	{
+		if (value.lists[i].isEmpty() == false)
+		{
+			if (!first)
+				stream << ",";
+			first = false;
+			json.openStruct();
+			json.printField("__class_name__","MediumFreePoolVList");
+			json.printField("id",i);
+			json.printField("size",value.sizes[i]);
+			json.printField("status",value.status[i]);
+			json.printField("list",value.lists[i]);
+			json.closeStruct();
+		}
+	}
+	
+	json.closeArray();
+	json.closeField("lists");
+	
+	json.closeStruct();
 }

@@ -4,6 +4,7 @@
 /********************  HEADERS  *********************/
 #include "DoubleLinkList.h"
 #include <cassert>
+#include <TypeToJson.h>
 
 /*******************  FUNCTION  *********************/
 inline ListElement::ListElement()
@@ -126,6 +127,93 @@ DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value)
 	#endif
 	
 	return res;
+}
+
+/*******************  FUNCTION  *********************/
+template <class T>
+void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<T> & value)
+{
+// 	json.openStruct();
+// 	json.openField("root");
+	typeToJson(json,stream,value,value.root);
+// 	json.closeField("root");
+// 	json.closeStruct();
+}
+
+/*******************  FUNCTION  *********************/
+template <class T>
+void typeToJsonInner(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<T> & value,const ListElement & elt)
+{
+	json.printField("__mem_address__",(void*)&elt);
+	json.printField("__class_name__","Element");
+	json.printField("next",(void*)elt.next);
+	json.printField("prev",(void*)elt.prev);
+}
+
+/*******************  FUNCTION  *********************/
+template <class T>
+void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<T> & value,const ListElement & elt)
+{
+	json.openStruct();
+	typeToJsonInner(json,stream,value,elt);
+	
+	///////////////////////////////
+	json.openField("__mem_objects__");
+	json.openArray();
+	const ListElement * cur = elt.next;
+	bool first = true;
+	while (cur != &elt)
+	{
+		if (!first)
+			stream << ",";
+		first = false;
+		json.openStruct();
+		typeToJsonInner(json,stream,value,*cur);
+		json.closeStruct();
+		cur = cur->next;
+	}
+	json.closeArray();
+	json.closeField("__mem_objects__");
+	///////////////////////////////
+	
+	///////////////////////////////
+	json.openField("__mem_links__");
+	json.openArray();
+	cur = &elt;
+	first = true;
+	while (cur != &elt || first == true)
+	{
+		if (!first)
+			stream << ",";
+		first = false;
+		json.openStruct();
+		json.printField("from",(void*)cur);
+		json.printField("to",(void*)cur->next);
+		json.closeStruct();
+		if (cur->next != cur)
+		{
+			stream << ",";
+			json.openStruct();
+			json.printField("from",(void*)cur);
+			json.printField("to",(void*)cur->prev);
+			json.closeStruct();
+			cur = cur->next;
+		}
+		if (cur != &elt)
+		{
+			T * tmp = ((T*)cur)-1;
+			stream << ",";
+			json.openStruct();
+			json.printField("from",(void*)cur);
+			json.printField("to",(void*)tmp);
+			json.closeStruct();
+		}
+	}
+	json.closeArray();
+	json.closeField("__mem_links__");
+	///////////////////////////////
+	
+	json.closeStruct();
 }
 
 #endif //DOUBLELINKLIST_IMPL_H

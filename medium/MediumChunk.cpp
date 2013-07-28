@@ -2,6 +2,7 @@
 #include "MediumChunk.h"
 #include <cstdlib>
 #include <cassert>
+#include <TypeToJson.h>
 
 /*******************  FUNCTION  *********************/
 MediumChunk* MediumChunk::setup ( void* ptr, Size totalSize )
@@ -211,4 +212,101 @@ void MediumChunk::merge ( MediumChunk* last )
 		last->next->prev = first;
 	
 	first->next = last->next;
+}
+
+/*******************  FUNCTION  *********************/
+void typeToJsonInner ( htopml::JsonState& json, std::ostream& stream, const MediumChunk& value )
+{
+	json.printField("__mem_address__",(void*)&value);
+	json.printField("__class_name__","MediumChunk");
+	json.printField("status",value.status);
+	json.printField("magick",value.magick);
+	json.printField("innerSize",value.getInnerSize());
+	json.printField("next",(void*)value.getNext());
+	json.printField("prev",(void*)value.getPrev());
+}
+
+/*******************  FUNCTION  *********************/
+void typeToJson ( htopml::JsonState& json, std::ostream& stream, const MediumChunk& value )
+{
+	json.openStruct();
+	typeToJsonInner(json,stream,value);
+	
+	/////////////////////////////////
+	json.openField("__mem_objects__");
+	json.openArray();
+	bool first = true;
+	
+	const MediumChunk * cur = value.getPrev();
+	while (cur != NULL)
+	{
+		if (!first)
+			stream << ",";
+		first = false;
+		json.openStruct();
+		typeToJsonInner(json,stream,*cur);
+		json.closeStruct();
+		stream << ",";
+		cur = cur->getPrev();
+	}
+	
+	cur = value.getNext();
+	while (cur != NULL)
+	{
+		if (!first)
+			stream << ",";
+		first = false;
+		json.openStruct();
+		typeToJsonInner(json,stream,*cur);
+		json.closeStruct();
+		cur = cur->getNext();
+	}
+	
+	json.closeArray();
+	json.closeField("__mem_objects__");
+	
+	/////////////////////////////////
+	json.openField("__mem_links__");
+	json.openArray();
+	cur = &value;
+	first = true;
+	while (cur != NULL)
+	{
+		if (!first)
+			stream << ",";
+		first = false;
+		json.openStruct();
+		json.printField("from",(void*)cur);
+		json.printField("to",(void*)cur->getPrev());
+		json.closeStruct();
+		stream << ",";
+		json.openStruct();
+		json.printField("from",(void*)cur);
+		json.printField("to",(void*)cur->getNext());
+		json.closeStruct();
+		cur = cur->getPrev();
+	}
+	
+	cur = value.getNext();
+	while (cur != NULL)
+	{
+		if (!first)
+			stream << ",";
+		first = false;
+		json.openStruct();
+		json.printField("from",(void*)cur);
+		json.printField("to",(void*)cur->getPrev());
+		json.closeStruct();
+		stream << ",";
+		json.openStruct();
+		json.printField("from",(void*)cur);
+		json.printField("to",(void*)cur->getNext());
+		json.closeStruct();
+		cur = cur->getNext();
+	}
+	
+	json.closeArray();
+	json.closeField("__mem_links__");
+	
+	json.closeStruct();
 }
