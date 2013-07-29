@@ -1,6 +1,6 @@
 include(${CMAKE_SOURCE_DIR}/cmake/unittest-macros.cmake)
 include_directories(${GTEST_INCLUDE_DIRS})
-set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock TestMediumFreePool TestCommon TestMediumAllocator TestRegionRegistry TestOS TestDummyMMSource)
+set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock TestMediumFreePool TestCommon TestMediumAllocator TestRegionRegistry TestOS TestDummyMMSource TestAtomicPtr)
 
 include_directories(${GMOCK_INCLUDE_DIRS})
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -27,3 +27,8 @@ else (ENABLE_ONE_TEST)
 		cmr_add_test(${test} ${test})
 	ENDFOREACH(test ${TEST_LIST})
 endif (ENABLE_ONE_TEST)
+
+
+add_executable(TestMPSCFQueue TestMPSCFQueue.cpp)
+target_link_libraries(TestMPSCFQueue alloc ${GTEST_BOTH_LIBRARIES} ${GMOCK_BOTH_LIBRARIES})
+cmr_add_test(TestMPSCFQueue TestMPSCFQueue)

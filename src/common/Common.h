@@ -23,6 +23,11 @@ typedef uint64_t Size;
 #define ADDR_NULL 0
 #define PAGE_SIZE 4096
 
+/********************  MACRO  ***********************/
+//TODO check to by use in coordination with -fvisibility=hidden for seom optim
+// #define DLL_PUBLIC __attribute__ ((visibility ("default")))
+// #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+
 /*******************  FUNCTION  *********************/
 static inline Size ceilToPowOf2(Size size,Size align)
 {

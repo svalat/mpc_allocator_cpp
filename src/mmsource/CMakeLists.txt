@@ -1,2 +1,2 @@
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_library(alloc_mmsource STATIC DummyMMSource.cpp)
+add_library(alloc_mmsource OBJECT DummyMMSource.cpp)

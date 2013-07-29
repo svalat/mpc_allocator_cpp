@@ -1,6 +1,9 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+/********************  HEADERS  *********************/
+#include "Common.h"
+
 /********************  ENUM  ************************/
 enum MessageLevel
 {
@@ -36,9 +39,9 @@ class DebugMessage
 	#define allocCondDebug(x,m) do { if (!(x)) DebugMessage(MESSAGE_DEBUG  , MESSAGE_CODE_LOCATION).print((m)); } while(0)
 	#define allocDebug          DebugMessage(MESSAGE_DEBUG, MESSAGE_CODE_LOCATION).print
 #else
-	#define allocAssert   ( x ) do{} while(0)
+	#define allocAssert( x )    do{} while(0)
 	#define allocCondDebug(x,m) do{} while(0)
-	#define allocDebug    (...) do{} while(0)
+	#define allocDebug(...)     do{} while(0)
 #endif
 
 /********************  MACRO  ***********************/

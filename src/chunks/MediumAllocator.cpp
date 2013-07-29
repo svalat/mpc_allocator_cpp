@@ -34,7 +34,7 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 	size = upToPowOf2( size,BASIC_ALIGN);
 	
 	//take lock for the current function
-	OPTINAL_CRITICAL(spinlock,useLocks);
+	OPTIONAL_CRITICAL(spinlock,useLocks);
 		//try to get memory
 		chunk = pool.findChunk( size );
 		if (chunk == NULL)
@@ -143,7 +143,7 @@ void MediumAllocator::free ( void* ptr )
 		return;
 	
 	//take lock for the current function
-	OPTINAL_CRITICAL(spinlock,useLocks);
+	OPTIONAL_CRITICAL(spinlock,useLocks);
 		//try merge
 		chunk = pool.merge(chunk);
 		
@@ -226,7 +226,7 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	
 	//check if can realloc the next one
 	//TODO maybe find a way to avoid to retake the lock for next malloc call
-	OPTINAL_CRITICAL(spinlock,useLocks);
+	OPTIONAL_CRITICAL(spinlock,useLocks);
 		MediumChunk * merged = pool.tryMergeForSize(chunk,size);
 		if (merged != NULL)
 		{

@@ -35,6 +35,7 @@ LIB_SUFFIX=''
 #deps
 GTEST_PREFIX=''
 GMOCK_PREFIX=''
+OPENPA_PREFIX=''
 
 ######################################################
 #Find default source dir
@@ -77,6 +78,7 @@ To find libs and commands :
    --with-cmake={command}  Define the cmake command to use [cmake].
    --with-gtest={prefix}   Define the GTest prefix if available [/usr].
    --with-gmock={prefix}   Define the GMock prefix if available [/usr].
+   --with-openpa={prefix}  Define the OpenPA prefix if available [/usr].
 
 To get the generated cmake command :
    --show                  Display the cmake command and didn't execute it.
@@ -148,6 +150,9 @@ do
 		--with-gmock=*)
 			GMOCK_PREFIX="-DGMOCK_ROOT=`get_arg_value \"$arg\" --with-gmock`"
 			;;
+		--with-openpa=*)
+			OPENPA_PREFIX="-DOPENPA_PREFIX=`get_arg_value \"$arg\" --with-openpa`"
+			;;
 		####################################################################
 		--enable-debug)
 			BUILD_TYPE='Debug'
@@ -174,7 +179,7 @@ do
 		CC=*)
 			EXTRA_CC="`get_arg_value \"$arg\" CC`"
 			;;
-		CC=*)
+		CFLAGS=*)
 			EXTRA_CFLAGS="`get_arg_value \"$arg\" CFLAGS`"
 			;;
 		CXX=*)
@@ -184,7 +189,7 @@ do
 			EXTRA_CXXFLAGS="`get_arg_value \"$arg\" CXXFLAGS`"
 			;;
 		LDFLAGS=*)
-			EXTRA_LDFLAGS="`get_arg_value \"$arg\" CFLAGS`"
+			EXTRA_LDFLAGS="`get_arg_value \"$arg\" LDFLAGS`"
 			;;
 		*)
 			echo "Invalid argument : $arg, please check in --help." 1>&2
@@ -237,7 +242,7 @@ gen_clean_command()
 #Gen final command
 COMMAND="`gen_clean_command "${CMAKE}" "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" "${PREFIX}" "${EXTRA_CXX}" \
 	"${EXTRA_CXXFLAGS}" "${EXTRA_LDFLAGS}" "${EXTRA_CC}" "${EXTRA_CFLAGS}" "${ENABLE_SELF_TEST}" "${ENABLE_JUNIT_OUT}" "${ENABLE_VALGRIND}" \
-	"${GTEST_PREFIX}" "${GMOCK_PREFIX}" "${DISABLE_TESTS}" "${DISABLE_CPPUNIT}" "${LIB_SUFFIX}" "${ENABLE_RPATH}" \
+	"${GTEST_PREFIX}" "${GMOCK_PREFIX}" "${OPENPA_PREFIX}" "${DISABLE_TESTS}" "${DISABLE_CPPUNIT}" "${LIB_SUFFIX}" "${ENABLE_RPATH}" \
 	"${SOURCE_DIR}"`"
 
 ######################################################

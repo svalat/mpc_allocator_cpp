@@ -6,6 +6,7 @@
 #include <MediumAllocator.h>
 #include <DummyMMSource.h>
 #include <Debug.h>
+#include <AtomicPtr.h>
 #include "StdPool.h"
 
 int main(int argc, char **argv) {
@@ -16,7 +17,7 @@ int main(int argc, char **argv) {
 	
 // 	fatal("This is a message %d",10);
 // 	allocAssert(1 == 2);
-	allocDebug("ok");
+	allocDebug("ok",5);
 	allocCondDebug(1,"ok");
 	
 	RegionRegistry reg;

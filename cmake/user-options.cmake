@@ -57,3 +57,6 @@ IF (ENABLE_RPATH)
 	SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 	SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ENDIF(ENABLE_RPATH)
+
+######################################################
+include_directories(${OPENPA_INCLUDE_DIR})

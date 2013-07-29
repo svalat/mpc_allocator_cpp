@@ -67,7 +67,7 @@ TEST(TestSpinlock, correctnessOfARIIMode_2) {
 		#pragma omp single
 		nbthread = omp_get_num_threads();
 		
-		OPTINAL_CRITICAL(lock,true)
+		OPTIONAL_CRITICAL(lock,true)
 			for (int i = 0 ; i < REPEAT ; i++)
 				sum ++;
 		END_CRITICAL
@@ -90,7 +90,7 @@ TEST(TestSpinlock, correctnessOfARIIMode_3) {
 		//already lock to check optional false (if true it will deadlock)
 		lock.lock();
 		
-		OPTINAL_CRITICAL(lock,false)
+		OPTIONAL_CRITICAL(lock,false)
 			for (int i = 0 ; i < REPEAT ; i++)
 				sum ++;
 		END_CRITICAL
