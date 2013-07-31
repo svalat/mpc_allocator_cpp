@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <TypeToJson.h>
+#include <Debug.h>
 
 /*******************  FUNCTION  *********************/
 MediumChunk* MediumChunk::setup ( void* ptr, Size totalSize )
@@ -309,4 +310,22 @@ void typeToJson ( htopml::JsonState& json, std::ostream& stream, const MediumChu
 	json.closeField("__mem_links__");
 	
 	json.closeStruct();
+}
+
+/*******************  FUNCTION  *********************/
+ListElement* MediumChunk::getListHandler ( void )
+{
+	allocAssert(this != NULL);
+	allocAssert(getStatus() == CHUNK_FREE);
+	return (ListElement*) (this+1);
+}
+
+/*******************  FUNCTION  *********************/
+MediumChunk * MediumChunk::MediumChunk::getFromListHandler ( ListElement* list )
+{
+	MediumChunk * res = NULL;
+	if (list != NULL)
+		res = ((MediumChunk*)list) - 1;
+	res->check();
+	return res;
 }

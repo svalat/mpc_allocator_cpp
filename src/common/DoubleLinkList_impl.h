@@ -39,7 +39,7 @@ bool DoubleLinkList<T>::isEmpty ( void ) const
 template <class T>
 void DoubleLinkList<T>::putFirst ( T* value)
 {
-	ListElement * elt = (ListElement*)(value+1);
+	ListElement * elt = value->getListHandler();
 	elt->next = root.next;
 	elt->prev = &root;
 	
@@ -51,7 +51,7 @@ void DoubleLinkList<T>::putFirst ( T* value)
 template <class T>
 void DoubleLinkList<T>::putLast ( T* value)
 {
-	ListElement * elt = (ListElement*)(value+1);
+	ListElement * elt = value->getListHandler();
 	elt->next = &root;
 	elt->prev = root.prev;
 	
@@ -73,8 +73,7 @@ T* DoubleLinkList<T>::popFirst ( void )
 	root.next = elt->next;
 	elt->next->prev = &root;
 	
-	T * res = (T*)elt;
-	return res-1;
+	return T::getFromListHandler(elt);
 }
 
 /*******************  FUNCTION  *********************/
@@ -91,8 +90,7 @@ T* DoubleLinkList<T>::popLast ( void )
 	root.prev = elt->prev;
 	elt->prev->next = &root;
 	
-	T * res = (T*)elt;
-	return res-1;
+	return T::getFromListHandler(elt);
 }
 
 /*******************  FUNCTION  *********************/
@@ -100,15 +98,15 @@ template <class T>
 DoubleLinkList<T> * DoubleLinkList<T>::remove(T * value)
 {
 	assert(value != NULL);
-	ListElement * elt = (ListElement*)(value+1);
+	ListElement * elt = value->getListHandler();
 	
-	return remove(elt);
+	return remove(elt,0);
 }
 
 
 /*******************  FUNCTION  *********************/
 template <class T>
-DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value)
+DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value,int /*unused*/)
 {
 	DoubleLinkList<T> * res = NULL;
 
@@ -201,7 +199,7 @@ void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkL
 		}
 		if (cur != &elt)
 		{
-			T * tmp = ((T*)cur)-1;
+			T * tmp = T::getFromListHandler((ListElement*)cur);
 			stream << ",";
 			json.openStruct();
 			json.printField("from",(void*)cur);

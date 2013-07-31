@@ -3,15 +3,8 @@
 
 /********************  HEADERS  *********************/
 #include "Common.h"
+#include "IDoubleLinkListElement.h"
 #include <JsonState.h>
-
-/*********************  STRUCT  *********************/
-struct ListElement
-{
-	ListElement();
-	ListElement * next;
-	ListElement * prev;
-};
 
 /*********************  CLASS  **********************/
 template <class T>
@@ -27,8 +20,8 @@ class DoubleLinkList
 				Iterator & operator--(void) {this->cur = this->cur->prev; return *this;};
 				bool operator==(const Iterator & it) {return this->cur == it.cur;};
 				bool operator!=(const Iterator & it) {return this->cur != it.cur;};
-				T * operator->(void) {T* res = (T*)cur;return res-1;};
-				T & operator*(void) {T* res = (T*)cur;return *(res-1);};
+				T * operator->(void) {return T::getFromListHandler(cur);};
+				T & operator*(void) {return *T::getFromListHandler(cur);};
 			private:
 				ListElement * cur;
 		};
@@ -45,7 +38,7 @@ class DoubleLinkList
 		Iterator begin(void) {Iterator it(root.next); return it;};
 		Iterator end(void) {Iterator it(&root); return it;};
 	private:
-		static DoubleLinkList<T> * remove(ListElement * value);
+		static DoubleLinkList<T> * remove(ListElement * value,int /*unused*/);
 		DoubleLinkList ( const DoubleLinkList& other );
 		DoubleLinkList& operator= ( const DoubleLinkList& other );
 	private:

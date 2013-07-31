@@ -9,11 +9,11 @@ TEST(DoubleLinkList, constructor) {
 
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, isEmpty) {
-	int data[32] = {0};
-	DoubleLinkList<int> list;
+	ListElement data;
+	DoubleLinkList<ListElement> list;
 	
 	ASSERT_TRUE(list.isEmpty());
-	list.putFirst(data);
+	list.putFirst(&data);
 	ASSERT_FALSE(list.isEmpty());
 	list.popFirst();
 	ASSERT_TRUE(list.isEmpty());
@@ -21,93 +21,93 @@ TEST(DoubleLinkList, isEmpty) {
 
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, putFirst) {
-	int data1[32] = {1};
-	int data2[32] = {2};
-	DoubleLinkList<int> list;
+	ListElement data1;
+	ListElement data2;
+	DoubleLinkList<ListElement> list;
 	
-	list.putFirst(data1);
-	list.putFirst(data2);
+	list.putFirst(&data1);
+	list.putFirst(&data2);
 	
-	int * data = list.popFirst();
-	ASSERT_EQ(data2,data);
+	ListElement * data = list.popFirst();
+	ASSERT_EQ(&data2,data);
 	data = list.popFirst();
-	ASSERT_EQ(data1,data);
+	ASSERT_EQ(&data1,data);
 }
 
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, putLast) {
-	int data1[32] = {1};
-	int data2[32] = {2};
-	DoubleLinkList<int> list;
+	ListElement data1;
+	ListElement data2;
+	DoubleLinkList<ListElement> list;
 	
-	list.putLast(data1);
-	list.putLast(data2);
+	list.putLast(&data1);
+	list.putLast(&data2);
 	
-	int * data = list.popLast();
-	ASSERT_EQ(data2,data);
+	ListElement * data = list.popLast();
+	ASSERT_EQ(&data2,data);
 	data = list.popLast();
-	ASSERT_EQ(data1,data);
+	ASSERT_EQ(&data1,data);
 }
 
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, popFirst) {
-	int data1[32] = {1};
-	int data2[32] = {2};
-	int data3[32] = {3};
-	DoubleLinkList<int> list;
+	ListElement data1;
+	ListElement data2;
+	ListElement data3;
+	DoubleLinkList<ListElement> list;
 	
-	list.putLast(data1);
-	list.putLast(data2);
-	list.putLast(data3);
+	list.putLast(&data1);
+	list.putLast(&data2);
+	list.putLast(&data3);
 	
-	int * data = list.popFirst();
-	ASSERT_EQ(data1,data);
+	ListElement * data = list.popFirst();
+	ASSERT_EQ(&data1,data);
 	data = list.popFirst();
-	ASSERT_EQ(data2,data);
+	ASSERT_EQ(&data2,data);
 	data = list.popFirst();
-	ASSERT_EQ(data3,data);
+	ASSERT_EQ(&data3,data);
 	data = list.popFirst();
 	ASSERT_EQ(NULL,data);
 }
 
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, popLast) {
-	int data1[32] = {1};
-	int data2[32] = {2};
-	int data3[32] = {3};
-	DoubleLinkList<int> list;
+	ListElement data1;
+	ListElement data2;
+	ListElement data3;
+	DoubleLinkList<ListElement> list;
 	
-	list.putLast(data1);
-	list.putLast(data2);
-	list.putLast(data3);
+	list.putLast(&data1);
+	list.putLast(&data2);
+	list.putLast(&data3);
 	
-	int * data = list.popLast();
-	ASSERT_EQ(data3,data);
+	ListElement * data = list.popLast();
+	ASSERT_EQ(&data3,data);
 	data = list.popLast();
-	ASSERT_EQ(data2,data);
+	ASSERT_EQ(&data2,data);
 	data = list.popLast();
-	ASSERT_EQ(data1,data);
+	ASSERT_EQ(&data1,data);
 	data = list.popLast();
 	ASSERT_EQ(NULL,data);
 }
 
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, remove_1) {
-	int data1[32] = {1};
-	int data2[32] = {2};
-	int data3[32] = {3};
-	DoubleLinkList<int> list;
+	ListElement data1;
+	ListElement data2;
+	ListElement data3;
+	DoubleLinkList<ListElement> list;
 	
-	list.putLast(data1);
-	list.putLast(data2);
-	list.putLast(data3);
-	DoubleLinkList<int> * res = list.remove(data2);
+	list.putLast(&data1);
+	list.putLast(&data2);
+	list.putLast(&data3);
+	DoubleLinkList<ListElement> * res = list.remove(&data2);
 	ASSERT_EQ(NULL,res);
 	
-	int * data = list.popFirst();
-	ASSERT_EQ(data1,data);
+	ListElement * data = list.popFirst();
+	ASSERT_EQ(&data1,data);
 	data = list.popFirst();
-	ASSERT_EQ(data3,data);
+	ASSERT_EQ(&data3,data);
 	data = list.popFirst();
 	ASSERT_EQ(NULL,data);
 	ASSERT_TRUE(list.isEmpty());
@@ -115,14 +115,14 @@ TEST(DoubleLinkList, remove_1) {
 
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, remove_2) {
-	int data1[32] = {1};
-	DoubleLinkList<int> list;
+	ListElement data1;
+	DoubleLinkList<ListElement> list;
 	
-	list.putLast(data1);
-	DoubleLinkList<int> * res = list.remove(data1);
+	list.putLast(&data1);
+	DoubleLinkList<ListElement> * res = list.remove(&data1);
 	ASSERT_EQ(&list,res);
 	
-	int * data = list.popFirst();
+	ListElement * data = list.popFirst();
 	ASSERT_EQ(NULL,data);
 	ASSERT_TRUE(list.isEmpty());
 }

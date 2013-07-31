@@ -3,6 +3,7 @@
 
 /********************  HEADERS  *********************/
 #include "Common.h"
+#include <IDoubleLinkListElement.h>
 #include <JsonState.h>
 
 /********************  ENUM  ************************/
@@ -12,8 +13,11 @@ enum ChunkStatus
 	CHUNK_ALLOCATED
 };
 
+/*********************  STRUCT  *********************/
+struct ListElement;
+
 /*********************  CLASS  **********************/
-class MediumChunk
+class MediumChunk : public IDoubleLinkListeElement
 {
 	public:
 		static MediumChunk * setup(void * ptr,Size totalSize);//checked
@@ -32,6 +36,8 @@ class MediumChunk
 		bool isSingle(void) const;//checked
 		void * getPtr(void);
 		void merge( MediumChunk* last );
+		ListElement * getListHandler(void);
+		static MediumChunk * getFromListHandler(ListElement * list);
 	private:
 		static MediumChunk * setup(void * ptr);
 	private:

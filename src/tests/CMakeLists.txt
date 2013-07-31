@@ -31,4 +31,4 @@ endif (ENABLE_ONE_TEST)
 
 add_executable(TestMPSCFQueue TestMPSCFQueue.cpp)
 target_link_libraries(TestMPSCFQueue alloc ${GTEST_BOTH_LIBRARIES} ${GMOCK_BOTH_LIBRARIES})
-cmr_add_test(TestMPSCFQueue TestMPSCFQueue)
+add_test(TestMPSCFQueue TestMPSCFQueue valid)
