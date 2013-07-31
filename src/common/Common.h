@@ -52,6 +52,12 @@ T * addrOffset(T * value,Size offset)
 }
 
 /*******************  FUNCTION  *********************/
+static inline long addrDelta(void * p1,void * p2)
+{
+	return (char*)p1 - (char*)p2;
+}
+
+/*******************  FUNCTION  *********************/
 template <class T>
 T max(T a,T b)
 {

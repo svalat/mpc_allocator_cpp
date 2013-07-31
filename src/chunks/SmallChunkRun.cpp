@@ -45,16 +45,19 @@ void SmallChunkRun::setSplitting ( SmallSize splitting )
 	SmallSize bitmapSize = bitmapEntries / 8;
 	SmallSize bitmapHiddenEntries = getRoundedNbEntries(bitmapSize);
 	
-	//clear bitmap size
-	for (SmallSize i = 0 ; i < bitmapSize / MACRO_ENTRY_SIZE ; i++)
-		bitmap[i] = MACRO_ENTRY_MASK;
+	//check
+	allocAssert(bitmapEntries > bitmapHiddenEntries - skipedEntries );
 	
-	//mark skied entries and bitmap part
-	for (SmallSize i = 0 ; i < skipedEntries + bitmapRealEntries ; i++)
+	//clear bitmap with 1 (all free)
+	for (SmallSize i = 0 ; i < bitmapSize / MACRO_ENTRY_SIZE ; i++)
+		bitmap[i] = -1UL;
+	
+	//mark skiped entries and bitmap part
+	for (SmallSize i = 0 ; i < skipedEntries + bitmapHiddenEntries ; i++)
 		setBitStatusZero(i);
 	
 	//mark last bits to 0
-	for (SmallSize i = bitmapRealEntries ; i < bitmapSize ; i++)
+	for (SmallSize i = bitmapRealEntries ; i < bitmapEntries ; i++)
 		setBitStatusZero(i);
 }
 
@@ -66,40 +69,43 @@ void SmallChunkRun::free ( void* ptr )
 	allocAssert(contain(ptr));
 
 	//calc bit position
-	SmallSize bitpos = (Addr)ptr / splitting;
+	SmallSize bitpos = addrDelta(ptr,data) / splitting;
 
 	//check current status
 	allocAssert(getBitStatus(bitpos) == false);
 
 	//mark as free
 	setBitStatusOne(bitpos);
+	
+	//update counter
+	cntAlloc--;
 }
 
 /*******************  FUNCTION  *********************/
 bool SmallChunkRun::contain ( void* ptr ) const
 {
-	return (ptr >= data+skipedSize+bitmapEntries/MACRO_ENTRY_BITS && ptr < addrOffset(data,MACRO_ENTRY_SIZE));
+	return (ptr >= data+skipedSize+bitmapEntries/MACRO_ENTRY_BITS && ptr < addrOffset(data,STORAGE_SIZE));
 }
 
 /*******************  FUNCTION  *********************/
 bool SmallChunkRun::getBitStatus ( SmallSize id )
 {
 	uint64_t value = *getMacroEntry(id);
-	return (value & (1 << (id & MACRO_ENTRY_MASK)));
+	return (value & (1UL << (id & MACRO_ENTRY_MASK))) != 0;
 }
 
 /*******************  FUNCTION  *********************/
 void SmallChunkRun::setBitStatusOne ( SmallSize id )
 {
 	uint64_t * value = getMacroEntry(id);
-	*value |= (1 << (id & MACRO_ENTRY_MASK));
+	*value |= (1UL << (id & MACRO_ENTRY_MASK));
 }
 
 /*******************  FUNCTION  *********************/
 void SmallChunkRun::setBitStatusZero ( SmallSize id )
 {
 	uint64_t * value = getMacroEntry(id);
-	*value &= ~(1 << (id & MACRO_ENTRY_MASK));
+	*value &= ~(1UL << (id & MACRO_ENTRY_MASK));
 }
 
 /*******************  FUNCTION  *********************/
@@ -151,17 +157,24 @@ void* SmallChunkRun::malloc ( size_t size, size_t align, bool* zeroFilled )
 {
 	//check size
 	allocAssume(size <= splitting,"SmallChunkRun only support allocation smaller the splitting size.");
+	allocCondWarning(size >= splitting / 2,"Caution, you allocate chunk in SmallChunkRun with size less than halfe of the quantum size.");
 	
 	//search first bit to one (availble free bloc)
 	SmallSize macroEntries = bitmapEntries / MACRO_ENTRY_BITS;
+	MacroEntry * entries = getMacroEntry(0);
 	for(SmallSize i = 0 ; i < macroEntries ; i++)
 	{
 		//if get one bit to 1, it contain free elements
-		if (data[i])
+		if (entries[i])
 		{
 			//search the first bit to one
-			SmallSize id = fastLog2(data[i]);
+			SmallSize id = fastLog2(entries[i]);
+			allocAssert(id < MACRO_ENTRY_BITS);
 			id += i * MACRO_ENTRY_BITS;
+			allocAssert(getBitStatus(id) == true);
+			setBitStatusZero(id);
+			allocAssert(getBitStatus(id) == false);
+			cntAlloc++;
 			return addrOffset(data,splitting * id);
 		}
 	}

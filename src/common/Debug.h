@@ -48,9 +48,11 @@ class DebugMessage
 #define allocFatal       DebugMessage(MESSAGE_FATAL       , MESSAGE_CODE_LOCATION).print
 #define allocFatalPerror DebugMessage(MESSAGE_FATAL_PERROR, MESSAGE_CODE_LOCATION).print
 #define allocPerror      DebugMessage(MESSAGE_PERROR      , MESSAGE_CODE_LOCATION).print
+#define allocWarning     DebugMessage(MESSAGE_WARNING     , MESSAGE_CODE_LOCATION).print
 
 /********************  MACRO  ***********************/
 #define allocAssume(x,m)        do { if (!(x)) allocFatal((m));       } while(0)
 #define allocAssumePerror(x,m)  do { if (!(x)) allocFatalPerror((m)); } while(0)
+#define allocCondWarning(x,m)   do { if (!(x)) allocWarning((m));     } while(0)
 
 #endif //DEBUG_H

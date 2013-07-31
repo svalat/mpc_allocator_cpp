@@ -11,11 +11,11 @@ typedef uint64_t MacroEntry;
 typedef uint16_t SmallSize;
 
 /********************  MACRO  ***********************/
-#define SMALL_RUN_SIZE       4096
+#define SMALL_RUN_SIZE      4096
 #define MACRO_ENTRY_BITS    (8*sizeof(MacroEntry))
-#define MACRO_ENTRY_SIZE     sizeof(MacroEntry)
-#define MACRO_ENTRY_MASK     (MACRO_ENTRY_BITS - 1)
-#define STORAGE_SIZE         sizeof(this->data)
+#define MACRO_ENTRY_SIZE    sizeof(MacroEntry)
+#define MACRO_ENTRY_MASK    (MACRO_ENTRY_BITS - 1)
+#define STORAGE_SIZE        sizeof(this->data)
 
 /*********************  CLASS  **********************/
 class SmallChunkRun
