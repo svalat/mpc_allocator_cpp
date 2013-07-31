@@ -230,41 +230,44 @@ void typeToJsonInner ( htopml::JsonState& json, std::ostream& stream, const Medi
 /*******************  FUNCTION  *********************/
 void typeToJson ( htopml::JsonState& json, std::ostream& stream, const MediumChunk& value )
 {
+	const MediumChunk * cur;
+	bool first = true;
+
 	json.openStruct();
 	typeToJsonInner(json,stream,value);
 	
 	/////////////////////////////////
-	json.openField("__mem_objects__");
-	json.openArray();
-	bool first = true;
-	
-	const MediumChunk * cur = value.getPrev();
-	while (cur != NULL)
-	{
-		if (!first)
-			stream << ",";
-		first = false;
-		json.openStruct();
-		typeToJsonInner(json,stream,*cur);
-		json.closeStruct();
-		stream << ",";
-		cur = cur->getPrev();
-	}
-	
-	cur = value.getNext();
-	while (cur != NULL)
-	{
-		if (!first)
-			stream << ",";
-		first = false;
-		json.openStruct();
-		typeToJsonInner(json,stream,*cur);
-		json.closeStruct();
-		cur = cur->getNext();
-	}
-	
-	json.closeArray();
-	json.closeField("__mem_objects__");
+// 	json.openField("__mem_objects__");
+// 	json.openArray();
+// 	bool first = true;
+// 	
+// 	const MediumChunk * cur = value.getPrev();
+// 	while (cur != NULL)
+// 	{
+// 		if (!first)
+// 			stream << ",";
+// 		first = false;
+// 		json.openStruct();
+// 		typeToJsonInner(json,stream,*cur);
+// 		json.closeStruct();
+// 		stream << ",";
+// 		cur = cur->getPrev();
+// 	}
+// 	
+// 	cur = value.getNext();
+// 	while (cur != NULL)
+// 	{
+// 		if (!first)
+// 			stream << ",";
+// 		first = false;
+// 		json.openStruct();
+// 		typeToJsonInner(json,stream,*cur);
+// 		json.closeStruct();
+// 		cur = cur->getNext();
+// 	}
+// 	
+// 	json.closeArray();
+// 	json.closeField("__mem_objects__");
 	
 	/////////////////////////////////
 	json.openField("__mem_links__");

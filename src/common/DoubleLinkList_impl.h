@@ -129,17 +129,6 @@ DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value,int /*unused*/
 
 /*******************  FUNCTION  *********************/
 template <class T>
-void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<T> & value)
-{
-// 	json.openStruct();
-// 	json.openField("root");
-	typeToJson(json,stream,value,value.root);
-// 	json.closeField("root");
-// 	json.closeStruct();
-}
-
-/*******************  FUNCTION  *********************/
-template <class T>
 void typeToJsonInner(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<T> & value,const ListElement & elt)
 {
 	json.printField("__mem_address__",(void*)&elt);
@@ -149,69 +138,14 @@ void typeToJsonInner(htopml::JsonState& json, std::ostream& stream, const Double
 }
 
 /*******************  FUNCTION  *********************/
-template <class T>
-void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<T> & value,const ListElement & elt)
+template <class T> void typeToJson(htopml::JsonState & json,std::ostream& stream, const DoubleLinkList<T> & iterable)
 {
-	json.openStruct();
-	typeToJsonInner(json,stream,value,elt);
-	
-	///////////////////////////////
-	json.openField("__mem_objects__");
 	json.openArray();
-	const ListElement * cur = elt.next;
-	bool first = true;
-	while (cur != &elt)
-	{
-		if (!first)
-			stream << ",";
-		first = false;
-		json.openStruct();
-		typeToJsonInner(json,stream,value,*cur);
-		json.closeStruct();
-		cur = cur->next;
-	}
+
+	for (typename DoubleLinkList<T>::ConstIterator it = iterable.begin() ; it != iterable.end() ; ++it)
+		json.printValue(*it);
+
 	json.closeArray();
-	json.closeField("__mem_objects__");
-	///////////////////////////////
-	
-	///////////////////////////////
-	json.openField("__mem_links__");
-	json.openArray();
-	cur = &elt;
-	first = true;
-	while (cur != &elt || first == true)
-	{
-		if (!first)
-			stream << ",";
-		first = false;
-		json.openStruct();
-		json.printField("from",(void*)cur);
-		json.printField("to",(void*)cur->next);
-		json.closeStruct();
-		if (cur->next != cur)
-		{
-			stream << ",";
-			json.openStruct();
-			json.printField("from",(void*)cur);
-			json.printField("to",(void*)cur->prev);
-			json.closeStruct();
-			cur = cur->next;
-		}
-		if (cur != &elt)
-		{
-			T * tmp = T::getFromListHandler((ListElement*)cur);
-			stream << ",";
-			json.openStruct();
-			json.printField("from",(void*)cur);
-			json.printField("to",(void*)tmp);
-			json.closeStruct();
-		}
-	}
-	json.closeArray();
-	json.closeField("__mem_links__");
-	///////////////////////////////
-	
-	json.closeStruct();
 }
 
 #endif //DOUBLELINKLIST_IMPL_H

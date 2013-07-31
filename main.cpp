@@ -8,6 +8,7 @@
 #include <Debug.h>
 #include <AtomicPtr.h>
 #include "StdPool.h"
+#include <TypeToJson.h>
 
 int main(int argc, char **argv) {
 	//check sizes
@@ -45,9 +46,11 @@ int main(int argc, char **argv) {
 	pool.insert(c3,CHUNK_INSERT_LIFO);
 	pool.insert(c4,CHUNK_INSERT_LIFO);
 	
+// 	typeToJson(std::cout,pool);
 	htopml::JsonState state(&std::cout);
-	state.openStruct();
-	state.printField("c0",*c0);
-	state.printField("pool",pool);
-	state.closeStruct();
+	state.printValue(pool);
+// 	state.openStruct();
+// 	state.printField("c0",*c0);
+// 	state.printField("pool",pool);
+// 	state.closeStruct();
 }

@@ -25,6 +25,21 @@ class DoubleLinkList
 			private:
 				ListElement * cur;
 		};
+		
+		class ConstIterator
+		{
+			public:
+				ConstIterator(const ListElement * elt) {this->cur = elt;};
+				ConstIterator & operator=(const ConstIterator & it) {this->cur = it.cur;};
+				ConstIterator & operator++(void) {this->cur = this->cur->next; return *this;};
+				ConstIterator & operator--(void) {this->cur = this->cur->prev; return *this;};
+				bool operator==(const ConstIterator & it) {return this->cur == it.cur;};
+				bool operator!=(const ConstIterator & it) {return this->cur != it.cur;};
+				const T * operator->(void) {return T::getFromListHandler((ListElement*)cur);};
+				const T & operator*(void) {return *T::getFromListHandler((ListElement*)cur);};
+			private:
+				const ListElement * cur;
+		};
 	
 	public:
 		DoubleLinkList();//checked
@@ -37,6 +52,8 @@ class DoubleLinkList
 		T * popLast(void);
 		Iterator begin(void) {Iterator it(root.next); return it;};
 		Iterator end(void) {Iterator it(&root); return it;};
+		ConstIterator begin(void) const {ConstIterator it(root.next); return it;};
+		ConstIterator end(void) const {ConstIterator it(&root); return it;};
 	private:
 		static DoubleLinkList<T> * remove(ListElement * value,int /*unused*/);
 		DoubleLinkList ( const DoubleLinkList& other );

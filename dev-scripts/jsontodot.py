@@ -47,6 +47,11 @@ def getObjColor(obj):
 	else:
 		return ''
 
+def addRels(nameFrom,nameTo):
+	tmp = nameFrom + ' -> ' + nameTo
+	if not (tmp in rels):
+		rels.append(tmp)
+
 def addObject(parent,obj):
 	global cnt
 	if obj.has_key('__mem_address__'):
@@ -54,7 +59,7 @@ def addObject(parent,obj):
 	else:
 		name = getName()
 	if (parent != '__mem_objects__'):
-		rels.append(parent + ' -> ' + name)
+		addRels(parent,name)
 	if objs.has_key(name):
 		return name
 	objs[name] = name
@@ -73,13 +78,13 @@ def addObject(parent,obj):
 		elif key == '__mem_links__':
 			for link in value:
 				if link['to'] != 'NULL' and link['to'] != None:
-					rels.append('addr_'+link['from'] + ' -> ' + 'addr_' + link['to'])
+					addRels('addr_'+link['from'], 'addr_' + link['to'])
 		elif key == '__class_name__':
 			tmp = tmp
 		elif isinstance(value,list):
 			tmpName = name + '_' + key
 			print tmpName + '[ label = "LIST ' + key + '", shape = "diamond" ]'
-			rels.append(name + ' -> ' + tmpName)
+			addRels(name,tmpName)
 			parseJson(tmpName,value)
 		else:
 			tmp = tmp + '+' + str(key) + ' : ' + str(value) + '\l'
@@ -90,7 +95,7 @@ def addObject(parent,obj):
 def simpleObj(parent,obj):
 	name = getName()
 	objs[name] = name
-	rels.append(parent + ' -> ' + name)	
+	addRels(parent,name)
 	print name + '[ shape = ellipse ,label = "' + str(obj) + '" ]'
 	return name
 
