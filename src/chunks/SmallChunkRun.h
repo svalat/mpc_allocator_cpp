@@ -4,6 +4,7 @@
 /********************  HEADERS  *********************/
 #include <Common.h>
 #include <IAllocator.h>
+#include <IDoubleLinkListElement.h>
 #include <stdint.h>
 
 /*********************  TYPES  **********************/
@@ -18,7 +19,7 @@ typedef uint16_t SmallSize;
 #define STORAGE_SIZE        sizeof(this->data)
 
 /*********************  CLASS  **********************/
-class SmallChunkRun
+class SmallChunkRun : public IDoubleLinkListeElement
 {
 	public:
 		SmallChunkRun(SmallSize skipedSize = 0,SmallSize splitting = 0);
@@ -32,6 +33,8 @@ class SmallChunkRun
 		SmallSize getSplitting(void) const;
 		void* realloc ( void* ptr, size_t size );
 		bool contain(void * ptr) const;
+		ListElement * getListHandler(void);
+		static SmallChunkRun * getFromListHandler(ListElement * list);
 	private:
 		void setBitStatusOne(SmallSize id);
 		void setBitStatusZero(SmallSize id);
@@ -39,7 +42,8 @@ class SmallChunkRun
 		int getRoundedNbEntries(SmallSize size) const;
 		MacroEntry * getMacroEntry( SmallSize id );
 	private:
-		MacroEntry data[SMALL_RUN_SIZE / sizeof(MacroEntry) - 1];
+		MacroEntry data[SMALL_RUN_SIZE / sizeof(MacroEntry) - 3];
+		ListElement listHandler;
 		SmallSize cntAlloc;
 		SmallSize skipedSize;
 		SmallSize splitting;

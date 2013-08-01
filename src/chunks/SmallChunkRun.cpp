@@ -2,6 +2,7 @@
 #include <Debug.h>
 #include "SmallChunkRun.h"
 #include <cstring>
+#include <cstddef>
 
 /*******************  FUNCTION  *********************/
 SmallChunkRun::SmallChunkRun ( SmallSize skipedSize , SmallSize splitting)
@@ -187,4 +188,19 @@ void* SmallChunkRun::malloc ( size_t size, size_t align, bool* zeroFilled )
 SmallSize SmallChunkRun::getSplitting ( void ) const
 {
 	return splitting;
+}
+
+/*******************  FUNCTION  *********************/
+SmallChunkRun* SmallChunkRun::getFromListHandler ( ListElement* list )
+{
+	char * ptr = (char*)list;
+	ptr -= offsetof(SmallChunkRun,listHandler);
+	SmallChunkRun * res = (SmallChunkRun*)ptr;
+	allocAssert(&res->listHandler == list);
+}
+
+/*******************  FUNCTION  *********************/
+ListElement* SmallChunkRun::getListHandler ( void )
+{
+	return &listHandler;
 }

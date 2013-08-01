@@ -82,7 +82,7 @@ TEST(TestSmallChunk,full)
 	while ( chunk.malloc(16) != NULL )
 		cnt++;
 	
-	EXPECT_EQ(SMALL_RUN_SIZE/16 - 3,cnt);
+	EXPECT_EQ(SMALL_RUN_SIZE/16 - 4,cnt);
 }
 
 /*******************  FUNCTION  *********************/
@@ -95,7 +95,7 @@ TEST(TestSmallChunk,fullNoOverlap)
 	while ( (ptr[cnt] = (unsigned char*)chunk.malloc(16)) != NULL )
 		cnt++;
 	
-	ASSERT_EQ(SMALL_RUN_SIZE/16 - 3,cnt);
+	ASSERT_EQ(SMALL_RUN_SIZE/16 - 4,cnt);
 	
 	for (int i = 0 ; i < cnt ; i++)
 	{
@@ -151,7 +151,7 @@ TEST(TestSmallChunk,skipedOffset)
 		cnt++;
 	}
 	
-	EXPECT_EQ(SMALL_RUN_SIZE/16 - 3 - 2,cnt);
+	EXPECT_EQ(SMALL_RUN_SIZE/16 - 4 - 2,cnt);
 }
 
 /*******************  FUNCTION  *********************/
@@ -167,5 +167,5 @@ TEST(TestSmallChunk,skipedOffset2)
 		cnt++;
 	}
 	
-	EXPECT_EQ(SMALL_RUN_SIZE/16 - 3 - 2,cnt);
+	EXPECT_EQ(SMALL_RUN_SIZE/16 - 4 - 2,cnt);
 }

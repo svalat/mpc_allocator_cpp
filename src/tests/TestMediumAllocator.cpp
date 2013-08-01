@@ -23,8 +23,22 @@ TEST(TestMediumAllocator,fill)
 	char buffer[4096];
 
 	EXPECT_EQ(NULL,alloc.malloc(32));
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	EXPECT_EQ(buffer+sizeof(MediumChunk),alloc.malloc(32));
+}
+
+/*******************  FUNCTION  *********************/
+TEST(TestMediumAllocator,fillRegister)
+{
+	RegionRegistry region;
+	MediumAllocator alloc;
+
+	EXPECT_EQ(NULL,alloc.malloc(32));
+	alloc.fill(gblBuffer,sizeof(gblBuffer),&region);
+	void * ptr = alloc.malloc(32);
+	EXPECT_EQ(gblBuffer+sizeof(MediumChunk) + sizeof(RegionSegmentHeader),ptr);
+	EXPECT_EQ(gblBuffer,(void*)region.getSegment(ptr));
+	EXPECT_EQ(&alloc,region.getSegment(ptr)->getManager());
 }
 
 /*******************  FUNCTION  *********************/
@@ -34,7 +48,7 @@ TEST(TestMediumAllocator,malloc)
 	char buffer[4096];
 	
 	EXPECT_EQ(NULL,alloc.malloc(32));
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	EXPECT_EQ(buffer+sizeof(MediumChunk),alloc.malloc(32));
 	EXPECT_EQ(buffer+sizeof(MediumChunk)*2 +32,alloc.malloc(32));
 }
@@ -45,7 +59,7 @@ TEST(TestMediumAllocator,free)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	void * ptr = alloc.malloc(32);
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
 	alloc.free(ptr);
@@ -59,7 +73,7 @@ TEST(TestMediumAllocator,realloc_basic)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	void * ptr = alloc.malloc(32);
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
 	ptr = alloc.realloc(ptr,16);
@@ -74,7 +88,7 @@ TEST(TestMediumAllocator,realloc_to_small_NEED_SOME_WORK)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	void * ptr = alloc.malloc(32);
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
 	ptr = alloc.realloc(ptr,64);
@@ -88,7 +102,7 @@ TEST(TestMediumAllocator,realloc_move)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	void * ptr = alloc.malloc(32);
 	alloc.malloc(32);
 	void * ptr2 = alloc.malloc(64);
@@ -106,7 +120,7 @@ TEST(TestMediumAllocator,realloc_free)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	void * ptr = alloc.malloc(32);
 
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
@@ -120,7 +134,7 @@ TEST(TestMediumAllocator,realloc_malloc)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	void * ptr = alloc.malloc(32);
 	alloc.free(ptr);
 
@@ -133,7 +147,7 @@ TEST(TestMediumAllocator,realloc_not_enought_mem)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	void * ptr = alloc.malloc(32);
 	ptr = alloc.realloc(ptr,10000);
 
@@ -146,7 +160,7 @@ TEST(TestMediumAllocator,realloc_copy)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	char * ptr = (char*)alloc.malloc(32);
 	alloc.malloc(32);
 	
@@ -165,7 +179,7 @@ TEST(TestMediumAllocator,getTotalSize)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	char * ptr = (char*)alloc.malloc(32);
 	
 	EXPECT_EQ(32+sizeof(MediumChunk),alloc.getTotalSize(ptr));
@@ -178,7 +192,7 @@ TEST(TestMediumAllocator,getInnerSize)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	char * ptr = (char*)alloc.malloc(32);
 	
 	EXPECT_EQ(32,alloc.getInnerSize(ptr));
@@ -191,7 +205,7 @@ TEST(TestMediumAllocator,getRequestedSize)
 	MediumAllocator alloc;
 	char buffer[4096];
 	
-	alloc.fill(buffer,sizeof(buffer));
+	alloc.fill(buffer,sizeof(buffer),NULL);
 	char * ptr = (char*)alloc.malloc(32);
 	
 	EXPECT_EQ(UNSUPPORTED,alloc.getRequestedSize(ptr));

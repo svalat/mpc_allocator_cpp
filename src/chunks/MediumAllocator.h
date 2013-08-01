@@ -2,9 +2,10 @@
 #define CHUNK_ALLOCATOR_H
 
 /********************  HEADERS  *********************/
+#include <IAllocator.h>
+#include <Spinlock.h>
+#include <RegionRegistry.h>
 #include "MediumFreePool.h"
-#include "IAllocator.h"
-#include "Spinlock.h"
 
 /*********************  CLASS  **********************/
 class MediumAllocator : public IChunkManager
@@ -18,7 +19,7 @@ class MediumAllocator : public IChunkManager
 		virtual size_t getRequestedSize ( void* ptr );
 		virtual size_t getTotalSize ( void* ptr );
 		virtual void* realloc ( void* ptr, size_t size );
-		void fill(void * ptr, size_t size);
+		void fill(void * ptr, size_t size,RegionRegistry * registry);
 	private:
 		MediumChunk * refill(size_t size,bool * zeroFilled = NULL);
 		MediumChunk * split( MediumChunk* chunk, size_t innerSize );
@@ -27,6 +28,7 @@ class MediumAllocator : public IChunkManager
 		Spinlock spinlock;
 		IMMSource * memorySource;
 		bool useLocks;
+		RegionRegistry * registry;
 };
 
 #endif //CHUNK_ALLOCATOR_H

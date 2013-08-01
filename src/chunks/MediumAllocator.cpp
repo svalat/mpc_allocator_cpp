@@ -111,8 +111,11 @@ MediumChunk* MediumAllocator::refill ( size_t size, bool * zeroFilled )
 }
 
 /*******************  FUNCTION  *********************/
-void MediumAllocator::fill ( void* ptr, size_t size )
+void MediumAllocator::fill ( void* ptr, size_t size, RegionRegistry * registry )
 {
+	//vars
+	MediumChunk * chunk = NULL;
+
 	//errors
 	assert(ptr != NULL);
 	assert(size > 0);
@@ -121,10 +124,15 @@ void MediumAllocator::fill ( void* ptr, size_t size )
 	if (ptr == NULL || size == 0)
 		return;
 	
-	//create chunk
-	MediumChunk * chunk = MediumChunk::setup(ptr,size);
-
-	//add to registry TODO
+	//if need register, create macro bloc
+	if (registry != NULL)
+	{
+		RegionSegmentHeader * segment = registry->setEntry(ptr,size,this);
+		chunk = MediumChunk::setup(segment->getPtr(),segment->getInnerSize());
+	} else {
+		//create chunk
+		chunk = MediumChunk::setup(ptr,size);
+	}
 	
 	//put in free list
 	pool.insert(chunk,CHUNK_INSERT_FIFO);

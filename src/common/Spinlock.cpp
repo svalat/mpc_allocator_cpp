@@ -4,25 +4,25 @@
 /*******************  FUNCTION  *********************/
 Spinlock::Spinlock ( void )
 {
-	pthread_spin_init(&spinlock,PTHREAD_PROCESS_PRIVATE);
+	Locks::init(&spinlock);
 }
 
 /*******************  FUNCTION  *********************/
 Spinlock::~Spinlock ( void )
 {
-	pthread_spin_destroy(&spinlock);
+	Locks::destroy(&spinlock);
 }
 
 /*******************  FUNCTION  *********************/
 void Spinlock::lock ( void )
 {
-	pthread_spin_lock(&spinlock);
+	Locks::lock(&spinlock);
 }
 
 /*******************  FUNCTION  *********************/
 void Spinlock::unlock ( void )
 {
-	pthread_spin_unlock(&spinlock);
+	Locks::unlock(&spinlock);
 }
 
 /*******************  FUNCTION  *********************/

@@ -2,7 +2,7 @@
 #define SPINLOCKS_H
 
 /********************  HEADERS  *********************/
-#include <pthread.h>
+#include <Locks.h>
 
 /*********************  CLASS  **********************/
 class Spinlock
@@ -23,9 +23,10 @@ class Spinlock
 		void lock(void);
 		void unlock(void);
 	private:
-		pthread_spinlock_t spinlock;
+		Locks::Spinlock spinlock;
 };
 
+/********************  MACRO  ***********************/
 #define OPTIONAL_CRITICAL(lock,test) do { Spinlock::TakeLock _local_##lock##__(lock,test);
 #define START_CRITICAL(lock) { Spinlock::TakeLock _local_##lock##__(lock);
 #define END_CRITICAL }while(0);
