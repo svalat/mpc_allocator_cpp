@@ -1,5 +1,5 @@
-#ifndef LINUX_ATOMICS_H
-#define LINUX_ATOMICS_H
+#ifndef ATOMICS_OPENPA_H
+#define ATOMICS_OPENPA_H
 
 /********************  HEADERS  *********************/
 #include <opa_primitives.h>
@@ -8,7 +8,7 @@
 typedef OPA_ptr_t AtomicPtrLL;
 
 /*********************  CLASS  **********************/
-class OpenPAAtomics
+class AtomicsOpenPA
 {
 	public:
 		static void * atomicLoad (AtomicPtrLL * ptr)                 {return OPA_load_ptr (ptr);         };
@@ -17,7 +17,4 @@ class OpenPAAtomics
 		static void * pause      (void)                              {       OPA_busy_wait();            };
 };
 
-/*********************  TYPES  **********************/
-typedef OpenPAAtomics Atomics;
-
-#endif //LINUX_ATOMICS_H
+#endif //ATOMICS_OPENPA_H

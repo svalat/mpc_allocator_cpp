@@ -1,11 +1,11 @@
-#ifndef LOCKS_H
-#define LOCKS_H
+#ifndef LOCKS_PTHREAD_H
+#define LOCKS_PTHREAD_H
 
 /********************  HEADERS  *********************/
 #include <pthread.h>
 
 /*********************  CLASS  **********************/
-class PThreadLocks
+class LocksPthread
 {
 	public:
 		typedef pthread_spinlock_t Spinlock;
@@ -15,7 +15,4 @@ class PThreadLocks
 		static void destroy(Spinlock * spinlock) {pthread_spin_destroy(spinlock);};
 };
 
-/*********************  TYPES  **********************/
-typedef PThreadLocks Locks;
-
-#endif //LOCKS_H
+#endif //LOCKS_PTHREAD_H

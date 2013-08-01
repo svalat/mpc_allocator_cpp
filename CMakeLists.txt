@@ -15,10 +15,17 @@ set(ALLOC_VERSION "0.0.0-dev")
 ######################################################
 #global setup
 enable_testing()
-add_definitions(-DVERSION="${CMR_VERSION}")
+add_definitions(-DVERSION="${ALLOC_VERSION}")
 add_definitions(-D_GNU_SOURCE)
 add_definitions(-DHAVE_COLOR)
-set(PORTABILITY_OS linux)
+
+######################################################
+#select portability mode
+set(PORTABILITY_OS      Linux  )
+set(PORTABILITY_LOCKS   Pthread)
+set(PORTABILITY_ATOMICS OpenPA )
+#enable features for code
+add_definitions(-DOS=${PORTABILITY_OS} -DLOCKS=${PORTABILITY_LOCKS} -DATOMICS=${PORTABILITY_ATOMICS})
 
 ######################################################
 #Add internal search path for scripts
@@ -37,7 +44,7 @@ include_directories(src/common)
 include_directories(src/chunks)
 include_directories(src/json)
 include_directories(src/mmsource)
-include_directories(src/portability/${PORTABILITY_OS})
+include_directories(src/portability/)
 
 ######################################################
 #manage subdirs
