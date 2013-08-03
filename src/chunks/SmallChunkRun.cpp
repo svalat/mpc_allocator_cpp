@@ -1,8 +1,8 @@
 /********************  HEADERS  *********************/
-#include <Debug.h>
-#include "SmallChunkRun.h"
 #include <cstring>
 #include <cstddef>
+#include <Debug.h>
+#include "SmallChunkRun.h"
 
 /*******************  FUNCTION  *********************/
 SmallChunkRun::SmallChunkRun ( SmallSize skipedSize , SmallSize splitting)
@@ -17,6 +17,13 @@ SmallChunkRun::SmallChunkRun ( SmallSize skipedSize , SmallSize splitting)
 
 /*******************  FUNCTION  *********************/
 MacroEntry * SmallChunkRun::getMacroEntry ( SmallSize id )
+{
+	//TODO check if compiler use shift
+	return data + skipedSize + id / MACRO_ENTRY_BITS;
+}
+
+/*******************  FUNCTION  *********************/
+const MacroEntry * SmallChunkRun::getMacroEntry ( SmallSize id ) const
 {
 	//TODO check if compiler use shift
 	return data + skipedSize + id / MACRO_ENTRY_BITS;
@@ -154,6 +161,18 @@ void* SmallChunkRun::realloc ( void* ptr, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
+bool SmallChunkRun::isFull ( void ) const
+{
+	allocAssert(this->splitting > 0);
+	SmallSize macroEntries = bitmapEntries / MACRO_ENTRY_BITS;
+	const MacroEntry * entries = getMacroEntry(0);
+	for(SmallSize i = 0 ; i < macroEntries ; i++)
+		if (entries[i])
+			return false;
+	return true;
+}
+
+/*******************  FUNCTION  *********************/
 void* SmallChunkRun::malloc ( size_t size, size_t align, bool* zeroFilled )
 {
 	//check size
@@ -197,6 +216,7 @@ SmallChunkRun* SmallChunkRun::getFromListHandler ( ListElement* list )
 	ptr -= offsetof(SmallChunkRun,listHandler);
 	SmallChunkRun * res = (SmallChunkRun*)ptr;
 	allocAssert(&res->listHandler == list);
+	return res;
 }
 
 /*******************  FUNCTION  *********************/

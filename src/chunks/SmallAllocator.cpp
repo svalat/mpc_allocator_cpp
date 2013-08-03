@@ -1,12 +1,13 @@
 /********************  HEADERS  *********************/
 #include <Debug.h>
-#include "SmallChunkAllocator.h"
+#include <cstring>
+#include "SmallAllocator.h"
 
 /*********************  CONSTS  *********************/
 static const size_t SMALL_SIZE_CLASSES[NB_SIZE_CLASS] = {8, 16, 24, 32, 48, 64, 80, 96, 128};
 
 /*******************  FUNCTION  *********************/
-SmallChunkAllocator::SmallChunkAllocator ( bool useLocks, IMMSource* memorySource )
+SmallAllocator::SmallAllocator ( bool useLocks, IMMSource* memorySource )
 {
 	this->useLocks = useLocks;
 	this->memorySource = memorySource;
@@ -15,13 +16,13 @@ SmallChunkAllocator::SmallChunkAllocator ( bool useLocks, IMMSource* memorySourc
 }
 
 /*******************  FUNCTION  *********************/
-void* SmallChunkAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
+void* SmallAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
 {
 	//vars
 	void * res = NULL;
 
 	//align is not supported up to now
-	allocAssume(align == 0, "TODO : support align");
+	allocAssume(align == sizeof(void*), "TODO : support align");
 	
 	//get related size class
 	int sizeClass = getSizeClass(size);
@@ -31,17 +32,17 @@ void* SmallChunkAllocator::malloc ( size_t size, size_t align, bool* zeroFilled 
 	OPTIONAL_CRITICAL(spinlock,useLocks);
 		//get active run
 		SmallChunkRun * run = getActivRunForSize(sizeClass);
-		if (run == NULL)
-			return NULL;
 		
 		//try to allocate with current run
-		res = run->malloc(size,align,zeroFilled);
+		if (run != NULL)
+			res = run->malloc(size,align,zeroFilled);
 		
 		//if not found, need to rotate current runs and retry
 		if (res == NULL)
 		{
 			run = updateActivRunForSize(sizeClass);
-			res = run->malloc(size,align,zeroFilled);
+			if (run != NULL)
+				res = run->malloc(size,align,zeroFilled);
 		}
 	END_CRITICAL
 	
@@ -50,20 +51,20 @@ void* SmallChunkAllocator::malloc ( size_t size, size_t align, bool* zeroFilled 
 }
 
 /*******************  FUNCTION  *********************/
-void SmallChunkAllocator::fill ( void* ptr, size_t size, RegionRegistry* registry, bool lock )
+void SmallAllocator::fill ( void* ptr, size_t size, RegionRegistry* registry, bool lock )
 {
 	//cast to ease usage
 	Addr addr = (Addr)ptr;
+	int cnt = 0;
 	
 	//errors
 	allocAssert(ptr != NULL);
-	allocAssert(size >= SMALL_RUN_SIZE);
 
 	//if need register, create macro bloc
 	if (registry != NULL)
 	{
 		RegionSegmentHeader * segment = registry->setEntry(ptr,size,this);
-		ptr = segment->getPtr();
+		addr = (Addr)segment->getPtr();
 		size = segment->getInnerSize();
 	}
 
@@ -73,12 +74,12 @@ void SmallChunkAllocator::fill ( void* ptr, size_t size, RegionRegistry* registr
 	
 	//create all runs
 	OPTIONAL_CRITICAL(spinlock,useLocks && lock);
-		for (Addr basePtr = ptrStart ; basePtr < ptrEnd ; basePtr++)
+		for (Addr basePtr = ptrStart ; basePtr < ptrEnd ; basePtr+=SMALL_RUN_SIZE)
 		{
 			size_t skipedSize = 0;
 			//calc skip
-			if (basePtr < (Addr)ptr)
-				skipedSize = ptrStart - addr;
+			if (basePtr < addr)
+				skipedSize = addr - basePtr;
 			allocAssert(skipedSize < SMALL_RUN_SIZE);
 
 			//create run
@@ -86,18 +87,21 @@ void SmallChunkAllocator::fill ( void* ptr, size_t size, RegionRegistry* registr
 			
 			//insert in empty list
 			empty.putFirst(run);
+			cnt++;
 		}
 	END_CRITICAL
+
+	allocAssert(cnt > 0);
 }
 
 /*******************  FUNCTION  *********************/
-void SmallChunkAllocator::fill ( void* ptr, size_t size, RegionRegistry* registry )
+void SmallAllocator::fill ( void* ptr, size_t size, RegionRegistry* registry )
 {
 	fill(ptr,size,registry,true);
 }
 
 /*******************  FUNCTION  *********************/
-void SmallChunkAllocator::refill ( void )
+void SmallAllocator::refill ( void )
 {
 	//trivial
 	if (memorySource == NULL)
@@ -108,7 +112,6 @@ void SmallChunkAllocator::refill ( void )
 	if (segment == NULL)
 		return;
 	allocAssert(segment->getTotalSize() == REGION_SPLITTING);
-	allocAssert(((Addr)segment + segment->getTotalSize()) % SMALL_RUN_SIZE == 0);
 	
 	//get inner segment
 	void * ptr = segment->getPtr();
@@ -120,7 +123,7 @@ void SmallChunkAllocator::refill ( void )
 }
 
 /*******************  FUNCTION  *********************/
-void SmallChunkAllocator::free ( void* ptr )
+void SmallAllocator::free ( void* ptr )
 {
 	//trivial
 	if (ptr == NULL)
@@ -130,7 +133,7 @@ void SmallChunkAllocator::free ( void* ptr )
 	SmallChunkRun * run = getRun(ptr);
 	allocAssert(run != NULL);
 	//MAYBE put warning
-	if (run != NULL)
+	if (run == NULL)
 		return;
 	
 	//free
@@ -142,22 +145,20 @@ void SmallChunkAllocator::free ( void* ptr )
 		//TODO check if it's not the activ one otherwise we need to skip this action
 		//TODO improve memory free by pointing a free list per macro bloc, so get more chance
 		//to fee one
-		SmallChunkRunList::remove(run);
 		empty.putFirst(run);
 	}
 }
 
 /*******************  FUNCTION  *********************/
-SmallChunkRun* SmallChunkAllocator::getActivRunForSize ( int sizeClass )
+SmallChunkRun* SmallAllocator::getActivRunForSize ( int sizeClass )
 {
 	allocAssert(sizeClass >= 0 && sizeClass < NB_SIZE_CLASS);
 	SmallChunkRun * res = activRuns[sizeClass];
-	if (res == NULL)
-		return updateActivRunForSize(sizeClass);
+	return res;
 }
 
 /*******************  FUNCTION  *********************/
-size_t SmallChunkAllocator::getInnerSize ( void* ptr )
+size_t SmallAllocator::getInnerSize ( void* ptr )
 {
 	//get the run to request the size
 	SmallChunkRun * run = getRun(ptr);
@@ -170,7 +171,7 @@ size_t SmallChunkAllocator::getInnerSize ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-size_t SmallChunkAllocator::getRequestedSize ( void* ptr )
+size_t SmallAllocator::getRequestedSize ( void* ptr )
 {
 	//get the run to request the size
 	SmallChunkRun * run = getRun(ptr);
@@ -183,7 +184,7 @@ size_t SmallChunkAllocator::getRequestedSize ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-size_t SmallChunkAllocator::getTotalSize ( void* ptr )
+size_t SmallAllocator::getTotalSize ( void* ptr )
 {
 	//get the run to request the size
 	SmallChunkRun * run = getRun(ptr);
@@ -196,7 +197,7 @@ size_t SmallChunkAllocator::getTotalSize ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-SmallChunkRun* SmallChunkAllocator::getRun ( void* ptr )
+SmallChunkRun* SmallAllocator::getRun ( void* ptr )
 {
 	//trivia
 	if (ptr == NULL)
@@ -214,11 +215,11 @@ SmallChunkRun* SmallChunkAllocator::getRun ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-int SmallChunkAllocator::getSizeClass ( size_t size ) const
+int SmallAllocator::getSizeClass ( size_t size ) const
 {
 	//errors
 	allocAssert(sizeof(SMALL_SIZE_CLASSES) / sizeof(size_t) == NB_SIZE_CLASS);
-	allocAssert(size > SMALL_CHUNK_MAX_SIZE);
+	allocAssert(size <= SMALL_CHUNK_MAX_SIZE);
 	allocAssert(size > 0);
 
 	//trivial
@@ -240,15 +241,79 @@ int SmallChunkAllocator::getSizeClass ( size_t size ) const
 }
 
 /*******************  FUNCTION  *********************/
-void* SmallChunkAllocator::realloc ( void* ptr, size_t size )
+//TODO maybe we can avoid to take the lock 2 times
+void* SmallAllocator::realloc ( void* ptr, size_t size )
 {
-#warning TODO
+	//trivial cases
+	if (ptr == NULL)
+	{
+		return this->malloc(size);
+	} else if (size == 0) {
+		this->free(ptr);
+		return NULL;
+	}
+	
+	//get size classes
+	SmallChunkRun * oldRun = getRun(ptr);
+	allocAssume(oldRun != NULL,"Invalid old pointer for realloc on SmallAllocator.");
+	int oldClass = getSizeClass(oldRun->getSplitting());
+	int newClass = getSizeClass(size);
+	allocAssume(newClass >= 0,"Invalid new size for realloc on SmallAllocator.");
+	
+	//if same class, do nothing, otherwise to realloc
+	if (newClass == oldClass)
+		return ptr;
+	
+	//alloc, copy, free
+	void * res = this->malloc(size);
+	if (res != NULL)
+		memcpy(res,ptr,min(size,(Size)oldRun->getSplitting()));
+	this->free(ptr);
+	
+	//ok return the segment
+	return res;
 }
 
 /*******************  FUNCTION  *********************/
-SmallChunkRun* SmallChunkAllocator::updateActivRunForSize ( int sizeClass )
+SmallChunkRun* SmallAllocator::updateActivRunForSize ( int sizeClass )
 {
-#warning TODO
-}
+	//errors
+	allocAssert(sizeClass >= 0 && sizeClass < NB_SIZE_CLASS);
+	if (activRuns[sizeClass] != NULL)
+		allocAssert(activRuns[sizeClass]->isFull());
+	
+	//search in list
+	SmallChunkRun * run = NULL;
+	for (SmallChunkRunList::Iterator it = inUse[sizeClass].begin() ; it != inUse[sizeClass].end() ; ++it)
+	{
+		if (it->isFull() == false)
+		{
+			run = &(*it);
+			SmallChunkRunList::remove(run);
+		}
+	}
+	
+	//if have not, try in empty list
+	if (run == NULL)
+	{
+		run = empty.popLast();
+		if (run != NULL)
+			run->setSplitting(SMALL_SIZE_CLASSES[sizeClass]);
+	}
 
-/*******************  FUNCTION  *********************/
+	//if have one
+	if (run != NULL)
+	{
+		//insert in FIFO
+		if (activRuns[sizeClass] != NULL)
+			inUse[sizeClass].putLast(activRuns[sizeClass]);
+		activRuns[sizeClass] = run;
+	} else {
+		refill();
+		if (empty.isEmpty() == false)
+			run = updateActivRunForSize(sizeClass);
+	}
+	
+	//return it
+	return run;
+}

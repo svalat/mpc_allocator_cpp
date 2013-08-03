@@ -17,10 +17,10 @@
 typedef DoubleLinkList<SmallChunkRun> SmallChunkRunList;
 
 /*********************  CLASS  **********************/
-class SmallChunkAllocator : public IChunkManager
+class SmallAllocator : public IChunkManager
 {
 	public:
-		SmallChunkAllocator(bool useLocks = false,IMMSource * memorySource = NULL);
+		SmallAllocator(bool useLocks = false,IMMSource * memorySource = NULL);
 		//required public interface
 		void * malloc(size_t size,size_t align = BASIC_ALIGN,bool * zeroFilled = NULL);
 		virtual void free ( void* ptr );

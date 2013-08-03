@@ -25,6 +25,7 @@ class SmallChunkRun : public IDoubleLinkListeElement
 		SmallChunkRun(SmallSize skipedSize = 0,SmallSize splitting = 0);
 		void setSplitting( SmallSize size );
 		bool isEmpty(void) const;
+		bool isFull(void) const;
 		void * malloc(size_t size,size_t align = BASIC_ALIGN,bool * zeroFilled = NULL);
 		void free ( void* ptr );
 		size_t getInnerSize ( void* ptr );
@@ -41,6 +42,7 @@ class SmallChunkRun : public IDoubleLinkListeElement
 		bool getBitStatus(SmallSize id);
 		int getRoundedNbEntries(SmallSize size) const;
 		MacroEntry * getMacroEntry( SmallSize id );
+		const MacroEntry * getMacroEntry( SmallSize id ) const;
 	private:
 		MacroEntry data[SMALL_RUN_SIZE / sizeof(MacroEntry) - 3];
 		ListElement listHandler;

@@ -68,6 +68,16 @@ T max(T a,T b)
 }
 
 /*******************  FUNCTION  *********************/
+template <class T>
+T min(T a,T b)
+{
+	if (a<b)
+		return a;
+	else
+		return b;
+}
+
+/*******************  FUNCTION  *********************/
 static inline int fastLog2(Size value)
 {
 	//vars

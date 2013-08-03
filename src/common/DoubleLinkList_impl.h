@@ -3,7 +3,7 @@
 
 /********************  HEADERS  *********************/
 #include "DoubleLinkList.h"
-#include <cassert>
+#include <Debug.h>
 #include <TypeToJson.h>
 
 /*******************  FUNCTION  *********************/
@@ -17,7 +17,7 @@ inline ListElement::ListElement()
 template <class T>
 void DoubleLinkList<T>::checkSize ( Size size )
 {
-	assert(size >= sizeof(ListElement));
+	allocAssert(size >= sizeof(ListElement));
 }
 
 /*******************  FUNCTION  *********************/
@@ -31,7 +31,7 @@ template <class T>
 bool DoubleLinkList<T>::isEmpty ( void ) const
 {
 	if (root.next == &root)
-		assert(root.prev == root.next);
+		allocAssert(root.prev == root.next);
 	return (root.next == &root);
 }
 
@@ -68,7 +68,7 @@ T* DoubleLinkList<T>::popFirst ( void )
 		return NULL;
 	
 	ListElement * elt = root.next;
-	assert(elt != &root);
+	allocAssert(elt != &root);
 	
 	root.next = elt->next;
 	elt->next->prev = &root;
@@ -85,7 +85,7 @@ T* DoubleLinkList<T>::popLast ( void )
 		return NULL;
 	
 	ListElement * elt = root.prev;
-	assert(elt != &root);
+	allocAssert(elt != &root);
 	
 	root.prev = elt->prev;
 	elt->prev->next = &root;
@@ -97,7 +97,7 @@ T* DoubleLinkList<T>::popLast ( void )
 template <class T>
 DoubleLinkList<T> * DoubleLinkList<T>::remove(T * value)
 {
-	assert(value != NULL);
+	allocAssert(value != NULL);
 	ListElement * elt = value->getListHandler();
 	
 	return remove(elt,0);
@@ -110,8 +110,8 @@ DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value,int /*unused*/
 {
 	DoubleLinkList<T> * res = NULL;
 
-	assert(value->next->prev == value);
-	assert(value->prev->next == value);
+	allocAssert(value->next->prev == value);
+	allocAssert(value->prev->next == value);
 	
 	value->next->prev = value->prev;
 	value->prev->next = value->next;
@@ -120,8 +120,8 @@ DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value,int /*unused*/
 		res = (DoubleLinkList<T> *)value->next;
 	
 	#ifndef OPTIMIZED
-	value->next = NULL;
-	value->prev = NULL;
+	value->next = value;
+	value->prev = value;
 	#endif
 	
 	return res;
