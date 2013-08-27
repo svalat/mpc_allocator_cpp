@@ -27,7 +27,7 @@
 #endif
 
 /*********************  TYPES  **********************/
-#if OS == Linux
+#ifdef OS_Linux
 	#include "OSLinux.h"
 	typedef OSLinux OS;
 #else

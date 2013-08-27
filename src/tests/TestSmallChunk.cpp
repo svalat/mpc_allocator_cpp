@@ -109,7 +109,7 @@ TEST(TestSmallChunk,free)
 	SmallChunkRun run(0,16);
 	
 	void * ptr1 = run.malloc(16);
-	void * ptr2 = run.malloc(16);
+	run.malloc(16);
 	run.free(ptr1);
 	void * ptr3 = run.malloc(16);
 	EXPECT_EQ(ptr1,ptr3);

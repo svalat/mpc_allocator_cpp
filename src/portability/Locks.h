@@ -2,7 +2,7 @@
 #define PORTABILITY_LOCKS_H
 
 /*********************  TYPES  **********************/
-#if LOCKS == Pthread
+#ifdef LOCKS_Pthread
 	#include "LocksPthread.h"
 	typedef LocksPthread Locks;
 #else

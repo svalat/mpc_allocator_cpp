@@ -25,7 +25,7 @@ set(PORTABILITY_OS      Linux  )
 set(PORTABILITY_LOCKS   Pthread)
 set(PORTABILITY_ATOMICS OpenPA )
 #enable features for code
-add_definitions(-DOS=${PORTABILITY_OS} -DLOCKS=${PORTABILITY_LOCKS} -DATOMICS=${PORTABILITY_ATOMICS})
+add_definitions(-DOS_${PORTABILITY_OS} -DLOCKS_${PORTABILITY_LOCKS} -DATOMICS_${PORTABILITY_ATOMICS})
 
 ######################################################
 #Add internal search path for scripts

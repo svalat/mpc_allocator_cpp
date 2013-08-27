@@ -2,7 +2,7 @@
 #define PORTABILITY_ATOMICS_H
 
 /*********************  TYPES  **********************/
-#if ATOMICS == OpenPA
+#ifdef ATOMICS_OpenPA
 	#include "AtomicsOpenPA.h"
 	typedef AtomicsOpenPA Atomics;
 #else

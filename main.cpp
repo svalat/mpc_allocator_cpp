@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 	MediumChunk * c3 = c2->split(16);
 	MediumChunk * c4 = c3->split(16);
 	MediumChunk * c5 = c4->split(16);
-	MediumChunk * c6 = c5->split(16);
+	c5->split(16);
 	
 	MediumFreePool pool;
 	pool.insert(c0,CHUNK_INSERT_LIFO);

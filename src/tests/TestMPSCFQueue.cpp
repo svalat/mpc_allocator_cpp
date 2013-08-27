@@ -15,13 +15,10 @@ typedef unsigned long long ticks;
 void test_with_n_threads(int threads)
 {
 	//vars
-	int i;
 	size_t cnt = 0;
-	int j;
 	size_t expected;
 	size_t test_size;
 	MPSCFQueue queue;
-	ticks t0;
 	ticks tflush = 0;
 	ticks treg = 0;
 
@@ -47,22 +44,23 @@ void test_with_n_threads(int threads)
 	omp_set_num_threads(threads);
 
 	//test in parallel
-	#pragma omp parallel private(i,j,t0)
+	#pragma omp parallel
 	{
 		//allocate elements to insert
 		struct MPSCFQueueElement * entries = new MPSCFQueueElement[TEST_SIZE];
 		struct MPSCFQueueElement * res;
+		ticks t0;
 
 		//get current ID
 		int id = omp_get_thread_num();
 
 		//repeat the test
-		for ( j = 0 ; j < REPEAT ; j++)
+		for ( int j = 0 ; j < REPEAT ; j++)
 		{
 			//all thread insert except 0, or for sequential test, 0 does the two actions
 			if (id != 0 || threads == 1)
 			{
-				for ( i = 0 ; i < test_size ; i++)
+				for ( size_t i = 0 ; i < test_size ; i++)
 				{
 					t0 = sctk_alloc_rdtsc();
 					queue.insert(&entries[i],sizeof(entries[i]));
