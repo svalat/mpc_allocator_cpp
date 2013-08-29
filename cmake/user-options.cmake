@@ -23,7 +23,6 @@ set(ENABLE_ONE_TEST no CACHE BOOL "Compile all tests in one executable instead o
 if (NOT LIB_SUFFIX)
 	set(LIB_SUFFIX "")
 endif (NOT LIB_SUFFIX)
-message(STATUS "LIB_SUFFIX : ${LIB_SUFFIX}")
 
 ######################################################
 #Display info on current configuration
@@ -59,4 +58,33 @@ IF (ENABLE_RPATH)
 ENDIF(ENABLE_RPATH)
 
 ######################################################
-include_directories(${OPENPA_INCLUDE_DIR})
+IF (OPENPA_FOUND)
+	include_directories(${OPENPA_INCLUDE_DIR})
+ENDIF (OPENPA_FOUND)
+
+######################################################
+#select portability mode
+set(PORTABILITY_OS      Linux  )
+set(PORTABILITY_LOCKS   Pthread)
+IF (OPENPA_FOUND)
+	set(PORTABILITY_ATOMICS OpenPA )
+ELSE (OPENPA_FOUND)
+	set(PORTABILITY_ATOMICS GCC    )
+ENDIF(OPENPA_FOUND)
+
+#enable features for code
+add_definitions(-DOS_${PORTABILITY_OS} -DLOCKS_${PORTABILITY_LOCKS} -DATOMICS_${PORTABILITY_ATOMICS})
+
+######################################################
+message(STATUS "-------------------- SUMMARY ----------------------- --")
+message(STATUS "PREFIX : ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "LIB_SUFFIX : ${LIB_SUFFIX}")
+print_variable_status("ENABLE_JUNIT_OUTPUT")
+print_variable_status("ENABLE_VALGRIND")
+print_variable_status("ENABLE_GCC_COVERAGE")
+print_variable_status("DISABLE_TESTS")
+print_variable_status("ENABLE_ONE_TEST")
+message(STATUS "PORTABILITY_OS : ${PORTABILITY_OS}")
+message(STATUS "PORTABILITY_LOCKS : ${PORTABILITY_LOCKS}")
+message(STATUS "PORTABILITY_ATOMICS : ${PORTABILITY_ATOMICS}")
+message(STATUS "---------------------------------------------------- --")

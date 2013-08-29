@@ -7,7 +7,8 @@
 ######################################################
 
 ######################################################
-#Resuire 2.8.9 Due to use of CMAKE_POSITION_INDEPENDENT_CODE
+#Resuire 2.8.9 Due to use of CMAKE_POSITION_INDEPENDENT_CODE 
+#Require 2.8.9 Due to use of OBJECT keyword to build libraries
 cmake_minimum_required(VERSION 2.8.9)
 project(mpc_allocator_cpp)
 set(ALLOC_VERSION "0.0.0-dev")
@@ -20,14 +21,6 @@ add_definitions(-D_GNU_SOURCE)
 add_definitions(-DHAVE_COLOR)
 
 ######################################################
-#select portability mode
-set(PORTABILITY_OS      Linux  )
-set(PORTABILITY_LOCKS   Pthread)
-set(PORTABILITY_ATOMICS OpenPA )
-#enable features for code
-add_definitions(-DOS_${PORTABILITY_OS} -DLOCKS_${PORTABILITY_LOCKS} -DATOMICS_${PORTABILITY_ATOMICS})
-
-######################################################
 #Add internal search path for scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 
@@ -37,6 +30,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/enable-options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack-options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/check-deps.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/user-options.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/macros.cmake)
 
 ######################################################
 #some include dirs

@@ -4,7 +4,7 @@
 /*********************  STRUCT  *********************/
 struct ListElement
 {
-	ListElement();
+	ListElement() {this->next = this;this->prev = this;};
 	ListElement * getListHandler(void) {return this;}
 	static ListElement * getFromListHandler(ListElement * list) {return list;}
 	ListElement * next;

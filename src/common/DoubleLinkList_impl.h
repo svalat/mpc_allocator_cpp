@@ -7,13 +7,6 @@
 #include <TypeToJson.h>
 
 /*******************  FUNCTION  *********************/
-inline ListElement::ListElement()
-{
-	this->next = this;
-	this->prev = this;
-}
-
-/*******************  FUNCTION  *********************/
 template <class T>
 void DoubleLinkList<T>::checkSize ( Size size )
 {

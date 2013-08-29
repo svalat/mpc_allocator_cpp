@@ -9,7 +9,7 @@
 ######################################################
 #For allocator
 find_package(Threads REQUIRED)
-find_package(OpenPA  REQUIRED)
+find_package(OpenPA  QUIET)
 #For tests
 if (NOT DISABLE_TESTS)
 	find_package(OpenMP  REQUIRED)

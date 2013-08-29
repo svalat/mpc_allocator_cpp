@@ -2,6 +2,7 @@
 #define LINUX_ATOMIC_PTR_H
 
 /********************  HEADERS  *********************/
+#include <stdlib.h>
 #include <Atomics.h>
 
 /*********************  CLASS  **********************/
