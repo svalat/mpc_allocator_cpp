@@ -18,13 +18,14 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 
 	//errors
 	assert(this != NULL);
-	assert(size >= MEDIUM_MIN_INNER_SIZE);
 	assert(align == BASIC_ALIGN);//TODO need support
 	assert(align >= BASIC_ALIGN);
 	
 	//trivial
 	if ( size == 0)
 		return NULL;
+	else if (size < MEDIUM_MIN_INNER_SIZE)
+		size = MEDIUM_MIN_INNER_SIZE;
 	
 	//zero
 	if (zeroFilled != NULL)
@@ -235,7 +236,11 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	//check if can realloc the next one
 	//TODO maybe find a way to avoid to retake the lock for next malloc call
 	OPTIONAL_CRITICAL(spinlock,useLocks);
-		MediumChunk * merged = pool.tryMergeForSize(chunk,size);
+		MediumChunk * merged;
+		if (size > oldSize)
+			merged = pool.tryMergeForSize(chunk,size);
+		else
+			merged = chunk;
 		if (merged != NULL)
 		{
 			//check

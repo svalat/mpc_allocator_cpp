@@ -38,7 +38,8 @@ include_directories(src/common)
 include_directories(src/chunks)
 include_directories(src/json)
 include_directories(src/mmsource)
-include_directories(src/portability/)
+include_directories(src/portability)
+include_directories(src/posix)
 
 ######################################################
 #manage subdirs

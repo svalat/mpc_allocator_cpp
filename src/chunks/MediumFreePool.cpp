@@ -14,10 +14,10 @@ const Size cstDefaultFreeSizes[NB_FREE_LIST] = {16, 24,
 int reverseDefaultFreeSizes(Size size,const Size * sizeList,int nbLists)
 {
 	//errors
-	assert(sizeList == cstDefaultFreeSizes);
-	assert(64 >> 5 == 2);
-	assert(sizeList[45] == -1UL);
-	assert(size >= 16);
+	allocAssert(sizeList == cstDefaultFreeSizes);
+	allocAssert(64 >> 5 == 2);
+	allocAssert(sizeList[45] == -1UL);
+	allocAssert(size >= 16);
 
 	if (size < 32)
 		return (int)(size/8) - 2;
@@ -51,9 +51,9 @@ MediumFreePool::MediumFreePool ( const Size freeSizes[48], ReverseAnalyticFreeSi
 /*******************  FUNCTION  *********************/
 void MediumFreePool::init ( const Size freeSizes[48], ReverseAnalyticFreeSize analyticRevers )
 {
-	assert(freeSizes != NULL);
-	assert(this != NULL);
-	assert(freeSizes[NB_FREE_LIST-1]==-1UL);
+	allocAssert(freeSizes != NULL);
+	allocAssert(this != NULL);
+	allocAssert(freeSizes[NB_FREE_LIST-1]==-1UL);
 	
 	//setup sizes
 	this->sizes = freeSizes;
@@ -76,11 +76,11 @@ void MediumFreePool::init ( const Size freeSizes[48], ReverseAnalyticFreeSize an
 		else
 				nbLists++;
 		//TODO
-		assert(nbLists < NB_FREE_LIST);
+		allocAssert(nbLists < NB_FREE_LIST);
 		//assume_m(pool->nb_free_lists < NB_FREE_LIST,"Error while calculating number of free lists.");
 	} else {
 		//TODO
-		assert(false);
+		allocAssert(false);
 		//warning("Caution, the last free list size must be -1, you didn't follow this requirement, this may leed to errors.");
 	}
 }
@@ -89,9 +89,9 @@ void MediumFreePool::init ( const Size freeSizes[48], ReverseAnalyticFreeSize an
 ChunkFreeList* MediumFreePool::getFreeList ( Size innerSize )
 {
 	//errors
-	assert(this != NULL);
-	assert(sizes != NULL);
-	assert( innerSize > 0);
+	allocAssert(this != NULL);
+	allocAssert(sizes != NULL);
+	allocAssert( innerSize > 0);
 	
 	if (analyticRevers == NULL)
 		return getFreeListByDichotomy( innerSize );
@@ -108,11 +108,11 @@ ChunkFreeList* MediumFreePool::getFreeListByDichotomy ( Size innerSize )
 	const Size * ptr = sizes;
 	
 	//errors
-	assert(ptr != NULL);
-	assert(this != NULL);
-	assert( innerSize > 0);
-	assert(4 >> 1 == 2);//required property to quickly divide by 2
-	assert(innerSize >= ptr[0]);
+	allocAssert(ptr != NULL);
+	allocAssert(this != NULL);
+	allocAssert( innerSize > 0);
+	allocAssert(4 >> 1 == 2);//required property to quickly divide by 2
+	allocAssert(innerSize >= ptr[0]);
 	
 	if (ptr[0] >= innerSize )
 	{
@@ -131,7 +131,7 @@ ChunkFreeList* MediumFreePool::getFreeListByDichotomy ( Size innerSize )
 			i = seg_size >> 1;//divide by 2
 		}
 	}
-	assert(i >= 0 && ptr+i >= this->sizes);
+	allocAssert(i >= 0 && ptr+i >= this->sizes);
 	
 	return lists+(ptr-sizes+i);
 }
@@ -145,10 +145,10 @@ ChunkFreeList* MediumFreePool::getFreeListByAnalytic ( Size innerSize )
 	int pos;
 	
 	//errors
-	assert( innerSize > 0);
-	assert(this != NULL);
-	assert(sizeList != NULL);
-	assert(analyticRevers != NULL);
+	allocAssert( innerSize > 0);
+	allocAssert(this != NULL);
+	allocAssert(sizeList != NULL);
+	allocAssert(analyticRevers != NULL);
 
 	//get position by reverse analytic computation.
 	pos = analyticRevers( innerSize, sizeList,nbLists);
@@ -158,8 +158,8 @@ ChunkFreeList* MediumFreePool::getFreeListByAnalytic ( Size innerSize )
 		pos++;
 
 	//check
-	assert(pos >= 0 && pos <= nbLists);
-	assert(lists + pos == getFreeListByDichotomy( innerSize ));
+	allocAssert(pos >= 0 && pos <= nbLists);
+	allocAssert(lists + pos == getFreeListByDichotomy( innerSize ));
 
 	//return position
 	return lists + pos;
@@ -170,7 +170,7 @@ Size MediumFreePool::getListClass ( const ChunkFreeList* list ) const
 {
 	int id = (int)(list - lists);
 	#ifndef SCTK_ALLOC_FAST_BUT_LESS_SAFE
-	assert(id >= 0 && id < NB_FREE_LIST);
+	allocAssert(id >= 0 && id < NB_FREE_LIST);
 	//assume_m(id >= 0 && id < NB_FREE_LIST,"The given list didn't be a member of the given thread pool.");
 	#endif
 	return sizes[id];
@@ -184,14 +184,14 @@ void MediumFreePool::insert ( MediumChunk* chunk,ChunkInsertMode mode )
 	Size innerSize = chunk->getInnerSize();
 
 	//errors
-	assert(this != NULL);
-	assert(chunk->getInnerSize() >= sizeof(ChunkFreeList));
-	assert(chunk->getTotalSize() > 0);
-	assert(chunk->getStatus() == CHUNK_ALLOCATED);
+	allocAssert(this != NULL);
+	allocAssert(chunk->getInnerSize() >= sizeof(ChunkFreeList));
+	allocAssert(chunk->getTotalSize() > 0);
+	allocAssert(chunk->getStatus() == CHUNK_ALLOCATED);
 	
 	//get the free list
 	ChunkFreeList * flist = getFreeList(innerSize);
-	assert(flist != NULL);
+	allocAssert(flist != NULL);
 	
 	Size listClass = getListClass(flist);
 	if (flist != lists && listClass != -1UL && listClass != innerSize)
@@ -211,7 +211,7 @@ void MediumFreePool::insert ( MediumChunk* chunk,ChunkInsertMode mode )
 			break;
 		default:
 			//TODO
-			assert(false);
+			allocAssert(false);
 			//assume_m(false,"Unknown insert mode in free list.");
 			break;
 	}
@@ -231,10 +231,10 @@ void MediumFreePool::insert ( void* ptr, Size size,ChunkInsertMode mode )
 void MediumFreePool::remove ( MediumChunk* chunk )
 {
 	//errors
-	assert(chunk != NULL);
-	assert(this != NULL);
+	allocAssert(chunk != NULL);
+	allocAssert(this != NULL);
 	chunk->check();
-	assert(chunk->getStatus() == CHUNK_FREE);
+	allocAssert(chunk->getStatus() == CHUNK_FREE);
 	
 	ChunkFreeList * list = ChunkFreeList::remove(chunk);
 	if (list != NULL)
@@ -247,10 +247,10 @@ void MediumFreePool::remove ( MediumChunk* chunk )
 MediumChunk* MediumFreePool::findAdaptedChunk ( ChunkFreeList * list, Size innerSize )
 {
 	//errors
-	assert( innerSize >= 0);
-	assert(this != NULL);
-	assert( list != NULL);
-	assert( list >= lists && list < lists + nbLists);
+	allocAssert( innerSize >= 0);
+	allocAssert(this != NULL);
+	allocAssert( list != NULL);
+	allocAssert( list >= lists && list < lists + nbLists);
 
 	//first in the list fo oldest one -> FIFO
 	ChunkFreeList::Iterator it = list->begin();
@@ -270,8 +270,8 @@ MediumChunk* MediumFreePool::findChunk ( Size innerSize )
 	MediumChunk * res = NULL;
 
 	//errors
-	assert(innerSize > 0);
-	assert(this != NULL);
+	allocAssert(innerSize > 0);
+	allocAssert(this != NULL);
 	
 	//get the minimum valid size
 	ChunkFreeList * list = getFreeList(innerSize);
@@ -303,14 +303,14 @@ MediumChunk* MediumFreePool::findChunk ( Size innerSize )
 ChunkFreeList* MediumFreePool::getFirstNextNonEmptyList ( ChunkFreeList* list )
 {
 	//errors
-	assert(this != NULL);
-	assert(list != NULL);
-	assert(nbLists <= NB_FREE_LIST);
-	assert(list >= lists && list < lists + nbLists);
+	allocAssert(this != NULL);
+	allocAssert(list != NULL);
+	allocAssert(nbLists <= NB_FREE_LIST);
+	allocAssert(list >= lists && list < lists + nbLists);
 	
 	//get free list id
 	int id = (list - lists);
-	assert(id < nbLists);
+	allocAssert(id < nbLists);
 	
 	for (int i = id ; i < nbLists ; i++)
 	{
@@ -331,9 +331,9 @@ MediumChunk* MediumFreePool::merge ( MediumChunk* chunk )
 	MediumChunk * cur;
 
 	//error
-	assert(this != NULL);
-	assert(chunk != NULL);
-	assert(chunk->getStatus() == CHUNK_ALLOCATED);
+	allocAssert(this != NULL);
+	allocAssert(chunk != NULL);
+	allocAssert(chunk->getStatus() == CHUNK_ALLOCATED);
 	//assume_m(chunk->getStatus() == CHUNK_ALLOCATED,"The central chunk must be allocated to be merged.");
 	
 	//search for the first free chunk before the central one.
@@ -367,7 +367,7 @@ MediumChunk* MediumFreePool::merge ( MediumChunk* chunk )
 void MediumFreePool::setEmptyStatus ( ChunkFreeList* flist, bool filled )
 {
 	int id = (int)(flist - lists);
-	assert(id >= 0 && id < NB_FREE_LIST);
+	allocAssert(id >= 0 && id < NB_FREE_LIST);
 	
 	status[id] = filled;
 }
@@ -376,9 +376,9 @@ void MediumFreePool::setEmptyStatus ( ChunkFreeList* flist, bool filled )
 MediumChunk* MediumFreePool::tryMergeForSize ( MediumChunk* chunk, Size findInnerSize )
 {
 	//errors
-	assert(chunk != NULL);
-	assert( findInnerSize > 0);
-	assert( findInnerSize > chunk->getInnerSize());
+	allocAssert(chunk != NULL);
+	allocAssert( findInnerSize > 0);
+	allocAssert( findInnerSize > chunk->getInnerSize());
 	
 	//start to search
 	MediumChunk * cur = chunk->getNext();
