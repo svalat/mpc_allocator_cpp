@@ -5,7 +5,6 @@
 #include <cstdlib>
 
 /********************  MACRO  ***********************/
-#define OS_STDERR_FILENO 2
 #ifdef HAVE_COLOR
 	#define DEFAULT_COLOR    "\033[0m"
 	#define COLOR_RED        "\033[31m"

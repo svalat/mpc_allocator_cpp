@@ -9,12 +9,13 @@ enum MessageLevel
 {
 	MESSAGE_DEBUG        = 0,
 	MESSAGE_INFO         = 1,
-	MESSAGE_WARNING      = 2,
-	MESSAGE_ERROR        = 3,
-	MESSAGE_PERROR       = 4,
-	MESSAGE_FATAL        = 5,
-	MESSAGE_FATAL_PERROR = 6,
-	MESSAGE_ASSERT       = 7
+	MESSAGE_TRACE        = 2,
+	MESSAGE_WARNING      = 3,
+	MESSAGE_ERROR        = 4,
+	MESSAGE_PERROR       = 5,
+	MESSAGE_FATAL        = 6,
+	MESSAGE_FATAL_PERROR = 7,
+	MESSAGE_ASSERT       = 8
 };
 
 /*********************  STRUCT  *********************/
@@ -42,6 +43,14 @@ class DebugMessage
 	#define allocAssert( x )    do{} while(0)
 	#define allocCondDebug(x,m) do{} while(0)
 	#define allocDebug(...)     do{} while(0)
+#endif
+
+/********************  MACRO  ***********************/
+#define TRACE
+#ifdef TRACE
+	#define allocTrace          DebugMessage(MESSAGE_TRACE, MESSAGE_CODE_LOCATION).print
+#else
+	#define allocTrace(...)     do{} while(0)
 #endif
 
 /********************  MACRO  ***********************/

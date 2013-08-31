@@ -8,12 +8,15 @@
 #include "OS.h"
 
 /*********************  CONSTS  *********************/
-static const char * cstMessageLevelStr[] = {"Debug message" , "Info"          , "Warning"       , "Error"         ,
-	                                       "Error"         , "Fatal error"   , "Fatal error"   , "Assert failed" };
+static const char * cstMessageLevelStr[] = {"Debug message" , "Info"            , "Trace"                    ,
+                                            "Warning"       , "Error"           , "Error"                    , 
+                                            "Fatal error"   , "Fatal error"     , "Assert failed"            };
 static const int    cstMessageLevelFD [] = {OS_STDERR_FILENO, OS_STDERR_FILENO, OS_STDERR_FILENO, OS_STDERR_FILENO, 
-	                                        OS_STDERR_FILENO, OS_STDERR_FILENO, OS_STDERR_FILENO, OS_STDERR_FILENO};
-static const char * cstMessageColor   [] = {COLOR_CYAN      , COLOR_BLUE      , COLOR_YELLOW    , COLOR_RED       , 
-	                                        COLOR_RED       , COLOR_RED       , COLOR_RED       , COLOR_MAGENTA   };
+                                            OS_STDERR_FILENO, OS_STDERR_FILENO, OS_STDERR_FILENO, OS_STDERR_FILENO,
+                                            OS_STDERR_FILENO};
+static const char * cstMessageColor   [] = {COLOR_CYAN      , COLOR_BLUE      , COLOR_BLUE      , COLOR_YELLOW    , 
+                                            COLOR_RED       , COLOR_RED       , COLOR_RED       , COLOR_RED       , 
+                                            COLOR_MAGENTA   };
 
 /********************  MACRO  ***********************/
 #define BUFFER_SIZE (4*4096)
@@ -38,7 +41,11 @@ void DebugMessage::print ( const char* format, ... )
 	char glob[BUFFER_SIZE];
 	
 	//prepare the location line
-	size_t size = sprintf(loc,"%s%s at %s:%d (%s)\n%s" DEFAULT_COLOR "\n",cstMessageColor[level],cstMessageLevelStr[level],file,line,func,format);
+	size_t size;
+	if (level == MESSAGE_TRACE)
+		size = sprintf(loc,"%s%s : %s" DEFAULT_COLOR "\n",cstMessageColor[level],cstMessageLevelStr[level],format);
+	else
+		size = sprintf(loc,"%s%s at %s:%d (%s)\n%s" DEFAULT_COLOR "\n",cstMessageColor[level],cstMessageLevelStr[level],file,line,func,format);
 	assert(size <= sizeof(loc));
 	
 	//final line
