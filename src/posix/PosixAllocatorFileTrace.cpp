@@ -8,7 +8,7 @@
 static const char cstTraceFilename[] = "alloc-trace-%08d.raw";
 
 /********************  GLOBALS  *********************/
-static __thread int gblThreadId = -1;
+static __thread int gblThreadId = 0;
 static bool gblInit = false;
 
 /*******************  FUNCTION  *********************/
@@ -19,7 +19,7 @@ PosixAllocatorFileTrace::PosixAllocatorFileTrace ( void )
 	
 	//errors
 	allocAssert(gblInit == false);
-	nextThreadId = 0;
+	nextThreadId = 1;
 
 	//get pid
 	int pid = OS::getpid();
@@ -46,8 +46,9 @@ void PosixAllocatorFileTrace::writeEvent ( TraceEntry& entry, TraceEntryType typ
 	entry.threadId = gblThreadId;
 	
 	//check for threadId init
-	if (entry.threadId == -1)
+	if (entry.threadId <= 0)
 	{
+		allocDebug("Alloc trace new thread %d\n",nextThreadId);
 		entry.threadId = nextThreadId++;
 		gblThreadId = entry.threadId;
 	}
