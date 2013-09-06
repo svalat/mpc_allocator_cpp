@@ -85,7 +85,7 @@ void* PosixAllocatorFileTrace::malloc ( size_t size )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_MALLOC);
-		res = PosixAllocator::malloc(size);
+		res = super::malloc(size);
 		writeAnswer(res);
 	END_CRITICAL;
 	
@@ -108,7 +108,7 @@ void* PosixAllocatorFileTrace::aligned_alloc ( size_t alignment, size_t size )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_ALIGN_ALLOC);
-		res = PosixAllocator::aligned_alloc(alignment,size);
+		res = super::aligned_alloc(alignment,size);
 		writeAnswer(res);
 	END_CRITICAL;
 	
@@ -131,7 +131,7 @@ void* PosixAllocatorFileTrace::calloc ( size_t nmemb, size_t size )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_CALLOC);
-		res = PosixAllocator::calloc(nmemb,size);
+		res = super::calloc(nmemb,size);
 		writeAnswer(res);
 	END_CRITICAL;
 	
@@ -156,7 +156,7 @@ void PosixAllocatorFileTrace::free ( void* ptr )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_FREE);
-		PosixAllocator::free(ptr);
+		super::free(ptr);
 		writeAnswer(NULL);
 	END_CRITICAL;
 }
@@ -177,7 +177,7 @@ void* PosixAllocatorFileTrace::memalign ( size_t alignment, size_t size )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_MEMALIGN);
-		res = PosixAllocator::memalign(alignment,size);
+		res = super::memalign(alignment,size);
 		writeAnswer(res);
 	END_CRITICAL;
 	
@@ -200,7 +200,7 @@ int PosixAllocatorFileTrace::posix_memalign ( void** memptr, size_t alignment, s
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_POSIX_MEMALIGN);
-		res = PosixAllocator::posix_memalign(memptr,alignment,size);
+		res = super::posix_memalign(memptr,alignment,size);
 		writeAnswer(*memptr);
 	END_CRITICAL;
 	
@@ -223,7 +223,7 @@ void* PosixAllocatorFileTrace::realloc ( void* ptr, size_t size )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_REALLOC);
-		res = PosixAllocator::realloc(ptr,size);
+		res = super::realloc(ptr,size);
 		writeAnswer(res);
 	END_CRITICAL;
 	
@@ -245,7 +245,7 @@ void* PosixAllocatorFileTrace::pvalloc ( size_t size )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_PVALLOC);
-		res = PosixAllocator::pvalloc(size);
+		res = super::pvalloc(size);
 		writeAnswer(res);
 	END_CRITICAL;
 	
@@ -267,7 +267,7 @@ void* PosixAllocatorFileTrace::valloc ( size_t size )
 	
 	START_CRITICAL(lock);
 		writeEvent(event,TRACE_VALLOC);
-		res = PosixAllocator::valloc(size);
+		res = super::valloc(size);
 		writeAnswer(res);
 	END_CRITICAL;
 	

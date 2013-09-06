@@ -4,9 +4,10 @@
 /********************  HEADERS  *********************/
 #include "PosixAllocator.h"
 #include "AllocTraceStruct.h"
+#include "PosixAllocatorStd.h"
 
 /*********************  CLASS  **********************/
-class PosixAllocatorFileTrace : public PosixAllocator
+class PosixAllocatorFileTrace : public PosixAllocatorStd
 {
 	public:
 		PosixAllocatorFileTrace(void);
@@ -27,6 +28,8 @@ class PosixAllocatorFileTrace : public PosixAllocator
 		int fd;
 		Spinlock lock;
 		int nextThreadId;
+	private:
+		typedef PosixAllocatorStd super;
 };
 
 #endif //POSIX_ALLOCATOR_FILE_TRACE_H

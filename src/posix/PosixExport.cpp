@@ -3,11 +3,13 @@
 #include "PosixAllocator.h"
 #include "PosixAllocatorDebugTrace.h"
 #include "PosixAllocatorFileTrace.h"
+#include "PosixAllocatorStd.h"
 
 /*********************  TYPES  **********************/
 // typedef PosixAllocator SelectedPosixAllocator;
 // typedef PosixAllocatorDebugTrace SelectedPosixAllocator;
 typedef PosixAllocatorFileTrace SelectedPosixAllocator;
+// typedef PosixAllocatorStd SelectedPosixAllocator;
 
 /********************  GLOBALS  *********************/
 static char gblAllocatorStructMem[sizeof(SelectedPosixAllocator)];
@@ -25,7 +27,10 @@ static void allocInit(void)
 	
 	//check if another has done the job
 	if (gblAllocator == NULL)
+	{
 		gblAllocator = new (gblAllocatorStructMem) SelectedPosixAllocator;
+		gblAllocator->postInit();
+	}
 	
 	//unlock
 	Locks::unlock(gblAllocInitLock);

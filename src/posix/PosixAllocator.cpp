@@ -12,6 +12,12 @@ PosixAllocator::PosixAllocator ( void )
 }
 
 /*******************  FUNCTION  *********************/
+void PosixAllocator::postInit ( void )
+{
+
+}
+
+/*******************  FUNCTION  *********************/
 void PosixAllocator::free ( void* ptr )
 {
 	//errors

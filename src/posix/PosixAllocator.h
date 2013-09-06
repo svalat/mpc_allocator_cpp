@@ -11,6 +11,7 @@ class PosixAllocator
 {
 	public:
 		PosixAllocator(void);
+		virtual void postInit(void);
 		//The posix interface
 		void   free ( void* ptr );
 		void * malloc ( size_t size );

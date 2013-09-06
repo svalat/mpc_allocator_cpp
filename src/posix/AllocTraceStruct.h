@@ -72,4 +72,11 @@ struct TraceEntry
 	uint16_t type;
 };
 
+/*********************  STRUCT  *********************/
+struct TraceEntryComplete
+{
+	TraceEntry call;
+	uint64_t result;
+};
+
 #endif //ALLOC_TRACE_STRUC_H

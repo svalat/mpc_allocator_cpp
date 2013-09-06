@@ -34,3 +34,6 @@ add_subdirectory(posix)
 if (NOT DISABLE_TESTS)
 	add_subdirectory(tests)
 endif (NOT DISABLE_TESTS)
+
+######################################################
+add_subdirectory(tools)
