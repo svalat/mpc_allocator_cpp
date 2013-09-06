@@ -7,7 +7,6 @@
 #include <DummyMMSource.h>
 #include <Debug.h>
 #include <AtomicPtr.h>
-#include "StdPool.h"
 #include <TypeToJson.h>
 
 int main(int argc, char **argv) {
