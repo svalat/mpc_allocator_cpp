@@ -2,6 +2,7 @@
 #define SPINLOCKS_H
 
 /********************  HEADERS  *********************/
+#include <Common.h>
 #include <Locks.h>
 
 /*********************  CLASS  **********************/

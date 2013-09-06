@@ -40,6 +40,7 @@ include_directories(src/json)
 include_directories(src/mmsource)
 include_directories(src/portability)
 include_directories(src/posix)
+include_directories(extern/include)
 #some external include dirs
 include_directories(${HWLOC_INCLUDE_DIRS})
 

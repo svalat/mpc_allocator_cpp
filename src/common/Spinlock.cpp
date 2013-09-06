@@ -4,25 +4,25 @@
 /*******************  FUNCTION  *********************/
 Spinlock::Spinlock ( void )
 {
-	Locks::init(&spinlock);
+	Locks::init(spinlock);
 }
 
 /*******************  FUNCTION  *********************/
 Spinlock::~Spinlock ( void )
 {
-	Locks::destroy(&spinlock);
+	Locks::destroy(spinlock);
 }
 
 /*******************  FUNCTION  *********************/
 void Spinlock::lock ( void )
 {
-	Locks::lock(&spinlock);
+	Locks::lock(spinlock);
 }
 
 /*******************  FUNCTION  *********************/
 void Spinlock::unlock ( void )
 {
-	Locks::unlock(&spinlock);
+	Locks::unlock(spinlock);
 }
 
 /*******************  FUNCTION  *********************/

@@ -9,7 +9,7 @@
 class DummyMMSource : public IMMSource
 {
 	public:
-		DummyMMSource(RegionRegistry * registry);
+		DummyMMSource(RegionRegistry * registry = NULL);
 		virtual RegionSegmentHeader* map ( size_t innerSize, bool* zeroFilled, IChunkManager * manager = NULL );
 		virtual RegionSegmentHeader* remap ( RegionSegmentHeader* oldSegment, size_t newInnerSize, IChunkManager * manager = NULL );
 		virtual void unmap ( RegionSegmentHeader* segment);

@@ -31,9 +31,10 @@ class PosixAllocator
 		IChunkManager * getChunkManager(void * ptr);
 		bool isDistantManager(IChunkManager * manager);
 	private:
-		DummyMMSource mmSource;
 		RegionRegistry registry;
+		DummyMMSource mmSource;
 		MediumAllocator mediumAlloc;
+		bool isInit;
 };
 
 #endif //POSIX_ALLOCATOR_H
