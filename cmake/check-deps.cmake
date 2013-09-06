@@ -9,6 +9,7 @@
 ######################################################
 #For allocator
 find_package(Threads REQUIRED)
+find_package(Hwloc   REQUIRED)
 find_package(OpenPA  QUIET)
 #For tests
 if (NOT DISABLE_TESTS)

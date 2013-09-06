@@ -16,11 +16,11 @@ set(ALLOC_BASE_OBJS $<TARGET_OBJECTS:alloc_mmsource>
 
 ######################################################
 add_library(alloc_base SHARED ${ALLOC_BASE_OBJS})
-target_link_libraries(alloc_base ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(alloc_base ${CMAKE_THREAD_LIBS_INIT} ${HWLOC_LIBRARY})
 
 ######################################################
 add_library(alloc SHARED ${ALLOC_BASE_OBJS} $<TARGET_OBJECTS:alloc_posix_export>)
-target_link_libraries(alloc ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(alloc ${CMAKE_THREAD_LIBS_INIT} ${HWLOC_LIBRARY})
 
 ######################################################
 add_subdirectory(common)

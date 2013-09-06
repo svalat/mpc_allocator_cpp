@@ -1,2 +1,2 @@
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_library(alloc_portability OBJECT OS${PORTABILITY_OS}.cpp)
+add_library(alloc_portability OBJECT OS${PORTABILITY_OS}.cpp Topo${PORTABILITY_TOPO}.cpp)
