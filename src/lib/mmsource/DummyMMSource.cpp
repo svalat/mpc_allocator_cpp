@@ -1,8 +1,8 @@
 /********************  HEADERS  *********************/
-#include <cassert>
-#include <Common.h>
-#include <RegionRegistry.h>
-#include <OS.h>
+#include "Common.h"
+#include "RegionRegistry.h"
+#include "OS.h"
+#include "Debug.h"
 #include "DummyMMSource.h"
 
 /********************  NAMESPACE  *******************/
@@ -19,7 +19,7 @@ DummyMMSource::DummyMMSource ( RegionRegistry* registry)
 RegionSegmentHeader* DummyMMSource::map ( size_t innerSize, bool* zeroFilled, IChunkManager * manager )
 {
 	//errors
-	assert(innerSize > 0);
+	allocAssert(innerSize > 0);
 	
 	//compute total size
 	size_t totalSize = innerSize + sizeof(RegionSegmentHeader);
@@ -54,7 +54,7 @@ RegionSegmentHeader* DummyMMSource::map ( size_t innerSize, bool* zeroFilled, IC
 void DummyMMSource::unmap ( RegionSegmentHeader* segment )
 {
 	//errors
-	assert(segment != NULL);
+	allocAssert(segment != NULL);
 	
 	//unregister
 	if (registry != NULL && segment->getManager() != NULL)
@@ -68,7 +68,7 @@ void DummyMMSource::unmap ( RegionSegmentHeader* segment )
 RegionSegmentHeader* DummyMMSource::remap ( RegionSegmentHeader* oldSegment, size_t newInnerSize , IChunkManager * manager )
 {
 	//errors
-	assert(oldSegment != NULL);
+	allocAssert(oldSegment != NULL);
 	
 	//checkup size
 	size_t totalSize = newInnerSize + sizeof(RegionSegmentHeader);

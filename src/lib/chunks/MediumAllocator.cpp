@@ -156,6 +156,13 @@ void MediumAllocator::free ( void* ptr )
 	if(chunk == NULL)
 		return;
 	
+	//check status
+	if (chunk->getStatus() == CHUNK_FREE)
+	{
+		allocCondWarning(ALLOC_DO_WARNING,"Double free, ignoring the request.");
+		return;
+	}
+	
 	//take lock for the current function
 	OPTIONAL_CRITICAL(spinlock,useLocks);
 		//try merge

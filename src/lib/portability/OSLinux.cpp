@@ -1,9 +1,7 @@
 /********************  HEADERS  *********************/
-#include "OS.h"
 #include <Common.h>
 #include <Debug.h>
 //standard
-#include <cassert>
 #include <cstdio>
 //for mmap/munmap
 //for mremap require -D_GNU_SOURCE on compiler
@@ -15,6 +13,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+//internal
+#include "Debug.h"
+#include "OSLinux.h"
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
@@ -57,9 +58,9 @@ size_t OSUnix::safeWrite ( int fd, const void * value, size_t size )
 void* OSLinux::mremap ( void* addr, size_t old_size, size_t new_size, void* dest_addr )
 {
 	//errors
-	assert(addr != NULL);
-	assert(old_size % PAGE_SIZE == 0);
-	assert(new_size % PAGE_SIZE == 0);
+	allocAssert(addr != NULL);
+	allocAssert(old_size % PAGE_SIZE == 0);
+	allocAssert(new_size % PAGE_SIZE == 0);
 	
 	void * res = ::mremap(addr,old_size,new_size,MREMAP_MAYMOVE);
 	

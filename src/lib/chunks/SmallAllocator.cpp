@@ -119,7 +119,7 @@ void SmallAllocator::refill ( void )
 	
 	//get inner segment
 	void * ptr = segment->getPtr();
-	assert(segment == RegionSegmentHeader::getSegment(ptr));
+	allocAssert(segment == RegionSegmentHeader::getSegment(ptr));
 	
 	//build chunk
 	Size innerSize = segment->getInnerSize();

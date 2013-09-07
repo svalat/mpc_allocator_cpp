@@ -62,6 +62,7 @@ void* PosixAllocator::aligned_alloc ( size_t alignment, size_t size )
 	//errors
 	allocAssert(isInit);
 
+	allocWarning("Not implemented");
 	allocAssert(size % alignment == 0);
 	return internalMalloc(size,alignment);
 }
@@ -167,6 +168,7 @@ void* PosixAllocator::memalign ( size_t alignment, size_t size )
 	allocAssert(isInit);
 
 	//do it
+	allocWarning("Not implemented");
 	void * res = internalMalloc(size,alignment);
 	
 	return res;
@@ -187,6 +189,7 @@ int PosixAllocator::posix_memalign ( void** memptr, size_t alignment, size_t siz
 	if (memptr == NULL)
 		return -1;
 	
+	allocWarning("Not implemented");
 	*memptr = internalMalloc(size,alignment);
 	
 	//TODO fill perror
