@@ -1,9 +1,8 @@
 /********************  HEADERS  *********************/
-#include "MediumChunk.h"
 #include <cstdlib>
-#include <cassert>
-#include <TypeToJson.h>
-#include <Debug.h>
+#include "Debug.h"
+#include "TypeToJson.h"
+#include "MediumChunk.h"
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
@@ -13,8 +12,8 @@ namespace MPCAllocator
 MediumChunk* MediumChunk::setup ( void* ptr, Size totalSize )
 {
 	//errors
-	assert( totalSize >= sizeof(MediumChunk) + BASIC_ALIGN);
-	assert( totalSize % BASIC_ALIGN == 0);
+	allocAssert( totalSize >= sizeof(MediumChunk) + BASIC_ALIGN);
+	allocAssert( totalSize % BASIC_ALIGN == 0);
 	
 	//setup first bloc
 	MediumChunk * res = setup(ptr,NULL,totalSize - sizeof(MediumChunk));
@@ -29,8 +28,8 @@ MediumChunk* MediumChunk::setup ( void* ptr, Size totalSize )
 MediumChunk* MediumChunk::setup ( void* ptr, MediumChunk* prev, MediumChunk* next )
 {
 	//errors
-	assert(next > ptr || next == NULL);
-	assert(prev < ptr);
+	allocAssert(next > ptr || next == NULL);
+	allocAssert(prev < ptr);
 
 	//generic setup
 	MediumChunk * res = setup(ptr);
@@ -45,8 +44,8 @@ MediumChunk* MediumChunk::setup ( void* ptr, MediumChunk* prev, MediumChunk* nex
 /*******************  FUNCTION  *********************/
 MediumChunk* MediumChunk::setup ( void* ptr, MediumChunk* prev, Size totalSize )
 {
-	assert(prev < ptr);
-	assert( totalSize == 0 || totalSize >= sizeof(MediumChunk) + BASIC_ALIGN);
+	allocAssert(prev < ptr);
+	allocAssert( totalSize == 0 || totalSize >= sizeof(MediumChunk) + BASIC_ALIGN);
 	
 	MediumChunk * res = setup(ptr);
 
@@ -63,8 +62,8 @@ MediumChunk* MediumChunk::setup ( void* ptr, MediumChunk* prev, Size totalSize )
 MediumChunk * MediumChunk::setup ( void * ptr )
 {
 	MediumChunk * res = (MediumChunk *)ptr;
-	assert(res != NULL);
-	assert((Addr)ptr % sizeof(Addr) == 0);
+	allocAssert(res != NULL);
+	allocAssert((Addr)ptr % sizeof(Addr) == 0);
 	
 	#ifndef OPTIMIZED
 	res->prev = NULL;
@@ -80,13 +79,13 @@ MediumChunk * MediumChunk::setup ( void * ptr )
 /*******************  FUNCTION  *********************/
 void MediumChunk::check ( void ) const
 {
-	assert(this != NULL);
-	assert(status == CHUNK_FREE || status == CHUNK_ALLOCATED);
-	assert(magick == MAGICK_VALUE);
+	allocAssert(this != NULL);
+	allocAssert(status == CHUNK_FREE || status == CHUNK_ALLOCATED);
+	allocAssert(magick == MAGICK_VALUE);
 	if (prev != NULL)
-		assert(prev->next == this);
+		allocAssert(prev->next == this);
 	if (next != NULL)
-		assert(next->prev == this);
+		allocAssert(next->prev == this);
 }
 
 /*******************  FUNCTION  *********************/
@@ -128,7 +127,7 @@ ChunkStatus MediumChunk::getStatus ( void ) const
 /*******************  FUNCTION  *********************/
 void MediumChunk::setStatus ( ChunkStatus status )
 {
-	assert(status == CHUNK_FREE || status == CHUNK_ALLOCATED);
+	allocAssert(status == CHUNK_FREE || status == CHUNK_ALLOCATED);
 	this->status = status;
 }
 
@@ -159,7 +158,7 @@ MediumChunk* MediumChunk::split ( Size innerSize )
 /*******************  FUNCTION  *********************/
 bool MediumChunk::isSingle ( void ) const
 {
-	assert(this != NULL);
+	allocAssert(this != NULL);
 	//this->status == CHUNK_FREE && 
 	return (this->prev == NULL && this->next->next == NULL);
 }
@@ -192,7 +191,7 @@ MediumChunk* MediumChunk::getChunkSafe ( void* ptr )
 		return NULL;
 	
 	MediumChunk * chunk = (MediumChunk*)ptr - 1;
-	chunk->check();//TODO implementer strict (work without asserts) check and return NULL if not ok
+	chunk->check();//TODO implementer strict (work without allocAsserts) check and return NULL if not ok
 	
 	return chunk;
 }
@@ -205,7 +204,7 @@ void MediumChunk::merge ( MediumChunk* last )
 	//errors
 	first->check();
 	last->check();
-	assert(last >= first);
+	allocAssert(last >= first);
 
 	if (first == last)
 		return;

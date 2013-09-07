@@ -40,8 +40,8 @@ class DebugMessage
 
 /********************  MACRO  ***********************/
 #ifndef NDEBUG
-	#define allocAssert(x)      do { if (!(x)) DebugMessage(MESSAGE_ASSERT , MESSAGE_CODE_LOCATION).print(#x);  } while(0)
-	#define allocCondDebug(x,m) do { if (!(x)) DebugMessage(MESSAGE_DEBUG  , MESSAGE_CODE_LOCATION).print((m)); } while(0)
+	#define allocAssert(x)      do { if (!(x)) DebugMessage(MESSAGE_ASSERT , MESSAGE_CODE_LOCATION).print("%s",#x);  } while(0)
+	#define allocCondDebug(x,m) do { if (!(x)) DebugMessage(MESSAGE_DEBUG  , MESSAGE_CODE_LOCATION).print("%s",(m)); } while(0)
 	#define allocDebug          DebugMessage(MESSAGE_DEBUG, MESSAGE_CODE_LOCATION).print
 #else
 	#define allocAssert( x )    do{} while(0)

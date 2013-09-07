@@ -9,9 +9,9 @@
 using namespace MPCAllocator;
 
 /*********************  TYPES  **********************/
-typedef PosixAllocator SelectedPosixAllocator;
+// typedef PosixAllocator SelectedPosixAllocator;
 // typedef PosixAllocatorDebugTrace SelectedPosixAllocator;
-// typedef PosixAllocatorFileTrace SelectedPosixAllocator;
+typedef PosixAllocatorFileTrace SelectedPosixAllocator;
 // typedef PosixAllocatorStd SelectedPosixAllocator;
 
 /********************  GLOBALS  *********************/

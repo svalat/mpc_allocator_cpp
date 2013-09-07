@@ -1,7 +1,8 @@
 /********************  HEADERS  *********************/
 #include <cstring>
+#include "Debug.h"
 #include "MediumAllocator.h"
-#include <RegionRegistry.h>
+#include "RegionRegistry.h"
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
@@ -21,9 +22,9 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 	MediumChunk * chunk = NULL;
 
 	//errors
-	assert(this != NULL);
-	assert(align == BASIC_ALIGN);//TODO need support
-	assert(align >= BASIC_ALIGN);
+	allocAssert(this != NULL);
+	allocAssert(align == BASIC_ALIGN);//TODO need support
+	allocAssert(align >= BASIC_ALIGN);
 	
 	//trivial
 	if ( size == 0)
@@ -51,7 +52,7 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 		
 		//try to split
 		MediumChunk * residut = split(chunk,size);
-		assert(chunk->getInnerSize() >= size);
+		allocAssert(chunk->getInnerSize() >= size);
 		if (residut != NULL)
 			pool.insert(residut,CHUNK_INSERT_LIFO);
 		//assume_m(sctk_alloc_get_size(vchunk) >= sctk_alloc_calc_chunk_size(size), "Size error in chunk spliting function.");
@@ -90,7 +91,7 @@ MediumChunk* MediumAllocator::split ( MediumChunk* chunk,size_t innerSize )
 MediumChunk* MediumAllocator::refill ( size_t size, bool * zeroFilled )
 {
 	//errors
-	assert(size > 0);
+	allocAssert(size > 0);
 	
 	//trivial
 	if (memorySource == NULL)
@@ -100,16 +101,16 @@ MediumChunk* MediumAllocator::refill ( size_t size, bool * zeroFilled )
 	RegionSegmentHeader * segment = memorySource->map(size,zeroFilled,this);
 	if (segment == NULL)
 		return NULL;
-	assert(segment->getInnerSize() >= size);
+	allocAssert(segment->getInnerSize() >= size);
 	
 	//get inner segment
 	void * ptr = segment->getPtr();
-	assert(segment == RegionSegmentHeader::getSegment(ptr));
+	allocAssert(segment == RegionSegmentHeader::getSegment(ptr));
 	
 	//build chunk
 	Size innerSize = segment->getInnerSize();
 	MediumChunk * chunk = MediumChunk::setup(ptr,innerSize);
-	assert(segment == RegionSegmentHeader::getSegment(chunk));
+	allocAssert(segment == RegionSegmentHeader::getSegment(chunk));
 	
 	//ok return it
 	return chunk;
@@ -122,8 +123,8 @@ void MediumAllocator::fill ( void* ptr, size_t size, RegionRegistry * registry )
 	MediumChunk * chunk = NULL;
 
 	//errors
-	assert(ptr != NULL);
-	assert(size > 0);
+	allocAssert(ptr != NULL);
+	allocAssert(size > 0);
 	
 	//trivial
 	if (ptr == NULL || size == 0)
@@ -173,7 +174,7 @@ void MediumAllocator::free ( void* ptr )
 	//if need final free to mm source
 	if (memorySource != NULL && chunk != NULL)
 	{
-		assert(chunk->isSingle());
+		allocAssert(chunk->isSingle());
 		memorySource->unmap(RegionSegmentHeader::getSegment(chunk));
 	}
 }
@@ -228,7 +229,7 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	
 	//get old size
 	MediumChunk * chunk = MediumChunk::getChunkSafe(ptr);
-	assert(chunk != NULL);
+	allocAssert(chunk != NULL);
 	//TODO assume
 	Size oldSize = chunk->getInnerSize();
 	Size delta = oldSize - size;
@@ -248,12 +249,12 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 		if (merged != NULL)
 		{
 			//check
-			assert(merged == chunk);
-			assert(merged->getInnerSize() >= size);
+			allocAssert(merged == chunk);
+			allocAssert(merged->getInnerSize() >= size);
 	
 			//check for split
 			MediumChunk * residut = split(merged,size);
-			assert(merged->getInnerSize() >= size);
+			allocAssert(merged->getInnerSize() >= size);
 			if (residut != NULL)
 				pool.insert(residut,CHUNK_INSERT_LIFO);
 			
