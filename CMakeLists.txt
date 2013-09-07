@@ -9,6 +9,7 @@
 ######################################################
 #Resuire 2.8.9 Due to use of CMAKE_POSITION_INDEPENDENT_CODE 
 #Require 2.8.9 Due to use of OBJECT keyword to build libraries
+#Otherwise it may be 2.7 or 2.6 or something similar
 cmake_minimum_required(VERSION 2.8.9)
 project(mpc_allocator_cpp)
 set(ALLOC_VERSION "0.0.0-dev")
@@ -34,12 +35,12 @@ include(${CMAKE_SOURCE_DIR}/cmake/macros.cmake)
 
 ######################################################
 #some include dirs
-include_directories(src/common)
-include_directories(src/chunks)
-include_directories(src/json)
-include_directories(src/mmsource)
-include_directories(src/portability)
-include_directories(src/posix)
+include_directories(src/lib/common)
+include_directories(src/lib/chunks)
+include_directories(src/lib/json)
+include_directories(src/lib/mmsource)
+include_directories(src/lib/portability)
+include_directories(src/lib/posix)
 include_directories(extern/include)
 #some external include dirs
 include_directories(${HWLOC_INCLUDE_DIRS})
