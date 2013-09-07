@@ -1,5 +1,6 @@
 /********************  HEADERS  *********************/
 #include <cstring>
+#include "Debug.h"
 #include "RegionRegistry.h"
 #include "OS.h"
 
@@ -7,10 +8,10 @@
 RegionSegmentHeader* RegionSegmentHeader::setup ( void* ptr, Size totalSize, IChunkManager* manager )
 {
 	//TODO maybe some assume
-	assert(ptr != NULL);
-	assert( totalSize >= REGION_SPLITTING);
-	assert(manager != NULL);
-	assert(totalSize >= sizeof(RegionSegmentHeader));
+	allocAssert(ptr != NULL);
+	allocAssert( totalSize >= REGION_SPLITTING);
+	allocAssert(manager != NULL);
+	allocAssert(totalSize >= sizeof(RegionSegmentHeader));
 
 	RegionSegmentHeader * res = (RegionSegmentHeader*)ptr;
 	res->totalSize = totalSize;
@@ -28,21 +29,21 @@ bool RegionSegmentHeader::contain ( void* ptr ) const
 /*******************  FUNCTION  *********************/
 IChunkManager* RegionSegmentHeader::getManager ( void )
 {
-	assert(this != NULL);
+	allocAssert(this != NULL);
 	return manager;
 }
 
 /*******************  FUNCTION  *********************/
 Size RegionSegmentHeader::getTotalSize ( void ) const
 {
-	assert(this != NULL);
+	allocAssert(this != NULL);
 	return totalSize;
 }
 
 /*******************  FUNCTION  *********************/
 Size RegionSegmentHeader::getInnerSize ( void ) const
 {
-	assert(this != NULL);
+	allocAssert(this != NULL);
 	return totalSize - sizeof(*this);
 }
 
@@ -70,12 +71,12 @@ bool Region::isEmpty ( void ) const
 int RegionRegistry::getRegionId ( Addr addr )
 {
 	//errors
-	assert(addr != ADDR_NULL);
-	assert(addr < PHYS_MAX_ADDR);
+	allocAssert(addr != ADDR_NULL);
+	allocAssert(addr < PHYS_MAX_ADDR);
 	
 	/** @TODO can be optimize if we consider power of 2 **/
 	int id = (int)(addr / REGION_SIZE);
-	assert(id >= 0 && (Size)id < MAX_REGIONS);
+	allocAssert(id >= 0 && (Size)id < MAX_REGIONS);
 	
 	return id;
 }
@@ -85,9 +86,12 @@ Region* RegionRegistry::setupNewRegion ( Addr ptr )
 {
 	Region * region = NULL;
 	
+	//errors
+	allocAssume(ptr < PHYS_MAX_ADDR,"Address is too big to be registered into the global region registry !");
+	
 	//get region ID
 	int id = getRegionId(ptr);
-	assert(id >= 0);
+	allocAssert(id >= 0);
 
 	//ensure init and take the lock
 	START_CRITICAL(spinlock)
@@ -119,6 +123,12 @@ RegionEntry* RegionRegistry::getRegionEntry ( Addr ptr , bool createIdNotExist)
 {
 	 //vars
 	Addr id;
+	
+	if (ptr > PHYS_MAX_ADDR)
+	{
+		allocWarning("Invalid address range in request for region registry : %p !",ptr);
+		return NULL;
+	}
 
 	//get the local region
 	struct Region * region = getRegion(ptr);
@@ -132,8 +142,8 @@ RegionEntry* RegionRegistry::getRegionEntry ( Addr ptr , bool createIdNotExist)
 	id = (((Addr)ptr) % REGION_SIZE) / REGION_SPLITTING;
 
 	//check
-	assert(id >= 0);
-	assert(id < REGION_ENTRIES);
+	allocAssert(id >= 0);
+	allocAssert(id < REGION_ENTRIES);
 
 	//return id
 	return region->entries + id;
@@ -170,8 +180,8 @@ void RegionRegistry::remove ( void * ptr )
 	//get the entry to remove
 	RegionSegmentHeader * segment = getSegment(ptr);
 	//TODO assume
-	assert(segment != NULL);
-	assert(segment->contain(ptr));
+	allocAssert(segment != NULL);
+	allocAssert(segment->contain(ptr));
 	
 	remove(segment);
 }
@@ -183,14 +193,14 @@ void RegionRegistry::remove ( RegionSegmentHeader* segment )
 	Size entrySize = segment->getTotalSize();
 
 	//errors
-	assert( segment != NULL);
+	allocAssert( segment != NULL);
 
 	//TODO can be optimized by playing with REGIN size multiples with ++
 	for (Size offset = 0 ; offset < entrySize ; offset += REGION_SPLITTING)
 	{
 		RegionEntry * localEntry = getRegionEntry(ptr + offset,false);
 		//TODO assume
-		assert(localEntry != NULL);
+		allocAssert(localEntry != NULL);
 		if (*localEntry == segment )
 			*localEntry = NULL;
 	}
@@ -202,14 +212,14 @@ void RegionRegistry::setEntry ( RegionSegmentHeader* segment )
 	Addr ptr = (Addr)segment;
 
 	//errors
-	assert(segment != NULL);
-	assert(segment->getManager() != NULL);
-	assert(segment->contain(segment));
-	//assert(! (chain->flags & SCTK_ALLOC_CHAIN_DISABLE_REGION_REGISTER));
+	allocAssert(segment != NULL);
+	allocAssert(segment->getManager() != NULL);
+	allocAssert(segment->contain(segment));
+	//allocAssert(! (chain->flags & SCTK_ALLOC_CHAIN_DISABLE_REGION_REGISTER));
 
 	//warn if too small
 	if (segment->getTotalSize() < REGION_SPLITTING)
-		assert(false);
+		allocAssert(false);
 	//TODO wanring
 	//warning("Caution, using macro blocs smaller than SCTK_MACRO_BLOC_SIZE is dangerous, check usage of flag SCTK_ALLOC_CHAIN_DISABLE_REGION_REGISTER.");
 	
@@ -220,8 +230,8 @@ void RegionRegistry::setEntry ( RegionSegmentHeader* segment )
 	{
 		RegionEntry * localEntry = getRegionEntry(ptr + offset,true);
 		//TODO assume
-		assert(localEntry != NULL);
-		assert(*localEntry == NULL);
+		allocAssert(localEntry != NULL);
+		allocAssert(*localEntry == NULL);
 		*localEntry = segment;
 	}
 }
@@ -236,7 +246,7 @@ bool RegionRegistry::hasEntry ( void* ptr )
 bool RegionRegistry::isOnSplttingLimit ( Addr ptr ) const
 {
 	//TODO optimize for power of 2
-	assert( (ptr % REGION_SPLITTING == 0) == ((ptr & (REGION_SPLITTING-1)) == 0));
+	allocAssert( (ptr % REGION_SPLITTING == 0) == ((ptr & (REGION_SPLITTING-1)) == 0));
 	return ((ptr & (REGION_SPLITTING-1)) == 0);
 }
 
@@ -250,7 +260,7 @@ void RegionRegistry::clearAll ( void )
 			{
 				//TODO warning
 				//if (regions[i]->isEmpty() == false)
-				//	assert(false);
+				//	allocAssert(false);
 				
 				//free mem
 				OS::mmap(regions[i],sizeof(Region));
@@ -272,9 +282,7 @@ RegionRegistry::RegionRegistry ( void )
 RegionSegmentHeader* RegionRegistry::getSegmentSafe ( void* ptr )
 {
 	RegionSegmentHeader* res = getSegment(ptr);
-	//TODO assume
-	if (res == NULL)
-		assert(false);
+	allocCondWarning(res != NULL && ALLOC_DO_WARNING,"Failed to find the requested adress in global registry, it may not be allocated by this allocator.");
 	return res;
 }
 
@@ -287,7 +295,7 @@ RegionRegistry::~RegionRegistry ( void )
 /*******************  FUNCTION  *********************/
 void Region::clear ( void )
 {
-	assert(this != NULL);
+	allocAssert(this != NULL);
 	memset(entries,0,sizeof(entries));
 }
 
@@ -295,9 +303,9 @@ void Region::clear ( void )
 RegionSegmentHeader* RegionRegistry::setEntry ( void* ptr, Size totalSize, IChunkManager* manager )
 {
 	//errors
-	assert(ptr != NULL);
-	assert(totalSize >= REGION_SPLITTING);
-	assert(manager != NULL);
+	allocAssert(ptr != NULL);
+	allocAssert(totalSize >= REGION_SPLITTING);
+	allocAssert(manager != NULL);
 
 	RegionSegmentHeader * res = RegionSegmentHeader::setup(ptr,totalSize,manager);
 	setEntry(res);

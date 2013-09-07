@@ -7,7 +7,7 @@
 #include "PosixAllocatorStd.h"
 
 /*********************  CLASS  **********************/
-class PosixAllocatorFileTrace : public PosixAllocatorStd
+class PosixAllocatorFileTrace : public PosixAllocator
 {
 	public:
 		PosixAllocatorFileTrace(void);
@@ -29,7 +29,7 @@ class PosixAllocatorFileTrace : public PosixAllocatorStd
 		Spinlock lock;
 		int nextThreadId;
 	private:
-		typedef PosixAllocatorStd super;
+		typedef PosixAllocator super;
 };
 
 #endif //POSIX_ALLOCATOR_FILE_TRACE_H

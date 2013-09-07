@@ -32,7 +32,8 @@ void PosixAllocator::free ( void* ptr )
 	allocAssert(chunkManager != NULL);
 	
 	//free it
-	chunkManager->free(ptr);
+	if (chunkManager != NULL)
+		chunkManager->free(ptr);
 }
 
 /*******************  FUNCTION  *********************/
@@ -82,9 +83,11 @@ IChunkManager* PosixAllocator::getChunkManager ( void* ptr )
 	//search region segment
 	RegionSegmentHeader * segment = registry.getSegmentSafe(ptr);
 	allocAssert(segment != NULL);
-	allocAssert(segment->contain(ptr));
+	if (segment == NULL)
+		return NULL;
 	
 	//get manager
+	allocAssert(segment->contain(ptr));
 	IChunkManager * chunkManager = segment->getManager();
 	
 	return chunkManager;
@@ -103,9 +106,12 @@ size_t PosixAllocator::getInnerSize ( void* ptr )
 	//get manager
 	IChunkManager * chunkManager = getChunkManager(ptr);
 	allocAssert(chunkManager != NULL);
-	
+
 	//get size
-	return chunkManager->getInnerSize(ptr);
+	if (chunkManager == NULL)
+		return 0;
+	else
+		return chunkManager->getInnerSize(ptr);
 }
 
 /*******************  FUNCTION  *********************/
@@ -123,7 +129,10 @@ size_t PosixAllocator::getRequestedSize ( void* ptr )
 	allocAssert(chunkManager != NULL);
 	
 	//get size
-	return chunkManager->getRequestedSize(ptr);
+	if (chunkManager == NULL)
+		return 0;
+	else
+		return chunkManager->getRequestedSize(ptr);
 }
 
 /*******************  FUNCTION  *********************/
@@ -141,7 +150,10 @@ size_t PosixAllocator::getTotalSize ( void* ptr )
 	allocAssert(chunkManager != NULL);
 	
 	//get size
-	return chunkManager->getTotalSize(ptr);
+	if (chunkManager == NULL)
+		return 0;
+	else
+		return chunkManager->getTotalSize(ptr);
 }
 
 /*******************  FUNCTION  *********************/
@@ -240,7 +252,7 @@ void* PosixAllocator::realloc ( void* ptr, size_t size )
 	} else {
 		//get manager
 		IChunkManager * chunkManager = getChunkManager(ptr);
-		allocAssert(chunkManager != NULL);
+		allocAssume(chunkManager != NULL,"The old segment isn't managed by current memory allocator, cannot realloc.");
 
 		//distant realloc
 		if (isDistantManager(chunkManager))

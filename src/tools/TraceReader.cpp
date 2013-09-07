@@ -29,7 +29,13 @@ bool TraceReader::readNext ( TraceEntryComplete& entry )
 		return false;
 	
 	assert(fp != NULL);
-	size_t res = fread(&entry,sizeof(entry),1,fp);
+	size_t res = fread(&entry,1,sizeof(entry),fp);
+	
+	if (res == sizeof(entry.call))
+		entry.result = -2;
+	
+	if (res < sizeof(entry.call) && res > 0)
+		allocWarning("Get partial entry");
 
-	return (res == 1);
+	return (res == sizeof(entry) || res == sizeof(entry.call));
 }

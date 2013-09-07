@@ -59,6 +59,9 @@ bool operator== ( const CheckerMemorySegment& v1, const CheckerMemorySegment& v2
 /*******************  FUNCTION  *********************/
 void CollisionChecker::registerSegment ( void* ptr, size_t size )
 {
+	if (ptr == NULL)
+		return;
+	
 	CheckerMemorySegment segment(ptr,size);
 
 	std::pair<CheckerMemorySegmentDeque::iterator,bool> res = segments.insert(segment);
@@ -70,6 +73,9 @@ void CollisionChecker::registerSegment ( void* ptr, size_t size )
 /*******************  FUNCTION  *********************/
 void CollisionChecker::unregisterSegment ( void* ptr, size_t size )
 {
+	if (ptr == NULL)
+		return;
+
 	CheckerMemorySegment segment(ptr,size);
 	
 	int cnt = segments.erase(segment);
