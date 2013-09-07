@@ -7,6 +7,10 @@
 #include <RegionRegistry.h>
 #include "MediumFreePool.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class MediumAllocator : public IChunkManager
 {
@@ -29,6 +33,8 @@ class MediumAllocator : public IChunkManager
 		IMMSource * memorySource;
 		bool useLocks;
 		RegionRegistry * registry;
+};
+
 };
 
 #endif //CHUNK_ALLOCATOR_H

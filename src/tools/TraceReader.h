@@ -11,7 +11,7 @@ class TraceReader
 	public:
 		TraceReader(const char * fname);
 		~TraceReader(void);
-		bool readNext(TraceEntryComplete & entry);
+		bool readNext(MPCAllocator::TraceEntryComplete & entry);
 	private:
 		FILE * fp;
 };

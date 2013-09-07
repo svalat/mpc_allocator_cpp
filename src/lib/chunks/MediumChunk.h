@@ -6,6 +6,10 @@
 #include <IDoubleLinkListElement.h>
 #include <JsonState.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /********************  ENUM  ************************/
 enum ChunkStatus
 {
@@ -54,6 +58,8 @@ class MediumChunk : public IDoubleLinkListeElement
 	public:
 		friend void typeToJson(htopml::JsonState& json, std::ostream& stream, const MediumChunk & value);
 		friend void typeToJsonInner ( htopml::JsonState& json, std::ostream& stream, const MediumChunk& value );
+};
+
 };
 
 #endif // CHUNK_H

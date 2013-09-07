@@ -2,6 +2,9 @@
 #include "Debug.h"
 #include "TraceReader.h"
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*******************  FUNCTION  *********************/
 TraceReader::TraceReader ( const char* fname )
 {

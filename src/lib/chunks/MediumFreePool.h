@@ -6,6 +6,10 @@
 #include "MediumChunk.h"
 #include "DoubleLinkList.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  TYPES  **********************/
 typedef int (*ReverseAnalyticFreeSize)(Size size,const Size * sizeList,int nbLists);
 typedef DoubleLinkList<MediumChunk> ChunkFreeList;
@@ -54,6 +58,8 @@ class MediumFreePool
 		ReverseAnalyticFreeSize analyticRevers;
 	public:
 		friend void typeToJson(htopml::JsonState& json, std::ostream& stream, const MediumFreePool & value);
+};
+
 };
 
 #endif // MEDIUM_FREE_POOL_H

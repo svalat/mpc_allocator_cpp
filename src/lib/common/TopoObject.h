@@ -3,6 +3,10 @@
 
 /********************  HEADERS  *********************/
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class TopoObject
 {
@@ -31,6 +35,8 @@ class GenericTopoObject : public TopoObject
 		T * getObject(int id);
 	protected:
 		virtual void* allocObject ( int id );
+};
+
 };
 
 #endif //TOPO_PTR_H

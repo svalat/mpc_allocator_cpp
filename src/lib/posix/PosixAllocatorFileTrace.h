@@ -6,6 +6,10 @@
 #include "AllocTraceStruct.h"
 #include "PosixAllocatorStd.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class PosixAllocatorFileTrace : public PosixAllocator
 {
@@ -30,6 +34,8 @@ class PosixAllocatorFileTrace : public PosixAllocator
 		int nextThreadId;
 	private:
 		typedef PosixAllocator super;
+};
+
 };
 
 #endif //POSIX_ALLOCATOR_FILE_TRACE_H

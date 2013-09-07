@@ -6,6 +6,10 @@
 #include "IDoubleLinkListElement.h"
 #include <JsonState.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 template <class T>
 class DoubleLinkList
@@ -63,6 +67,8 @@ class DoubleLinkList
 	public:
 		template <class U> friend void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<U> & value);
 		template <class U> friend void typeToJson(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<U> & value,const ListElement & elt);
+};
+
 };
 
 /********************  HEADERS  *********************/

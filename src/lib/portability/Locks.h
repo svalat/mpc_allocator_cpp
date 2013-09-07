@@ -4,7 +4,7 @@
 /*********************  TYPES  **********************/
 #ifdef LOCKS_Pthread
 	#include "LocksPthread.h"
-	typedef LocksPthread Locks;
+	namespace MPCAllocator{ typedef LocksPthread Locks; };
 #else
 	#error "Unsupported Locks portability mode"
 #endif

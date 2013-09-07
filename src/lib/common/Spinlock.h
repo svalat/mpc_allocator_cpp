@@ -5,6 +5,10 @@
 #include <Common.h>
 #include <Locks.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class Spinlock
 {
@@ -31,5 +35,7 @@ class Spinlock
 #define OPTIONAL_CRITICAL(lock,test) do { Spinlock::TakeLock _local_##lock##__(lock,test);
 #define START_CRITICAL(lock) { Spinlock::TakeLock _local_##lock##__(lock);
 #define END_CRITICAL }while(0);
+
+};
 
 #endif //LOCKS

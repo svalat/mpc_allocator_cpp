@@ -7,6 +7,10 @@
 #include <IDoubleLinkListElement.h>
 #include <stdint.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  TYPES  **********************/
 typedef uint64_t MacroEntry;
 typedef uint16_t SmallSize;
@@ -50,6 +54,8 @@ class SmallChunkRun : public IDoubleLinkListeElement
 		SmallSize skipedSize;
 		SmallSize splitting;
 		SmallSize bitmapEntries;
+};
+
 };
 
 #endif //SMALL_CHUNK_RUN_H

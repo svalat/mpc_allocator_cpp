@@ -4,6 +4,9 @@
 #include <SmallChunkRun.h>
 #include <gtest/gtest.h>
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*******************  FUNCTION  *********************/
 TEST(TestSmallChunk,classSize)
 {

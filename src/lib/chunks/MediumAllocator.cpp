@@ -3,6 +3,10 @@
 #include "MediumAllocator.h"
 #include <RegionRegistry.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 MediumAllocator::MediumAllocator ( bool useLocks, IMMSource* memorySource )
 {
@@ -266,3 +270,5 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	
 	return new_ptr;
 }
+
+};

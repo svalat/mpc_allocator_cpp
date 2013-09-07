@@ -8,6 +8,9 @@
 #define omp_get_num_threads() 1
 #endif//HAVE_OPENMP
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*********************  CONSTS  *********************/
 #define REPEAT 500000
 

@@ -3,6 +3,9 @@
 #include <cassert>
 #include "TraceReader.h"
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*******************  FUNCTION  *********************/
 int main(int argc,char ** argv)
 {

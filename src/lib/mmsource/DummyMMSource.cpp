@@ -5,6 +5,10 @@
 #include <OS.h>
 #include "DummyMMSource.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 DummyMMSource::DummyMMSource ( RegionRegistry* registry)
 {
@@ -88,3 +92,5 @@ RegionSegmentHeader* DummyMMSource::remap ( RegionSegmentHeader* oldSegment, siz
 	
 	return res;
 }
+
+};

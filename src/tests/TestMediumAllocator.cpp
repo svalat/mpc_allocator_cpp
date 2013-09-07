@@ -6,6 +6,7 @@
 
 /**********************  USING  *********************/
 using namespace testing;
+using namespace MPCAllocator;
 
 /********************  GLOBALS  *********************/
 static char gblBuffer[REGION_SPLITTING];

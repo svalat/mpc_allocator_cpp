@@ -1,6 +1,10 @@
 /********************  HEADERS  *********************/
 #include "Spinlock.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 Spinlock::Spinlock ( void )
 {
@@ -50,3 +54,5 @@ void Spinlock::TakeLock::unlock ( void )
 		lock->unlock();
 	lock = NULL;
 }
+
+};

@@ -5,6 +5,10 @@
 #include <TypeToJson.h>
 #include <Debug.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 MediumChunk* MediumChunk::setup ( void* ptr, Size totalSize )
 {
@@ -332,3 +336,5 @@ MediumChunk * MediumChunk::MediumChunk::getFromListHandler ( ListElement* list )
 	res->check();
 	return res;
 }
+
+};

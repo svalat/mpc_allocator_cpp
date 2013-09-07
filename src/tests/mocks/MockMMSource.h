@@ -5,6 +5,9 @@
 #include <IAllocator.h>
 #include <gmock/gmock.h>
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*********************  CLASS  **********************/
 class MockMMSource : public IMMSource {
 	public:

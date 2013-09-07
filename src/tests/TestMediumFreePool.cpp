@@ -2,6 +2,9 @@
 #include "MediumFreePool.h"
 #include "gtest/gtest.h"
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 static const Size TEST_SIZE_LIST[NB_FREE_LIST] = {8,16,32,64,128,1,-1,-1,-1,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};

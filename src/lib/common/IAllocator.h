@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include <stdlib.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  TYPES  **********************/
 class RegionSegmentHeader;
 
@@ -33,6 +37,8 @@ class IMMSource
 		virtual RegionSegmentHeader * remap(RegionSegmentHeader * oldSegment,size_t newInnerSize, IChunkManager * manager) = 0;
 		virtual void unmap(RegionSegmentHeader * segment) = 0;
 		//virtual bool haveEfficientRemap(void) const = 0;
+};
+
 };
 
 #endif //IALLOCATOR_H

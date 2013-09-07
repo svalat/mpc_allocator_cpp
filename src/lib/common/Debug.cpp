@@ -7,6 +7,10 @@
 #include "Debug.h"
 #include "OS.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CONSTS  *********************/
 static const char * cstMessageLevelStr[] = {"Debug message" , "Info"            , "Trace"                    ,
                                             "Warning"       , "Error"           , "Error"                    , 
@@ -64,3 +68,5 @@ void DebugMessage::print ( const char* format, ... )
 	if (level >= MESSAGE_FATAL && level != MESSAGE_ASSERT)
 		abort();
 }
+
+};

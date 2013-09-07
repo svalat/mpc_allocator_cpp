@@ -6,6 +6,10 @@
 #include <cassert>
 #include <stdint.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  TYPES  **********************/
 typedef uint64_t Addr;
 typedef uint64_t Size;
@@ -97,5 +101,7 @@ static inline int fastLog2(Size value)
 
 	return (int)res;
 }
+
+};
 
 #endif //COMMON_H

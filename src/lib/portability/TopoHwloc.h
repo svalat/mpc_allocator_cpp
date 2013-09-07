@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include <hwloc.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class TopoHwloc
 {
@@ -23,6 +27,8 @@ class TopoHwloc
 		int getAbsDepth(int level,int depth) const;
 	private:
 		hwloc_topology_t topology;
+};
+
 };
 
 #endif //PORTABILITY_TOPO_HWLOC_H

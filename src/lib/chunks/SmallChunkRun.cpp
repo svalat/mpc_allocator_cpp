@@ -4,6 +4,10 @@
 #include <Debug.h>
 #include "SmallChunkRun.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 SmallChunkRun::SmallChunkRun ( SmallSize skipedSize , SmallSize splitting)
 {
@@ -224,3 +228,5 @@ ListElement* SmallChunkRun::getListHandler ( void )
 {
 	return &listHandler;
 }
+
+};

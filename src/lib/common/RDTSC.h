@@ -22,6 +22,10 @@
 #ifndef SCTK_ALLOC_RDTSC_H_
 #define SCTK_ALLOC_RDTSC_H_
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 #ifdef _MSC_VER
 	#define __inline__ __inline
 	#define __sctk_rdtscll(val) 0
@@ -59,5 +63,7 @@ static __inline__ void sctk_alloc_fill_rdtsc(unsigned long * value)
 {
 	__sctk_rdtscll(*value);
 }
+
+};
 
 #endif //SCTK_ALLOC_RDTSC_H_

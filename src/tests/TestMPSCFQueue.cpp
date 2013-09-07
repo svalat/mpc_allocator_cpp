@@ -9,6 +9,10 @@
 #define TEST_SIZE 20000
 #define REPEAT 100
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
+/*********************  TYPES  **********************/
 typedef unsigned long long ticks;
 
 /********************************* FUNCTION *********************************/

@@ -4,6 +4,10 @@
 #include "RegionRegistry.h"
 #include "OS.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 RegionSegmentHeader* RegionSegmentHeader::setup ( void* ptr, Size totalSize, IChunkManager* manager )
 {
@@ -318,3 +322,5 @@ RegionSegmentHeader* RegionSegmentHeader::getSegment ( void* ptr )
 	RegionSegmentHeader * segment = (RegionSegmentHeader *)ptr;
 	return segment - 1;
 }
+
+};

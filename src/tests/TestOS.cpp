@@ -3,6 +3,9 @@
 #include <gtest/gtest.h>
 #include <cstdlib>
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 #define SIZE (2*1024*1024)
 
 TEST(TestOS,mmapAndMunmap)

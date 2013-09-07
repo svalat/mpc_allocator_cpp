@@ -6,6 +6,10 @@
 #include "DummyMMSource.h"
 #include "MediumAllocator.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class PosixAllocator
 {
@@ -36,6 +40,8 @@ class PosixAllocator
 		DummyMMSource mmSource;
 		MediumAllocator mediumAlloc;
 		bool isInit;
+};
+
 };
 
 #endif //POSIX_ALLOCATOR_H

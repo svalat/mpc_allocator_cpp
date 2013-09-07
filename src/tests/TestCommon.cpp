@@ -2,6 +2,9 @@
 #include <Common.h>
 #include <gtest/gtest.h>
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*******************  FUNCTION  *********************/
 TEST(TestCommon,ceilToPowOf2)
 {

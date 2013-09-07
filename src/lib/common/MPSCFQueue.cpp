@@ -2,6 +2,10 @@
 #include "MPSCFQueue.h"
 #include "Debug.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 MPSCFQueue::~MPSCFQueue ( void )
 {
@@ -105,3 +109,5 @@ MPSCFQueueElement* MPSCFQueue::dequeueAll ( void )
 	/* now we can return */
 	return localHead;
 }
+
+};

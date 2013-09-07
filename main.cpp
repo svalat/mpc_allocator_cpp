@@ -9,6 +9,8 @@
 #include <AtomicPtr.h>
 #include <TypeToJson.h>
 
+using namespace MPCAllocator;
+
 int main(int argc, char **argv) {
 	//check sizes
 	assert(sizeof(Size) == sizeof(size_t));

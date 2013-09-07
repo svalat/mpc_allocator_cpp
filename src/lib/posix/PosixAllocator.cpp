@@ -3,6 +3,10 @@
 #include "Debug.h"
 #include <cstring>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 PosixAllocator::PosixAllocator ( void )
 	:mmSource(&registry), mediumAlloc(true,&mmSource)
@@ -280,3 +284,5 @@ void* PosixAllocator::valloc ( size_t size )
 	allocFatal("Not supported");
 	return NULL;
 }
+
+};

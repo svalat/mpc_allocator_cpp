@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include "Common.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /********************  ENUM  ************************/
 enum MessageLevel
 {
@@ -63,5 +67,7 @@ class DebugMessage
 #define allocAssume(x,m)        do { if (!(x)) allocFatal((m));       } while(0)
 #define allocAssumePerror(x,m)  do { if (!(x)) allocFatalPerror((m)); } while(0)
 #define allocCondWarning(x,m)   do { if (!(x)) allocWarning((m));     } while(0)
+
+};
 
 #endif //DEBUG_H

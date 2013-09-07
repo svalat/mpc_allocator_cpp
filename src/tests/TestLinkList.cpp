@@ -2,6 +2,9 @@
 #include "DoubleLinkList.h"
 #include "gtest/gtest.h"
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*******************  FUNCTION  *********************/
 TEST(DoubleLinkList, constructor) {
 	DoubleLinkList<int> list;

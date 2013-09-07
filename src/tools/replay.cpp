@@ -8,6 +8,7 @@
 
 /**********************  USING  *********************/
 using namespace std;
+using namespace MPCAllocator;
 
 /*******************  FUNCTION  *********************/
 int main(int argc,char ** argv)

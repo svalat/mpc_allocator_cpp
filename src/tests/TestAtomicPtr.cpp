@@ -2,6 +2,9 @@
 #include <AtomicPtr.h>
 #include <gtest/gtest.h>
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*******************  FUNCTION  *********************/
 TEST(TestAtomicPtr,defaultConstructor)
 {

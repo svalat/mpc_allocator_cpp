@@ -2,6 +2,10 @@
 #include "Debug.h"
 #include "PosixAllocatorDebugTrace.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 void* PosixAllocatorDebugTrace::malloc ( size_t size )
 {
@@ -73,3 +77,5 @@ void* PosixAllocatorDebugTrace::valloc ( size_t size )
 	allocTrace("%p = valloc(%llu);",res,size);
 	return res;
 }
+
+};

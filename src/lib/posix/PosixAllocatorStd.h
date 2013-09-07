@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include <cstdlib>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class PosixAllocatorStd
 {
@@ -39,6 +43,8 @@ class PosixAllocatorStd
 		void * (*libc_pvalloc)(size_t size);
 		int isDlsym;
 		char dlsymBuffer[1024];
+};
+
 };
 
 #endif //STD_POSIX_ALLOCATOR_H

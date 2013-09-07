@@ -3,6 +3,10 @@
 #include <cstring>
 #include "SmallAllocator.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CONSTS  *********************/
 static const size_t SMALL_SIZE_CLASSES[NB_SIZE_CLASS] = {8, 16, 24, 32, 48, 64, 80, 96, 128};
 
@@ -317,3 +321,5 @@ SmallChunkRun* SmallAllocator::updateActivRunForSize ( int sizeClass )
 	//return it
 	return run;
 }
+
+};

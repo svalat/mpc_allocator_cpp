@@ -5,6 +5,10 @@
 #include <IAllocator.h>
 #include <RegionRegistry.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 class DummyMMSource : public IMMSource
 {
@@ -15,6 +19,8 @@ class DummyMMSource : public IMMSource
 		virtual void unmap ( RegionSegmentHeader* segment);
 	private:
 		RegionRegistry * registry;
+};
+
 };
 
 #endif //DUMMY_MM_SOURCE_H

@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include "PosixAllocator.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 class PosixAllocatorDebugTrace : public PosixAllocator
 {
@@ -18,6 +22,8 @@ class PosixAllocatorDebugTrace : public PosixAllocator
 		void * valloc(size_t size);
 		void * memalign(size_t alignment, size_t size);
 		void * pvalloc(size_t size);
+};
+
 };
 
 #endif //POSIX_ALLOCATOR_DEBUG_TRACE_H

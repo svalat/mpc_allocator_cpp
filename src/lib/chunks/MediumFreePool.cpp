@@ -2,6 +2,10 @@
 #include "MediumFreePool.h"
 #include <TypeToJson.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 //////////////////////////////////////////////////////////////////////////////////TODO
 const Size cstDefaultFreeSizes[NB_FREE_LIST] = {16, 24,
         32,    64,   96,  128,  160,   192,   224,   256,    288,    320,
@@ -449,3 +453,5 @@ void typeToJson ( htopml::JsonState& json, std::ostream& stream, const MediumFre
 	
 	json.closeStruct();
 }
+
+};

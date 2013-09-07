@@ -4,6 +4,7 @@
 
 /**********************  USING  *********************/
 using namespace testing;
+using namespace MPCAllocator;
 
 /*******************  FUNCTION  *********************/
 TEST(TestPosixAllocator,setup)

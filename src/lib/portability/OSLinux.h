@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include <cstdlib>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /********************  MACRO  ***********************/
 #define OS_STDERR_FILENO 2
 
@@ -28,5 +32,7 @@ class OSLinux : public OSUnix
 
 /*********************  TYPES  **********************/
 typedef OSLinux OS;
+
+};
 
 #endif //OS_H

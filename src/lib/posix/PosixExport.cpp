@@ -5,6 +5,9 @@
 #include "PosixAllocatorFileTrace.h"
 #include "PosixAllocatorStd.h"
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*********************  TYPES  **********************/
 typedef PosixAllocator SelectedPosixAllocator;
 // typedef PosixAllocatorDebugTrace SelectedPosixAllocator;

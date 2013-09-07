@@ -6,6 +6,10 @@
 #include <cycle.h>
 #include <stdint.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  STRUCT  *********************/
 struct TraceMallocArgs
 {
@@ -77,6 +81,8 @@ struct TraceEntryComplete
 {
 	TraceEntry call;
 	uint64_t result;
+};
+
 };
 
 #endif //ALLOC_TRACE_STRUC_H

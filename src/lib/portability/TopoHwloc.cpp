@@ -3,6 +3,10 @@
 #include "Debug.h"
 #include <hwloc.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 TopoHwloc::TopoHwloc ( void )
 {
@@ -130,3 +134,5 @@ int TopoHwloc::getCurrentId ( int level, int depth ) const
 	
 	return res;
 }
+
+};

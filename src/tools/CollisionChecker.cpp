@@ -4,6 +4,7 @@
 
 /**********************  USING  *********************/
 using namespace std;
+using namespace MPCAllocator;
 
 /*******************  FUNCTION  *********************/
 CheckerMemorySegment::CheckerMemorySegment ( uint64_t base, uint64_t size )

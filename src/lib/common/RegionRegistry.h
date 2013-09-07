@@ -6,6 +6,10 @@
 #include "IAllocator.h"
 #include "Spinlock.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /********************  MACRO  ***********************/
 #define REGION_SPLITTING   MACRO_BLOC_SIZE
 #define REGION_SIZE        (1024ULL*1024ULL*1024ULL*1024ULL)
@@ -70,6 +74,8 @@ class RegionRegistry
 	private:
 		Region * regions[MAX_REGIONS];
 		Spinlock spinlock;
+};
+
 };
 
 #endif //REGION_REGISTRY_H

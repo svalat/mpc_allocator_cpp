@@ -4,7 +4,7 @@
 /*********************  TYPES  **********************/
 #ifdef TOPO_Hwloc
 	#include "TopoHwloc.h"
-	typedef TopoHwloc Topo;
+	namespace MPCAllocator { typedef TopoHwloc Topo; };
 #else
 	#error "Unsupported topo portability mode"
 #endif

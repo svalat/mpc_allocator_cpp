@@ -28,7 +28,7 @@
 /*********************  TYPES  **********************/
 #ifdef OS_Linux
 	#include "OSLinux.h"
-	typedef OSLinux OS;
+	namespace MPCAllocator { typedef OSLinux OS; };
 #else
 	#error "Unsupported OS portability mode"
 #endif

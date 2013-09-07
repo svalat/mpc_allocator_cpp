@@ -3,6 +3,10 @@
 #include "Debug.h"
 #include "PosixAllocatorStd.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 PosixAllocatorStd::PosixAllocatorStd ( void )
 {
@@ -122,3 +126,5 @@ void* PosixAllocatorStd::valloc ( size_t size )
 {
 	return libc_valloc(size);
 }
+
+};

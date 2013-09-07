@@ -4,6 +4,10 @@
 #include "Debug.h"
 #include "PosixAllocatorFileTrace.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CONSTS  *********************/
 static const char cstTraceFilename[] = "alloc-trace-%08d.raw";
 
@@ -274,3 +278,5 @@ void* PosixAllocatorFileTrace::valloc ( size_t size )
 	
 	return res;
 }
+
+};

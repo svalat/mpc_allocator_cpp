@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include <pthread.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CONSTS  *********************/
 #define LOCKS_INIT_MUTEX PTHREAD_MUTEX_INITIALIZER
 
@@ -21,6 +25,8 @@ class LocksPthread
 		//init locks (to be setup with static value at boot time)
 		static void lock(StaticInitLock & lock) {pthread_mutex_lock(&lock);};
 		static void unlock(StaticInitLock & lock) {pthread_mutex_unlock(&lock);};
+};
+
 };
 
 #endif //LOCKS_PTHREAD_H

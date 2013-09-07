@@ -16,6 +16,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 void* OSUnix::mmap ( void* addr, size_t size )
 {
@@ -92,3 +96,5 @@ int OSUnix::openFileDescriptor ( const char* fname, bool writeMode )
 	
 	return res;
 }
+
+};

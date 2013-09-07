@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <Atomics.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  CLASS  **********************/
 template <class T>
 class AtomicPtr
@@ -19,6 +23,8 @@ class AtomicPtr
 		AtomicPtr & operator=(AtomicPtr<T> & newValue);
 	private:
 		AtomicPtrLL value;
+};
+
 };
 
 /********************  HEADERS  *********************/

@@ -13,6 +13,10 @@
 #define SMALL_CHUNK_MAX_SIZE 128
 //8 16 24 32 48 64 80 96 128
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  TYPES  **********************/
 typedef DoubleLinkList<SmallChunkRun> SmallChunkRunList;
 
@@ -43,6 +47,8 @@ class SmallAllocator : public IChunkManager
 		SmallChunkRun * activRuns[NB_SIZE_CLASS];
 		SmallChunkRunList inUse[NB_SIZE_CLASS];
 		SmallChunkRunList empty;
+};
+
 };
 
 #endif //SMALL_CHUNK_ALLOCATOR_H

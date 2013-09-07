@@ -1,6 +1,10 @@
 #ifndef IDOUBLE_LINK_LIST_ELEMENT_H
 #define IDOUBLE_LINK_LIST_ELEMENT_H
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  STRUCT  *********************/
 struct ListElement
 {
@@ -17,6 +21,8 @@ class IDoubleLinkListeElement
 	public:
 		//virtual ListElement * getListHandler(void) = 0;
 		//static MediumChunk::getFromListHandler(ListElement * list);
+};
+
 };
 
 #endif //IDOUBLE_LINK_LIST_ELEMENT_H

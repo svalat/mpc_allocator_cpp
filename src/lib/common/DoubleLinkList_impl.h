@@ -6,6 +6,10 @@
 #include <Debug.h>
 #include <TypeToJson.h>
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 template <class T>
 void DoubleLinkList<T>::checkSize ( Size size )
@@ -140,5 +144,7 @@ template <class T> void typeToJson(htopml::JsonState & json,std::ostream& stream
 
 	json.closeArray();
 }
+
+};
 
 #endif //DOUBLELINKLIST_IMPL_H

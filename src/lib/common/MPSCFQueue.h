@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include "AtomicPtr.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*********************  STRUCT  *********************/
 struct MPSCFQueueElement
 {
@@ -23,6 +27,8 @@ class MPSCFQueue
 	private:
 		AtomicPtr<MPSCFQueueElement> head;
 		AtomicPtr<MPSCFQueueElement> tail;
+};
+
 };
 
 #endif //MPSCF_QUEUE_H

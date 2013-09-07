@@ -4,6 +4,10 @@
 /********************  HEADERS  *********************/
 #include "AtomicPtr.h"
 
+/********************  NAMESPACE  *******************/
+namespace MPCAllocator
+{
+
 /*******************  FUNCTION  *********************/
 template <class T>
 inline AtomicPtr<T>::AtomicPtr(T * ptr)
@@ -31,5 +35,7 @@ inline T * AtomicPtr<T>::atomicSwap ( T* newValue )
 {
 	return (T*)Atomics::atomicSwap(&value,newValue);
 }
+
+};
 
 #endif

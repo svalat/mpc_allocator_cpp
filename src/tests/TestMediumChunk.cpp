@@ -2,6 +2,9 @@
 #include "MediumChunk.h"
 #include "gtest/gtest.h"
 
+/**********************  USING  *********************/
+using namespace MPCAllocator;
+
 /*********************  CLASS  **********************/
 class TestMediumChunk : public ::testing::Test {
 	protected:
