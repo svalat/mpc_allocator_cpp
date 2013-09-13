@@ -241,3 +241,47 @@ TEST(TestMediumAllocator,testMemorySourceFree)
 	EXPECT_CALL(mm,unmap(segment)).Times(1);
 	alloc.free(ptr);
 }
+
+/*******************  FUNCTION  *********************/
+TEST(TestMediumAllocator,testMallocAlign_1)
+{
+	MediumAllocator alloc;
+	alloc.fill(gblBuffer,sizeof(gblBuffer),NULL);
+
+	for (int i = 8 ; i < 256 ; i+=4)
+	{
+		void * ptr = alloc.malloc(32,i);
+		ASSERT_NE((void*)NULL,ptr);
+		ASSERT_EQ(0,(Addr)ptr % i);
+	}
+}
+
+/*******************  FUNCTION  *********************/
+TEST(TestMediumAllocator,testFreeAlign_1)
+{
+	MediumAllocator alloc;
+	alloc.fill(gblBuffer,sizeof(gblBuffer),NULL);
+
+	for (int i = 8 ; i < 256 ; i+=4)
+	{
+		void * ptr = alloc.malloc(32,i);
+		ASSERT_NE((void*)NULL,ptr);
+		ASSERT_EQ(0,(Addr)ptr % i);
+		alloc.free(ptr);
+	}
+}
+
+/*******************  FUNCTION  *********************/
+TEST(TestMediumAllocator,testMallocFreeAlign_2)
+{
+	MediumAllocator alloc;
+	alloc.fill(gblBuffer,sizeof(gblBuffer),NULL);
+
+	for (int i = 256 ; i < 4096 ; i+=32)
+	{
+		void * ptr = alloc.malloc(32,i);
+		ASSERT_NE((void*)NULL,ptr);
+		ASSERT_EQ(0,(Addr)ptr % i);
+		alloc.free(ptr);
+	}
+}

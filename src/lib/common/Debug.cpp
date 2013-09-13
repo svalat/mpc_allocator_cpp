@@ -65,7 +65,7 @@ void DebugMessage::print ( const char* format, ... )
 		OS::safeWrite(cstMessageLevelFD[level],glob,size);
 	
 	//special
-	if (level >= MESSAGE_FATAL && level != MESSAGE_ASSERT)
+	if (level >= MESSAGE_FATAL)// && level != MESSAGE_ASSERT)
 		abort();
 }
 

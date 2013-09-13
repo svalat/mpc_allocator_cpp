@@ -2,6 +2,7 @@
 #include <cstring>
 #include "Debug.h"
 #include "MediumAllocator.h"
+#include "PaddedChunk.h"
 #include "RegionRegistry.h"
 
 /********************  NAMESPACE  *******************/
@@ -20,39 +21,43 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 {
 	bool zero = false;
 	MediumChunk * chunk = NULL;
+	size_t checkedSize = size;
 
 	//errors
 	allocAssert(this != NULL);
-	allocAssert(align == BASIC_ALIGN);//TODO need support
 	allocAssert(align >= BASIC_ALIGN);
 	
 	//trivial
-	if ( size == 0)
+	if ( checkedSize == 0)
 		return NULL;
-	else if (size < MEDIUM_MIN_INNER_SIZE)
-		size = MEDIUM_MIN_INNER_SIZE;
+	else if (checkedSize < MEDIUM_MIN_INNER_SIZE)
+		checkedSize = MEDIUM_MIN_INNER_SIZE;
 	
 	//zero
 	if (zeroFilled != NULL)
 		zero = *zeroFilled;
 	
+	//add place for padding
+	if (align > BASIC_ALIGN)
+		checkedSize += align;
+	
 	//align size
-	size = upToPowOf2( size,BASIC_ALIGN);
+	checkedSize = upToPowOf2( checkedSize,BASIC_ALIGN);
 	
 	//take lock for the current function
 	OPTIONAL_CRITICAL(spinlock,useLocks);
 		//try to get memory
-		chunk = pool.findChunk( size );
+		chunk = pool.findChunk( checkedSize );
 		if (chunk == NULL)
-			chunk = refill(size,zeroFilled);
+			chunk = refill(checkedSize,zeroFilled);
 
 		//error out of memory (unlocking is managed by TakeLock destructor)
 		if (chunk == NULL)
 			return NULL;
 		
 		//try to split
-		MediumChunk * residut = split(chunk,size);
-		allocAssert(chunk->getInnerSize() >= size);
+		MediumChunk * residut = split(chunk,checkedSize);
+		allocAssert(chunk->getInnerSize() >= checkedSize);
 		if (residut != NULL)
 			pool.insert(residut,CHUNK_INSERT_LIFO);
 		//assume_m(sctk_alloc_get_size(vchunk) >= sctk_alloc_calc_chunk_size(size), "Size error in chunk spliting function.");
@@ -62,8 +67,19 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 	if (zeroFilled != NULL)
 		*zeroFilled = zero;
 
-	//ok this is good
-	return chunk->getPtr();
+	//ok this is good get ptr
+	void * res = chunk->getPtr();
+	if (res == NULL)
+		return NULL;
+	
+	//check for padding
+	if ((Addr)res % align != 0)
+		res = PaddedChunk::setup(chunk,PaddedChunk::calcPadding(chunk,align,size))->getPtr();
+	
+	//final check
+	allocAssert(res == NULL || (Addr)res % align == 0);
+	
+	return res;
 }
 
 /*******************  FUNCTION  *********************/
@@ -150,6 +166,9 @@ void MediumAllocator::free ( void* ptr )
 	//trivial
 	if (ptr == NULL)
 		return;
+	
+	//check if padded
+	ptr = PaddedChunk::unpad(ptr);
 	
 	//get chunk
 	MediumChunk * chunk = MediumChunk::getChunkSafe(ptr);

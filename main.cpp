@@ -54,4 +54,6 @@ int main(int argc, char **argv) {
 // 	state.printField("c0",*c0);
 // 	state.printField("pool",pool);
 // 	state.closeStruct();
+	
+	return EXIT_SUCCESS;
 }
