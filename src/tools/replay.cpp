@@ -12,6 +12,15 @@ using namespace std;
 using namespace MPCAllocator;
 
 /*******************  FUNCTION  *********************/
+void checkIsZero(void * ptr,size_t size)
+{
+	for (size_t i = 0 ; i < size ; i++)
+	{
+		allocAssume(((char*)ptr)[i] == 0,"Required zero but get non initialized memory.");
+	}
+};
+
+/*******************  FUNCTION  *********************/
 int main(int argc,char ** argv)
 {
 	assert(argc == 2);
@@ -53,7 +62,7 @@ int main(int argc,char ** argv)
 				printf("          => %p , %lu\n",ptr,alloc.getInnerSize(ptr));
 				ptrs[entry.result] = ptr;
 				checker.registerSegment(ptr,alloc.getInnerSize(ptr));
-				memset(ptr,0,entry.call.infos.calloc.nmemb*entry.call.infos.calloc.size);
+				checkIsZero(ptr,entry.call.infos.calloc.nmemb*entry.call.infos.calloc.size);
 				break;
 			case TRACE_REALLOC:
 				ptr = ptrs[entry.call.infos.realloc.oldPtr];

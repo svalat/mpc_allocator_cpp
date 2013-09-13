@@ -259,19 +259,26 @@ void* PosixAllocator::realloc ( void* ptr, size_t size )
 	} else {
 		//get manager
 		IChunkManager * chunkManager = getChunkManager(ptr);
-		allocAssume(chunkManager != NULL,"The old segment isn't managed by current memory allocator, cannot realloc.");
-
-		//distant realloc
-		if (isDistantManager(chunkManager))
+		
+		//manage bad realloc as we can
+		if (chunkManager == NULL)
 		{
-			void * new_ptr = internalMalloc(size);
-			allocAssert(new_ptr != NULL);
-			memcpy(new_ptr,ptr,min(size,chunkManager->getInnerSize(ptr)));
-			chunkManager->free(ptr);
-			res = new_ptr;
+			allocWarning("The old segment isn't managed by current memory allocator, try to copy, but create a memory leak.");
+			res = malloc(size);
+			memcpy(res,ptr,size);
 		} else {
-			allocAssert(chunkManager == &mediumAlloc);
-			res = mediumAlloc.realloc(ptr,size);
+			//distant realloc
+			if (isDistantManager(chunkManager))
+			{
+				void * new_ptr = internalMalloc(size);
+				allocAssert(new_ptr != NULL);
+				memcpy(new_ptr,ptr,min(size,chunkManager->getInnerSize(ptr)));
+				chunkManager->free(ptr);
+				res = new_ptr;
+			} else {
+				allocAssert(chunkManager == &mediumAlloc);
+				res = mediumAlloc.realloc(ptr,size);
+			}
 		}
 	}
 

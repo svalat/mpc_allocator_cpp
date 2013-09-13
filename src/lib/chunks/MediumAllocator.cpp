@@ -49,7 +49,9 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 		//try to get memory
 		chunk = pool.findChunk( checkedSize );
 		if (chunk == NULL)
-			chunk = refill(checkedSize,zeroFilled);
+			chunk = refill(checkedSize,&zero);
+		else
+			zero = false;
 
 		//error out of memory (unlocking is managed by TakeLock destructor)
 		if (chunk == NULL)
