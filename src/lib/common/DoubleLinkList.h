@@ -54,6 +54,8 @@ class DoubleLinkList
 		static DoubleLinkList<T> * remove(T * value);
 		T * popFirst(void);
 		T * popLast(void);
+		T * getFirst(void);
+		T * getLast(void);
 		Iterator begin(void) {Iterator it(root.next); return it;};
 		Iterator end(void) {Iterator it(&root); return it;};
 		ConstIterator begin(void) const {ConstIterator it(root.next); return it;};

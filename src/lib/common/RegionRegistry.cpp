@@ -323,4 +323,26 @@ RegionSegmentHeader* RegionSegmentHeader::getSegment ( void* ptr )
 	return segment - 1;
 }
 
+/*******************  FUNCTION  *********************/
+ListElement* RegionSegmentHeader::getListHandler ( void )
+{
+	allocAssert(this != NULL);
+	return (ListElement*) (this+1);
+}
+
+/*******************  FUNCTION  *********************/
+RegionSegmentHeader * RegionSegmentHeader::getFromListHandler ( ListElement* list )
+{
+	RegionSegmentHeader * res = NULL;
+	if (list != NULL)
+		res = ((RegionSegmentHeader*)list) - 1;
+	return res;
+}
+
+/*******************  FUNCTION  *********************/
+void RegionSegmentHeader::setManager ( IChunkManager* manager )
+{
+	this->manager = manager;
+}
+
 };

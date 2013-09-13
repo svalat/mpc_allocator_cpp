@@ -5,6 +5,7 @@
 #include "Common.h"
 #include "IAllocator.h"
 #include "Spinlock.h"
+#include "IDoubleLinkListElement.h"
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
@@ -19,7 +20,7 @@ namespace MPCAllocator
 #define MAX_REGIONS        ( PHYS_MAX_ADDR / REGION_SIZE )
 
 /*********************  CLASS  **********************/
-class RegionSegmentHeader
+class RegionSegmentHeader : public IDoubleLinkListeElement
 {
 	public:
 		static RegionSegmentHeader * setup(void * ptr,Size totalSize,IChunkManager * manager);
@@ -28,7 +29,10 @@ class RegionSegmentHeader
 		Size getInnerSize(void) const;
 		bool contain(void * ptr) const;
 		void * getPtr(void);
+		void setManager(IChunkManager * manager);
 		static RegionSegmentHeader * getSegment(void * ptr);
+		ListElement * getListHandler(void);
+		static RegionSegmentHeader * getFromListHandler(ListElement * list);
 	private:
 		RegionSegmentHeader(void);
 		RegionSegmentHeader(RegionSegmentHeader & orig);

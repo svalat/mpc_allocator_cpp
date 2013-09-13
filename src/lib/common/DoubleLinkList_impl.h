@@ -58,6 +58,26 @@ void DoubleLinkList<T>::putLast ( T* value)
 
 /*******************  FUNCTION  *********************/
 template <class T>
+T * DoubleLinkList<T>::getFirst( void )
+{
+	if (isEmpty())
+		return NULL;
+	
+	return T::getFromListHandler(root.next);
+}
+
+/*******************  FUNCTION  *********************/
+template <class T>
+T * DoubleLinkList<T>::getLast( void )
+{
+	if (isEmpty())
+		return NULL;
+	
+	return T::getFromListHandler(root.prev);
+}
+
+/*******************  FUNCTION  *********************/
+template <class T>
 T* DoubleLinkList<T>::popFirst ( void )
 {
 	//TODO optimize

@@ -327,7 +327,7 @@ ListElement* MediumChunk::getListHandler ( void )
 }
 
 /*******************  FUNCTION  *********************/
-MediumChunk * MediumChunk::MediumChunk::getFromListHandler ( ListElement* list )
+MediumChunk * MediumChunk::getFromListHandler ( ListElement* list )
 {
 	MediumChunk * res = NULL;
 	if (list != NULL)
