@@ -4,6 +4,7 @@
 /********************  HEADERS  *********************/
 #include "RegionRegistry.h"
 #include "DummyMMSource.h"
+#include <CachedMMSource.h>
 #include "MediumAllocator.h"
 
 /********************  NAMESPACE  *******************/
@@ -37,7 +38,7 @@ class PosixAllocator
 		bool isDistantManager(IChunkManager * manager);
 	private:
 		RegionRegistry registry;
-		DummyMMSource mmSource;
+		CachedMMSource mmSource;
 		MediumAllocator mediumAlloc;
 		bool isInit;
 };

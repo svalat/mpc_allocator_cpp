@@ -1,4 +1,5 @@
 /********************  HEADERS  *********************/
+#include <stddef.h>
 #include "CachedMMSource.h"
 #include "Debug.h"
 #include <OS.h>
@@ -6,6 +7,45 @@
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator 
 {
+	
+/*******************  FUNCTION  *********************/
+FreeMacroBloc::FreeMacroBloc ( Size totalSize )
+{
+	allocAssert(totalSize > sizeof(FreeMacroBloc));
+	this->totalSize = totalSize;
+}
+
+/*******************  FUNCTION  *********************/
+FreeMacroBloc* FreeMacroBloc::setup ( void* ptr, Size totalSize )
+{
+	return new (ptr) FreeMacroBloc(totalSize);
+}
+
+/*******************  FUNCTION  *********************/
+Size FreeMacroBloc::getTotalSize ( void ) const
+{
+	return this->totalSize;
+}
+
+/*******************  FUNCTION  *********************/
+FreeMacroBloc * FreeMacroBloc::getFromListHandler ( ListElement* list )
+{
+	return (FreeMacroBloc*)(addrOffset(list,-offsetof(FreeMacroBloc,listElement)));
+}
+
+/*******************  FUNCTION  *********************/
+ListElement* FreeMacroBloc::getListHandler ( void )
+{
+	return &listElement;
+}
+
+/*******************  FUNCTION  *********************/
+FreeMacroBloc * FreeMacroBloc::from ( RegionSegmentHeader* segment )
+{
+	allocAssert(segment != NULL);
+	FreeMacroBloc * res = new (segment)FreeMacroBloc(segment->getTotalSize());
+	return res;
+}
 
 /*******************  FUNCTION  *********************/
 CachedMMSource::CachedMMSource ( RegionRegistry * registry,size_t maxSize, size_t threashold ,bool keepResidut)
@@ -50,8 +90,7 @@ RegionSegmentHeader* CachedMMSource::map ( size_t innerSize, bool* zeroFilled, I
 	//search in cache if smaller than threashold
 	if (totalSize <= threashold)
 	{
-		res = searchInCache(totalSize);
-		res->setManager(manager);
+		res = searchInCache(totalSize,manager);
 		zero = false;
 	}
 	
@@ -59,7 +98,7 @@ RegionSegmentHeader* CachedMMSource::map ( size_t innerSize, bool* zeroFilled, I
 	if (res == NULL)
 	{
 		void * ptr = OS::mmap(NULL,totalSize);
-		allocCondWarning(res != NULL,"Failed to get memory from OS with mmap, maybe get OOM.");
+		allocCondWarning(ptr != NULL,"Failed to get memory from OS with mmap, maybe get OOM.");
 		zero = true;
 		
 		//not found
@@ -125,9 +164,8 @@ void CachedMMSource::unmap ( RegionSegmentHeader* segment )
 	{
 		OS::munmap(segment,segment->getTotalSize());
 	} else {
-		segment->setManager(NULL);
 		START_CRITICAL(spinlock);
-			freeList.putFirst(segment);
+			freeList.putFirst(FreeMacroBloc::from(segment));
 			currentSize += size;
 		END_CRITICAL;
 	}
@@ -138,11 +176,15 @@ void CachedMMSource::freeAll ( void )
 {
 	START_CRITICAL(spinlock);
 		//loop on all and unmap
-		for (FreeMacroBlocList::Iterator it = freeList.begin() ; it != freeList.end() ; ++it)
+		FreeMacroBlocList::Iterator it = freeList.begin();
+		while (it != freeList.end())
 		{
 			size_t totalSize = it->getTotalSize();
 			currentSize -= totalSize;
-			OS::munmap(&(*it),totalSize);
+			void * ptr = &(*it);
+			//need to increment before unmap, otherwise segfaut due to access to prev/next
+			++it;
+			OS::munmap(ptr,totalSize);
 		}
 	
 		//check
@@ -151,14 +193,20 @@ void CachedMMSource::freeAll ( void )
 }
 
 /*******************  FUNCTION  *********************/
-RegionSegmentHeader* CachedMMSource::searchInCache ( size_t totalSize )
+RegionSegmentHeader* CachedMMSource::searchInCache ( size_t totalSize, IChunkManager* manager )
 {
 	//errors
 	allocAssert(totalSize >= REGION_SPLITTING);
 	allocAssert(totalSize <= threashold);
 	
 	//to capture not exact matching
-	RegionSegmentHeader * best = freeList.getFirst();
+	FreeMacroBloc * best = freeList.getFirst();
+	
+	//not found 
+	if (best == NULL)
+		return NULL;
+	
+	//save best delta
 	size_t bestDelta = labs(totalSize - best->getTotalSize());
 
 	//search most adapted
@@ -179,21 +227,27 @@ RegionSegmentHeader* CachedMMSource::searchInCache ( size_t totalSize )
 	
 		//update current size
 		if (best != NULL)
+		{
+			FreeMacroBlocList::remove(best);
 			currentSize -= best->getTotalSize();
+		}
 	END_CRITICAL;
 
 	//if to large, split
 	if (bestDelta != 0)
 		best = fixReuseSize(best,totalSize);
 
-	return best;
+	if (best == NULL)
+		return NULL;
+	else
+		return RegionSegmentHeader::setup(best,best->getTotalSize(),manager);
 }
 
 /*******************  FUNCTION  *********************/
-RegionSegmentHeader* CachedMMSource::fixReuseSize ( RegionSegmentHeader* segment, size_t totalSize )
+FreeMacroBloc* CachedMMSource::fixReuseSize ( FreeMacroBloc* segment, size_t totalSize )
 {
 	//Vars
-	RegionSegmentHeader * res = NULL;
+	FreeMacroBloc * res = NULL;
 
 	//errors
 	allocAssert(segment != NULL);
@@ -206,20 +260,20 @@ RegionSegmentHeader* CachedMMSource::fixReuseSize ( RegionSegmentHeader* segment
 	if (size < totalSize)
 	{
 		void * ptr = OS::mremap((void*)segment,size,totalSize);
-		res = RegionSegmentHeader::setup(ptr,totalSize,NULL);
+		res = FreeMacroBloc::setup(ptr,totalSize);
 	} else {
 		//split
-		res = RegionSegmentHeader::setup((void*)segment,totalSize,NULL);
+		res = FreeMacroBloc::setup((void*)segment,totalSize);
 		
 		//point next
 		void * next = addrOffset(res,totalSize);
 		size_t nextSize = size - totalSize;
 
 		//keep next for reuse of return to OS
-		if (keepResidut)
+		if (keepResidut && nextSize <= threashold)
 		{
 			START_CRITICAL(spinlock);
-				RegionSegmentHeader * residut = RegionSegmentHeader::setup(next,nextSize,NULL);
+				FreeMacroBloc * residut = FreeMacroBloc::setup(next,nextSize);
 				freeList.putFirst(residut);
 				currentSize += residut->getTotalSize();
 			END_CRITICAL;

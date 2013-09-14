@@ -15,8 +15,23 @@ namespace MPCAllocator
 #define MMSRC_THREASHOLD (8*1024*1204)
 #define MMSRC_KEEP_RESIDUT false
 
+/*********************  STRUCT  *********************/
+class FreeMacroBloc
+{
+	public:
+		FreeMacroBloc(Size totalSize);
+		Size getTotalSize(void) const;
+		ListElement * getListHandler(void);
+		static FreeMacroBloc * getFromListHandler(ListElement * list);
+		static FreeMacroBloc * from(RegionSegmentHeader * segment);
+		static FreeMacroBloc * setup(void * ptr,Size totalSize);
+	private:
+		Size totalSize;
+		ListElement listElement;
+};
+
 /*********************  TYPES  **********************/
-typedef DoubleLinkList<RegionSegmentHeader> FreeMacroBlocList;
+typedef DoubleLinkList<FreeMacroBloc> FreeMacroBlocList;
 
 /*********************  CLASS  **********************/
 class CachedMMSource : public IMMSource
@@ -29,8 +44,8 @@ class CachedMMSource : public IMMSource
 		virtual void unmap ( RegionSegmentHeader* segment );
 		void freeAll(void);
 	protected:
-		RegionSegmentHeader * searchInCache(size_t totalSize);
-		RegionSegmentHeader * fixReuseSize(RegionSegmentHeader * segment,size_t totalSize);
+		RegionSegmentHeader * searchInCache( size_t totalSize, MPCAllocator::IChunkManager* manager );
+		FreeMacroBloc* fixReuseSize( MPCAllocator::FreeMacroBloc* segment, size_t totalSize );
 	private:
 		FreeMacroBlocList freeList;
 		size_t currentSize;

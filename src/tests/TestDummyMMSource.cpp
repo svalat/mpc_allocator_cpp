@@ -39,6 +39,7 @@ TEST(TestDummyMMSource,mapWithoutReg)
 	
 	ASSERT_NE((void*)NULL,segment);
 	EXPECT_EQ(REGION_SPLITTING,segment->getTotalSize());
+	EXPECT_EQ(&manager,segment->getManager());
 }
 
 /*******************  FUNCTION  *********************/
@@ -74,9 +75,11 @@ TEST(TestDummyMMSource,remapWithReg)
 	//TODO find a way to mock the registry
 	//TODO try with splitting to ensure move and check registry remove
 	RegionSegmentHeader * segment = mm.map(SIZE,NULL,&manager);
-	segment = mm.remap(segment,2*SIZE,&manager);
+	mm.map(SIZE,NULL,&manager);
+	RegionSegmentHeader * segment2 = mm.remap(segment,2*SIZE,&manager);
 	
-	EXPECT_EQ(segment,reg.getSegment(segment+10));
+	EXPECT_EQ(NULL,reg.getSegment(segment+10));
+	EXPECT_EQ(segment2,reg.getSegment(segment2+10));
 }
 
 /*******************  FUNCTION  *********************/

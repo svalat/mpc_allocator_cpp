@@ -13,6 +13,7 @@ namespace MPCAllocator
 /*********************  TYPES  **********************/
 typedef uint64_t Addr;
 typedef uint64_t Size;
+typedef int64_t SSize;
 
 /********************  MACRO  ***********************/
 #define BASIC_ALIGN sizeof(Addr)
@@ -50,7 +51,7 @@ static inline Size upToPowOf2(Size size,Size align)
 
 /*******************  FUNCTION  *********************/
 template <class T>
-T * addrOffset(T * value,Size offset)
+T * addrOffset(T * value,SSize offset)
 {
 	assert(value != NULL);
 	return (T*)((Addr)value + offset);
