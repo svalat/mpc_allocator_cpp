@@ -37,7 +37,7 @@ class CachedMMSource : public IMMSource
 		size_t maxSize;
 		size_t threashold;
 		bool keepResidut;
-		Spinlock lock;
+		Spinlock spinlock;
 		RegionRegistry * registry;
 };
 

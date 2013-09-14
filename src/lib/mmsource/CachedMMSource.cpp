@@ -14,6 +14,7 @@ CachedMMSource::CachedMMSource ( RegionRegistry * registry,size_t maxSize, size_
 	this->threashold = threashold;
 	this->keepResidut = keepResidut;
 	this->registry = registry;
+	this->currentSize = 0;
 }
 
 /*******************  FUNCTION  *********************/
@@ -125,24 +126,28 @@ void CachedMMSource::unmap ( RegionSegmentHeader* segment )
 		OS::munmap(segment,segment->getTotalSize());
 	} else {
 		segment->setManager(NULL);
-		freeList.putFirst(segment);
-		currentSize += size;
+		START_CRITICAL(spinlock);
+			freeList.putFirst(segment);
+			currentSize += size;
+		END_CRITICAL;
 	}
 }
 
 /*******************  FUNCTION  *********************/
 void CachedMMSource::freeAll ( void )
 {
-	//loop on all and unmap
-	for (FreeMacroBlocList::Iterator it = freeList.begin() ; it != freeList.end() ; ++it)
-	{
-		size_t totalSize = it->getTotalSize();
-		currentSize -= totalSize;
-		OS::munmap(&(*it),totalSize);
-	}
+	START_CRITICAL(spinlock);
+		//loop on all and unmap
+		for (FreeMacroBlocList::Iterator it = freeList.begin() ; it != freeList.end() ; ++it)
+		{
+			size_t totalSize = it->getTotalSize();
+			currentSize -= totalSize;
+			OS::munmap(&(*it),totalSize);
+		}
 	
-	//check
-	allocAssert(currentSize == 0);
+		//check
+		allocAssert(currentSize == 0);
+	END_CRITICAL;
 }
 
 /*******************  FUNCTION  *********************/
@@ -157,24 +162,26 @@ RegionSegmentHeader* CachedMMSource::searchInCache ( size_t totalSize )
 	size_t bestDelta = labs(totalSize - best->getTotalSize());
 
 	//search most adapted
-	for (FreeMacroBlocList::Iterator it = freeList.begin() ; it != freeList.end() ; ++it)
-	{
-		size_t delta = labs(it->getTotalSize() - totalSize);
-		//find better size
-		if (delta < bestDelta)
+	START_CRITICAL(spinlock);
+		for (FreeMacroBlocList::Iterator it = freeList.begin() ; it != freeList.end() ; ++it)
 		{
-			best = &(*it);
-			bestDelta = delta;
+			size_t delta = labs(it->getTotalSize() - totalSize);
+			//find better size
+			if (delta < bestDelta)
+			{
+				best = &(*it);
+				bestDelta = delta;
+			}
+			//exact match, no need to search more
+			if (delta == 0)
+				break;
 		}
-		//exact match, no need to search more
-		if (delta == 0)
-			break;
-	}
 	
-	//update current size
-	if (best != NULL)
-		currentSize -= best->getTotalSize();
-	
+		//update current size
+		if (best != NULL)
+			currentSize -= best->getTotalSize();
+	END_CRITICAL;
+
 	//if to large, split
 	if (bestDelta != 0)
 		best = fixReuseSize(best,totalSize);
@@ -211,9 +218,11 @@ RegionSegmentHeader* CachedMMSource::fixReuseSize ( RegionSegmentHeader* segment
 		//keep next for reuse of return to OS
 		if (keepResidut)
 		{
-			RegionSegmentHeader * residut = RegionSegmentHeader::setup(next,nextSize,NULL);
-			freeList.putFirst(residut);
-			currentSize += residut->getTotalSize();
+			START_CRITICAL(spinlock);
+				RegionSegmentHeader * residut = RegionSegmentHeader::setup(next,nextSize,NULL);
+				freeList.putFirst(residut);
+				currentSize += residut->getTotalSize();
+			END_CRITICAL;
 		} else {
 			OS::munmap(next,nextSize);
 		}
