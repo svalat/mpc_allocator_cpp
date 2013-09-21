@@ -7,6 +7,8 @@
 #include "TraceReader.h"
 #include "CollisionChecker.h"
 
+#define printf(...) do{} while(0)
+
 /**********************  USING  *********************/
 using namespace std;
 using namespace MPCAllocator;

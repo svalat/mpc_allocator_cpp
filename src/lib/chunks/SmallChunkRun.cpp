@@ -47,6 +47,14 @@ void SmallChunkRun::setSplitting ( SmallSize splitting )
 	allocAssert(splitting <= STORAGE_SIZE);
 	allocAssume(cntAlloc == 0,"Cannot change the size of non empty SmallChunkRun.");
 	
+	//trivial
+	if (splitting == 0)
+	{
+		allocAssert(this->splitting > 0);
+		this->splitting = 0;
+		return;
+	}
+	
 	//get bitmap
 	MacroEntry * bitmap = getMacroEntry(0);
 	
@@ -187,7 +195,7 @@ bool SmallChunkRun::isFull ( void ) const
 void* SmallChunkRun::malloc ( size_t size, size_t align, bool* zeroFilled )
 {
 	//check size
-	allocAssume(size <= splitting,"SmallChunkRun only support allocation smaller the splitting size.");
+	allocAssume(size <= splitting,"SmallChunkRun only support allocation smaller than the splitting size.");
 	allocCondWarning(size >= splitting / 2,"Caution, you allocate chunk in SmallChunkRun with size less than halfe of the quantum size.");
 	
 	//search first bit to one (availble free bloc)

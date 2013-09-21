@@ -68,7 +68,7 @@ void SmallRunContainer::regEmpty ( SmallChunkRun* run )
 	//errors
 	allocAssert(run != NULL);
 	allocAssert(run->isEmpty());
-	allocAssert((void*)run > (void*)this);
+	allocAssert((void*)run >= (void*)ceilToPowOf2((Addr)this,PAGE_SIZE));
 	allocAssert((void*)run < addrOffset((void*)this,size));
 	
 	if (run != NULL)

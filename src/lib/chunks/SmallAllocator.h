@@ -10,7 +10,7 @@
 #include "SmallRunContainer.h"
 
 /********************  MACRO  ***********************/
-#define NB_SIZE_CLASS 9
+#define NB_SIZE_CLASS 10
 #define SMALL_CHUNK_MAX_SIZE 128
 //8 16 24 32 48 64 80 96 128
 

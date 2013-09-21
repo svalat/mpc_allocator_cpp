@@ -67,3 +67,19 @@ TEST(TestPosixAllocator,calloc_big)
 	for (int i = 0 ; i < 2*1024*1024 ; i++)
 		ASSERT_EQ(0,(int)ptr2[i]);
 }
+
+/*******************  FUNCTION  *********************/
+TEST(TestPosixAllocator, malloc_all_small_sizes)
+{
+	PosixAllocator alloc;
+	for (int i = 0 ; i <= 128 ; i++)
+		alloc.malloc(i);
+}
+
+/*******************  FUNCTION  *********************/
+TEST(TestPosixAllocator, malloc_all_medium_sizes)
+{
+	PosixAllocator alloc;
+	for (int i = 256 ; i <= 2*1024*1024 ; i*=2)
+		alloc.malloc(i);
+}

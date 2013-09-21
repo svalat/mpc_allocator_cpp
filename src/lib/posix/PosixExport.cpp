@@ -78,7 +78,8 @@ void *calloc(size_t nmemb, size_t size)
 	
 	//forward action
 	void * ptr = gblAllocator->calloc(nmemb,size);
-	allocAssert((Addr)ptr % BASIC_ALIGN == 0 || (Addr)ptr % size == 0);
+	if (size >= BASIC_ALIGN)
+		allocAssert((Addr)ptr % BASIC_ALIGN == 0 || (Addr)ptr % size == 0);
 	allocAssert(size * nmemb <= gblAllocator->getInnerSize(ptr));
 	
 	return ptr;

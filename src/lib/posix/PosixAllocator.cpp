@@ -270,8 +270,12 @@ void* PosixAllocator::realloc ( void* ptr, size_t size )
 			//local and same class realloc, otherwise alloc/copy/free
 			if ((size <= SMALL_CHUNK_MAX_SIZE && chunkManager == &smallAlloc) || (size > SMALL_CHUNK_MAX_SIZE && chunkManager == &mediumAlloc))
 			{
-				allocAssert(chunkManager == &mediumAlloc);
-				res = mediumAlloc.realloc(ptr,size);
+				if (chunkManager == &smallAlloc)
+				{
+					res = smallAlloc.realloc(ptr,size);
+				} else {
+					res = mediumAlloc.realloc(ptr,size);
+				}
 			} else {
 				void * new_ptr = internalMalloc(size);
 				allocAssert(new_ptr != NULL);

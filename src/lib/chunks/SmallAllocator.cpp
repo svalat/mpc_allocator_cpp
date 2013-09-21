@@ -9,7 +9,7 @@ namespace MPCAllocator
 {
 
 /*********************  CONSTS  *********************/
-static const size_t SMALL_SIZE_CLASSES[NB_SIZE_CLASS] = {8, 16, 24, 32, 48, 64, 80, 96, 128};
+static const size_t SMALL_SIZE_CLASSES[NB_SIZE_CLASS] = {8, 16, 24, 32, 48, 64, 80, 96, 112, 128};
 
 /*******************  FUNCTION  *********************/
 SmallAllocator::SmallAllocator ( bool useLocks, IMMSource* memorySource )
@@ -32,6 +32,7 @@ void* SmallAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
 	//get related size class
 	int sizeClass = getSizeClass(size);
 	allocAssume(sizeClass >= 0,"Invalid size, not candidate to use small chunk mechnism.");
+	allocAssert(SMALL_SIZE_CLASSES[sizeClass] % align == 0);
 	
 	//take lock for the current function
 	OPTIONAL_CRITICAL(spinlock,useLocks);
@@ -147,6 +148,19 @@ void SmallAllocator::markRunAsFree ( SmallChunkRun* run )
 	//reg empty
 	SmallRunContainer * container = run->getContainer();
 	allocAssert(container != NULL);
+	
+	//check current usage
+	int sizeClass = getSizeClass(run->getSplitting());
+	allocAssert(sizeClass >= 0);
+	if (activRuns[sizeClass] == run)
+	{
+		activRuns[sizeClass] = NULL;
+	} else {
+		SmallChunkRunList::remove(run);
+	}
+	
+	//register as free
+	run->setSplitting(0);
 	container->regEmpty(run);
 	
 	//if container is empty, remove it
@@ -223,6 +237,7 @@ SmallChunkRun* SmallAllocator::getRun ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
+//8, 16, 24, 32, 48, 64, 80, 96, 128
 int SmallAllocator::getSizeClass ( size_t size ) const
 {
 	//errors
@@ -234,14 +249,16 @@ int SmallAllocator::getSizeClass ( size_t size ) const
 	if (size > SMALL_CHUNK_MAX_SIZE)
 		return -1;
 	
+	//if too small
+	if (size < 8)
+		size = 8;
+	
 	//calc from 8 to 32
 	int res;
-	if (size <= 8)
-		res = 0;
-	else if (size <= 32)
+	if (size <= 32)
 		res = (size - 1) / 8;
 	else
-		res = (size - 1) / 16 + 4;
+		res = (size - 1) / 16 + 2;
 	
 	allocAssert(SMALL_SIZE_CLASSES[res] >= size);
 	if (res > 0)

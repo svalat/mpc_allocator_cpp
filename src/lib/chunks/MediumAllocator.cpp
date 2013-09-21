@@ -214,6 +214,9 @@ size_t MediumAllocator::getInnerSize ( void* ptr )
 	if (ptr == NULL)
 		return 0;
 	
+	//unpadd
+	ptr = PaddedChunk::unpad(ptr);
+	
 	MediumChunk * chunk = MediumChunk::getChunkSafe(ptr);
 	if (chunk == NULL)	
 		return 0;
@@ -227,6 +230,9 @@ size_t MediumAllocator::getTotalSize ( void* ptr )
 	//trivial
 	if (ptr == NULL)
 		return 0;
+	
+	//unpadd
+	ptr = PaddedChunk::unpad(ptr);
 	
 	MediumChunk * chunk = MediumChunk::getChunkSafe(ptr);
 	if (chunk == NULL)	
