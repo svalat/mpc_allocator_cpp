@@ -6,7 +6,7 @@ Current dependencies for this project are :
          + cmake           (tested version 2.8.10, 2.8.9)
          + make            (tested version 3.82)
          + Hwloc           (tested version 1.6.2)
-         + OpenPA          (tested version 1.0.4) [Optional]
+         + OpenPA          (tested version 1.0.4) [Optional if GCC]
          + GTest           (tested version 1.6.0) [Optional]
          + GMock           (tested versino 1.6.0) [Optional]
          + OpenMP support                         [Optional]
