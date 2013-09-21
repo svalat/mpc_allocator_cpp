@@ -31,7 +31,7 @@ void* SmallAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
 	
 	//get related size class
 	int sizeClass = getSizeClass(size);
-	allocAssume(sizeClass > 0,"Invalid size, not candidate to use small chunk mechnism.");
+	allocAssume(sizeClass >= 0,"Invalid size, not candidate to use small chunk mechnism.");
 	
 	//take lock for the current function
 	OPTIONAL_CRITICAL(spinlock,useLocks);
@@ -50,6 +50,9 @@ void* SmallAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
 				res = run->malloc(size,align,zeroFilled);
 		}
 	END_CRITICAL
+	
+	if (zeroFilled != NULL)
+		*zeroFilled = false;
 	
 	//return
 	return res;
@@ -96,7 +99,7 @@ void SmallAllocator::refill ( void )
 		return;
 	
 	//request mem
-	RegionSegmentHeader * segment = memorySource->map(REGION_SPLITTING,NULL,this);
+	RegionSegmentHeader * segment = memorySource->map(REGION_SPLITTING-sizeof(RegionSegmentHeader),NULL,this);
 	if (segment == NULL)
 		return;
 	allocAssert(segment->getTotalSize() == REGION_SPLITTING);
@@ -233,7 +236,9 @@ int SmallAllocator::getSizeClass ( size_t size ) const
 	
 	//calc from 8 to 32
 	int res;
-	if (size <= 32)
+	if (size <= 8)
+		res = 0;
+	else if (size <= 32)
 		res = (size - 1) / 8;
 	else
 		res = (size - 1) / 16 + 4;

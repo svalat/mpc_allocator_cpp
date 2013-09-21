@@ -9,7 +9,7 @@ namespace MPCAllocator
 
 /*******************  FUNCTION  *********************/
 PosixAllocator::PosixAllocator ( void )
-	:mmSource(&registry), mediumAlloc(true,&mmSource)
+	:mmSource(&registry), mediumAlloc(true,&mmSource), smallAlloc(true,&mmSource)
 {
 	//mark as init
 	isInit = true;
@@ -207,13 +207,13 @@ void* PosixAllocator::internalMalloc ( size_t size, size_t alignement, bool requ
 
 	//var
 	bool zeroStatus = requireZero;
+	void * res = NULL;
 	
 	//round size
-	if (size < 16)
-		size = 16;
-	
-	//do alloc
-	void * res = mediumAlloc.malloc(size,alignement,&zeroStatus);
+	if (size <= SMALL_CHUNK_MAX_SIZE)
+		res = smallAlloc.malloc(size,alignement,&zeroStatus);
+	else
+		res = mediumAlloc.malloc(size,alignement,&zeroStatus);
 	
 	//if need reset
 	//TODO use optim here
@@ -238,7 +238,7 @@ void* PosixAllocator::pvalloc ( size_t size )
 /*******************  FUNCTION  *********************/
 bool PosixAllocator::isDistantManager ( IChunkManager* manager )
 {
-	return (manager != &mediumAlloc);
+	return (manager != &mediumAlloc && manager != &smallAlloc);
 }
 
 /*******************  FUNCTION  *********************/
@@ -263,21 +263,21 @@ void* PosixAllocator::realloc ( void* ptr, size_t size )
 		//manage bad realloc as we can
 		if (chunkManager == NULL)
 		{
-			allocWarning("The old segment isn't managed by current memory allocator, try to copy, but create a memory leak.");
+			allocWarning("The old segment isn't managed by current memory allocator, try to copy, but create a memory leak and may segfault during unsafe copy.");
 			res = malloc(size);
 			memcpy(res,ptr,size);
 		} else {
-			//distant realloc
-			if (isDistantManager(chunkManager))
+			//local and same class realloc, otherwise alloc/copy/free
+			if ((size <= SMALL_CHUNK_MAX_SIZE && chunkManager == &smallAlloc) || (size > SMALL_CHUNK_MAX_SIZE && chunkManager == &mediumAlloc))
 			{
+				allocAssert(chunkManager == &mediumAlloc);
+				res = mediumAlloc.realloc(ptr,size);
+			} else {
 				void * new_ptr = internalMalloc(size);
 				allocAssert(new_ptr != NULL);
 				memcpy(new_ptr,ptr,min(size,chunkManager->getInnerSize(ptr)));
 				chunkManager->free(ptr);
 				res = new_ptr;
-			} else {
-				allocAssert(chunkManager == &mediumAlloc);
-				res = mediumAlloc.realloc(ptr,size);
 			}
 		}
 	}

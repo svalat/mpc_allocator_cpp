@@ -144,7 +144,7 @@ TEST(TestSmallAllocator,refill)
 	SmallAllocator alloc(false,&mm);
 	RegionSegmentHeader * segment = RegionSegmentHeader::setup(gblBuffer,sizeof(gblBuffer),&alloc);
 	
-	EXPECT_CALL(mm,map(REGION_SPLITTING,NULL,&alloc)).WillOnce(Return(segment));
+	EXPECT_CALL(mm,map(REGION_SPLITTING-sizeof(RegionSegmentHeader),NULL,&alloc)).WillOnce(Return(segment));
 	
 	EXPECT_NE((void*)NULL,alloc.malloc(16));
 }
@@ -155,7 +155,7 @@ TEST(TestSmallAllocator,refillOOM)
 	MockMMSource mm;
 	SmallAllocator alloc(false,&mm);
 	
-	EXPECT_CALL(mm,map(REGION_SPLITTING,NULL,&alloc)).WillOnce(Return((RegionSegmentHeader*)NULL));
+	EXPECT_CALL(mm,map(REGION_SPLITTING-sizeof(RegionSegmentHeader),NULL,&alloc)).WillOnce(Return((RegionSegmentHeader*)NULL));
 	
 	EXPECT_EQ((void*)NULL,alloc.malloc(16));
 }
@@ -179,7 +179,7 @@ TEST(TestSmallAllocator,real_free)
 	SmallAllocator alloc(false,&mm);
 
 	RegionSegmentHeader * segment = RegionSegmentHeader::setup(gblBuffer,sizeof(gblBuffer),&alloc);
-	Expectation op1 = EXPECT_CALL(mm,map(REGION_SPLITTING,NULL,&alloc)).WillOnce(Return(segment));
+	Expectation op1 = EXPECT_CALL(mm,map(REGION_SPLITTING-sizeof(RegionSegmentHeader),NULL,&alloc)).WillOnce(Return(segment));
 	EXPECT_CALL(mm,unmap(segment)).After(op1);
 	
 	void * ptr = alloc.malloc(16);

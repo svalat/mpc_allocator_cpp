@@ -6,6 +6,7 @@
 #include "DummyMMSource.h"
 #include <CachedMMSource.h>
 #include "MediumAllocator.h"
+#include <SmallAllocator.h>
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
@@ -40,6 +41,7 @@ class PosixAllocator
 		RegionRegistry registry;
 		CachedMMSource mmSource;
 		MediumAllocator mediumAlloc;
+		SmallAllocator smallAlloc;
 		bool isInit;
 };
 

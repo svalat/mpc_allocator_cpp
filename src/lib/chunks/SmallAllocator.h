@@ -40,7 +40,7 @@ class SmallAllocator : public IChunkManager
 		void refill(void);
 		void markRunAsFree(SmallChunkRun * run);
 		SmallChunkRun * findEmptyRun(void);
-		SmallChunkRun * updateActivRunForSize(int sizeClass);
+		SmallChunkRun * updateActivRunForSize( int sizeClass );
 		SmallChunkRun * getActivRunForSize(int sizeClass);
 		SmallChunkRun * getRun(void * ptr);
 	private:
