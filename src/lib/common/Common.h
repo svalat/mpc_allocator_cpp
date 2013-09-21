@@ -20,7 +20,7 @@ typedef int64_t SSize;
 #define MAGICK_VALUE 42
 #define NB_FREE_LIST 50
 #define UNSUPPORTED 0
-#define ALLOC_MIN_SIZE BASIC_ALIGN
+#define ALLOC_MIN_SIZE (2*BASIC_ALIGN)
 //TODO setup value
 #define REALLOC_THREASHOLD 64
 #define MACRO_BLOC_SIZE (2*1024*1024)

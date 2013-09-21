@@ -171,3 +171,17 @@ TEST(TestSmallAllocator,free1)
 	void * ptr2 = alloc.malloc(16);
 	EXPECT_EQ(ptr1,ptr2);
 }
+
+/*******************  FUNCTION  *********************/
+TEST(TestSmallAllocator,real_free)
+{
+	MockMMSource mm;
+	SmallAllocator alloc(false,&mm);
+
+	RegionSegmentHeader * segment = RegionSegmentHeader::setup(gblBuffer,sizeof(gblBuffer),&alloc);
+	Expectation op1 = EXPECT_CALL(mm,map(REGION_SPLITTING,NULL,&alloc)).WillOnce(Return(segment));
+	EXPECT_CALL(mm,unmap(segment)).After(op1);
+	
+	void * ptr = alloc.malloc(16);
+	alloc.free(ptr);
+}

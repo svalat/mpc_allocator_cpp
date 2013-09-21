@@ -14,6 +14,7 @@ namespace MPCAllocator
 /*********************  TYPES  **********************/
 typedef uint64_t MacroEntry;
 typedef uint16_t SmallSize;
+class SmallRunContainer;
 
 /********************  MACRO  ***********************/
 #define SMALL_RUN_SIZE      4096
@@ -26,7 +27,7 @@ typedef uint16_t SmallSize;
 class SmallChunkRun : public IDoubleLinkListeElement
 {
 	public:
-		SmallChunkRun(SmallSize skipedSize = 0,SmallSize splitting = 0);
+		SmallChunkRun(SmallSize skipedSize = 0,SmallSize splitting = 0,SmallRunContainer * container = NULL);
 		void setSplitting( SmallSize size );
 		bool isEmpty(void) const;
 		bool isFull(void) const;
@@ -40,6 +41,7 @@ class SmallChunkRun : public IDoubleLinkListeElement
 		bool contain(void * ptr) const;
 		ListElement * getListHandler(void);
 		static SmallChunkRun * getFromListHandler(ListElement * list);
+		SmallRunContainer * getContainer(void);
 	private:
 		void setBitStatusOne(SmallSize id);
 		void setBitStatusZero(SmallSize id);
@@ -48,7 +50,8 @@ class SmallChunkRun : public IDoubleLinkListeElement
 		MacroEntry * getMacroEntry( SmallSize id );
 		const MacroEntry * getMacroEntry( SmallSize id ) const;
 	private:
-		MacroEntry data[SMALL_RUN_SIZE / sizeof(MacroEntry) - 3];
+		MacroEntry data[SMALL_RUN_SIZE / sizeof(MacroEntry) - 4];
+		SmallRunContainer * container;
 		ListElement listHandler;
 		SmallSize cntAlloc;
 		SmallSize skipedSize;

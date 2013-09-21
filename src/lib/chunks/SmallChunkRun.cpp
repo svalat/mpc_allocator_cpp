@@ -9,12 +9,13 @@ namespace MPCAllocator
 {
 
 /*******************  FUNCTION  *********************/
-SmallChunkRun::SmallChunkRun ( SmallSize skipedSize , SmallSize splitting)
+SmallChunkRun::SmallChunkRun ( SmallSize skipedSize , SmallSize splitting,SmallRunContainer * container)
 {
 	this->cntAlloc = 0;
 	this->skipedSize = upToPowOf2(skipedSize,MACRO_ENTRY_SIZE) / MACRO_ENTRY_SIZE;
 	this->splitting = splitting;
 	this->bitmapEntries = 0;
+	this->container = container;
 	if (splitting > 0)
 		setSplitting(splitting);
 }
@@ -24,6 +25,12 @@ MacroEntry * SmallChunkRun::getMacroEntry ( SmallSize id )
 {
 	//TODO check if compiler use shift
 	return data + skipedSize + id / MACRO_ENTRY_BITS;
+}
+
+/*******************  FUNCTION  *********************/
+SmallRunContainer* SmallChunkRun::getContainer ( void )
+{
+	return container;
 }
 
 /*******************  FUNCTION  *********************/

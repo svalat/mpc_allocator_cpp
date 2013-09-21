@@ -7,6 +7,7 @@
 #include <SmallChunkRun.h>
 #include <RegionRegistry.h>
 #include <DoubleLinkList.h>
+#include "SmallRunContainer.h"
 
 /********************  MACRO  ***********************/
 #define NB_SIZE_CLASS 9
@@ -18,7 +19,7 @@ namespace MPCAllocator
 {
 
 /*********************  TYPES  **********************/
-typedef DoubleLinkList<SmallChunkRun> SmallChunkRunList;
+typedef DoubleLinkList<SmallRunContainer> SmallRunContainerList;
 
 /*********************  CLASS  **********************/
 class SmallAllocator : public IChunkManager
@@ -37,6 +38,8 @@ class SmallAllocator : public IChunkManager
 		void fill(void * ptr, size_t size, RegionRegistry * registry,bool lock);
 		int getSizeClass(size_t size) const;
 		void refill(void);
+		void markRunAsFree(SmallChunkRun * run);
+		SmallChunkRun * findEmptyRun(void);
 		SmallChunkRun * updateActivRunForSize(int sizeClass);
 		SmallChunkRun * getActivRunForSize(int sizeClass);
 		SmallChunkRun * getRun(void * ptr);
@@ -46,7 +49,7 @@ class SmallAllocator : public IChunkManager
 		bool useLocks;
 		SmallChunkRun * activRuns[NB_SIZE_CLASS];
 		SmallChunkRunList inUse[NB_SIZE_CLASS];
-		SmallChunkRunList empty;
+		SmallRunContainerList containers;
 };
 
 };

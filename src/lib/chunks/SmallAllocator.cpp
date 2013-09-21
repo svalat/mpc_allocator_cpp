@@ -1,6 +1,7 @@
 /********************  HEADERS  *********************/
 #include <Debug.h>
 #include <cstring>
+#include <cstddef>
 #include "SmallAllocator.h"
 
 /********************  NAMESPACE  *******************/
@@ -58,8 +59,7 @@ void* SmallAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
 void SmallAllocator::fill ( void* ptr, size_t size, RegionRegistry* registry, bool lock )
 {
 	//cast to ease usage
-	Addr addr = (Addr)ptr;
-	int cnt = 0;
+	void * addr = ptr;
 	
 	//errors
 	allocAssert(ptr != NULL);
@@ -68,34 +68,18 @@ void SmallAllocator::fill ( void* ptr, size_t size, RegionRegistry* registry, bo
 	if (registry != NULL)
 	{
 		RegionSegmentHeader * segment = registry->setEntry(ptr,size,this);
-		addr = (Addr)segment->getPtr();
+		addr = segment->getPtr();
 		size = segment->getInnerSize();
 	}
-
-	//calc starting point
-	Addr ptrStart = ceilToPowOf2(addr,SMALL_RUN_SIZE);
-	Addr ptrEnd = ceilToPowOf2(addr+size,SMALL_RUN_SIZE);
 	
-	//create all runs
+	//setup run container
+	SmallRunContainer * container = SmallRunContainer::setup(addr,size);
+	allocAssert(container != NULL);
+
+	//reg in list
 	OPTIONAL_CRITICAL(spinlock,useLocks && lock);
-		for (Addr basePtr = ptrStart ; basePtr < ptrEnd ; basePtr+=SMALL_RUN_SIZE)
-		{
-			size_t skipedSize = 0;
-			//calc skip
-			if (basePtr < addr)
-				skipedSize = addr - basePtr;
-			allocAssert(skipedSize < SMALL_RUN_SIZE);
-
-			//create run
-			SmallChunkRun * run = new ((void*)basePtr) SmallChunkRun(skipedSize);
-			
-			//insert in empty list
-			empty.putFirst(run);
-			cnt++;
-		}
+		containers.putLast(container);
 	END_CRITICAL
-
-	allocAssert(cnt > 0);
 }
 
 /*******************  FUNCTION  *********************/
@@ -140,16 +124,33 @@ void SmallAllocator::free ( void* ptr )
 	if (run == NULL)
 		return;
 	
-	//free
-	run->free(ptr);
+	OPTIONAL_CRITICAL(spinlock,useLocks);
+		//free
+		run->free(ptr);
+		
+		//if empty move to empty list
+		if (run->isEmpty())
+			markRunAsFree(run);
+	END_CRITICAL;
+}
+
+/*******************  FUNCTION  *********************/
+void SmallAllocator::markRunAsFree ( SmallChunkRun* run )
+{
+	//errors
+	allocAssert(run != NULL);
+	allocAssert(run->isEmpty());
 	
-	//if empty move to empty list
-	if (run->isEmpty())
+	//reg empty
+	SmallRunContainer * container = run->getContainer();
+	allocAssert(container != NULL);
+	container->regEmpty(run);
+	
+	//if container is empty, remove it
+	if (container->isEmpty() && memorySource != NULL)
 	{
-		//TODO check if it's not the activ one otherwise we need to skip this action
-		//TODO improve memory free by pointing a free list per macro bloc, so get more chance
-		//to fee one
-		empty.putFirst(run);
+		containers.remove(container);
+		memorySource->unmap(RegionSegmentHeader::getSegment(container));
 	}
 }
 
@@ -279,6 +280,22 @@ void* SmallAllocator::realloc ( void* ptr, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
+SmallChunkRun* SmallAllocator::findEmptyRun ( void )
+{
+	SmallChunkRun * res = NULL;
+	
+	//search in containers
+	for (SmallRunContainerList::Iterator it = containers.begin() ; it != containers.end() ; ++it)
+	{
+		res = it->getEmptyRun();
+		if (res != NULL)
+			break;
+	}
+	
+	return res;
+}
+
+/*******************  FUNCTION  *********************/
 SmallChunkRun* SmallAllocator::updateActivRunForSize ( int sizeClass )
 {
 	//errors
@@ -293,14 +310,23 @@ SmallChunkRun* SmallAllocator::updateActivRunForSize ( int sizeClass )
 		if (it->isFull() == false)
 		{
 			run = &(*it);
-			SmallChunkRunList::remove(run);
+			break;
 		}
 	}
+	if (run != NULL)
+		inUse[sizeClass].remove(run);
 	
 	//if have not, try in empty list
 	if (run == NULL)
 	{
-		run = empty.popLast();
+		run = findEmptyRun();
+		//need to refill
+		if (run == NULL)
+		{
+			refill();
+			run = findEmptyRun();
+		}
+		//setup splitting in run
 		if (run != NULL)
 			run->setSplitting(SMALL_SIZE_CLASSES[sizeClass]);
 	}
@@ -312,12 +338,8 @@ SmallChunkRun* SmallAllocator::updateActivRunForSize ( int sizeClass )
 		if (activRuns[sizeClass] != NULL)
 			inUse[sizeClass].putLast(activRuns[sizeClass]);
 		activRuns[sizeClass] = run;
-	} else {
-		refill();
-		if (empty.isEmpty() == false)
-			run = updateActivRunForSize(sizeClass);
 	}
-	
+
 	//return it
 	return run;
 }
