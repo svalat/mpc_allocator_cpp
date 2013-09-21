@@ -220,7 +220,7 @@ TEST(TestMediumAllocator,testMemorySourceRefill)
 	MediumAllocator alloc(false,&mm);
 	RegionSegmentHeader * segment = RegionSegmentHeader::setup(gblBuffer,sizeof(gblBuffer),&alloc);
 	
-	EXPECT_CALL(mm,map(32,NULL,&alloc)).WillOnce(Return(segment));
+	EXPECT_CALL(mm,map(32,_,&alloc)).WillOnce(Return(segment));
 	
 	void * ptr = alloc.malloc(32);
 	EXPECT_EQ((char*)segment->getPtr()+sizeof(MediumChunk),ptr);
@@ -233,7 +233,7 @@ TEST(TestMediumAllocator,testMemorySourceFree)
 	MediumAllocator alloc(false,&mm);
 	RegionSegmentHeader * segment = RegionSegmentHeader::setup(gblBuffer,sizeof(gblBuffer),&alloc);
 	
-	EXPECT_CALL(mm,map(32,NULL,&alloc)).WillOnce(Return(segment));
+	EXPECT_CALL(mm,map(32,_,&alloc)).WillOnce(Return(segment));
 	
 	void * ptr = alloc.malloc(32);
 	EXPECT_EQ((char*)segment->getPtr()+sizeof(MediumChunk),ptr);
