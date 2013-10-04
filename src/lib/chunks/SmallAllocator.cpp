@@ -366,4 +366,19 @@ SmallChunkRun* SmallAllocator::updateActivRunForSize ( int sizeClass )
 	return run;
 }
 
+/*******************  FUNCTION  *********************/
+bool SmallAllocator::isThreadSafe ( void ) const
+{
+	return useLocks;
+}
+
+/*******************  FUNCTION  *********************/
+void SmallAllocator::remoteFree ( void* ptr )
+{
+	if (useLocks)
+		free(ptr);
+	else
+		allocFatal("Unsuppported remoteFree() function for medium allocators without locks.");
+}
+
 };

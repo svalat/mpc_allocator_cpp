@@ -11,7 +11,7 @@ namespace MPCAllocator
 {
 
 /*********************  CLASS  **********************/
-class PosixAllocatorFileTrace : public PosixAllocator
+class PosixAllocatorFileTrace : public PosixAllocatorStd
 {
 	public:
 		PosixAllocatorFileTrace(void);
@@ -33,7 +33,7 @@ class PosixAllocatorFileTrace : public PosixAllocator
 		Spinlock lock;
 		int nextThreadId;
 	private:
-		typedef PosixAllocator super;
+		typedef PosixAllocatorStd super;
 };
 
 };

@@ -1,22 +1,30 @@
-#ifndef POSIX_ALLOCATOR_H
-#define POSIX_ALLOCATOR_H
+#ifndef POSIX_ALLOCATOR_LOCAL_H
+#define POSIX_ALLOCATOR_LOCAL_H
 
 /********************  HEADERS  *********************/
-#include <pthread.h>
 #include "RegionRegistry.h"
+#include <MPSCFQueue.h>
 #include "DummyMMSource.h"
-#include "CachedMMSource.h"
-#include "PosixAllocatorLocal.h"
+#include <CachedMMSource.h>
+#include "MediumAllocator.h"
+#include <SmallAllocator.h>
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
 {
+	
+enum AllocatorClass
+{
+	ALLOCATOR_CLASS_SMALL,
+	ALLOCATOR_CLASS_MEDIUM,
+	ALLOCATOR_CLASS_HUGE
+};
 
 /*********************  CLASS  **********************/
-class PosixAllocator
+class PosixAllocatorLocal : public IAllocator
 {
 	public:
-		PosixAllocator(void);
+		PosixAllocatorLocal(void);
 		virtual void postInit(void);
 		//The posix interface
 		void   free ( void* ptr );
@@ -33,21 +41,30 @@ class PosixAllocator
 		size_t getRequestedSize ( void* ptr );
 		size_t getTotalSize ( void* ptr );
 		//compat with glibc
+		//to be stored in list
+		ListElement * getListHandler(void);
+		static PosixAllocatorLocal * getFromListHandler(ListElement * list);
+		//implement IAllocator
+		virtual void flushRemote ( void );
+		virtual bool isLocalChunkManager ( IChunkManager* manager );
+		virtual bool isThreadSafe ( void ) const;
+		virtual void* malloc ( size_t size, size_t align, bool* zeroFilled = 0 );
+		virtual void remoteFree ( void* ptr );
 	protected:
-		IAllocator * initLocal(void);
 		void * internalMalloc (size_t size, size_t alignement = BASIC_ALIGN, bool requireZero = false);
 		IChunkManager * getChunkManager(void * ptr);
-		bool isDistantManager(IAllocator * localAlloc,IChunkManager * manager);
-		void flushRemote(IAllocator * localAllocator);
+		bool isDistantManager(IChunkManager * manager);
+		AllocatorClass getSizeClass(Size innerSize);
 	private:
 		RegionRegistry registry;
 		CachedMMSource mmSource;
-		MediumAllocator internalAlloc;
-		DoubleLinkList<PosixAllocatorLocal> inuse;
-		DoubleLinkList<PosixAllocatorLocal> unused;
+		MediumAllocator mediumAlloc;
+		SmallAllocator smallAlloc;
 		bool isInit;
+		ListElement listHandler;
+		MPSCFQueue rfq;
 };
 
 };
 
-#endif //POSIX_ALLOCATOR_H
+#endif //POSIX_ALLOCATOR_LOCAL_H

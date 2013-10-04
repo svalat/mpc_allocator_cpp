@@ -1,71 +1,32 @@
 /********************  HEADERS  *********************/
-#include "PosixAllocator.h"
+#include "PosixAllocatorLocal.h"
 #include "Debug.h"
+#include <cstddef>
 #include <cstring>
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
 {
 
-/********************  GLOBALS  *********************/
-__thread IAllocator * tlsLocalCurrentAllocator = NULL;
-__thread IAllocator * tlsLocalDefaultAllocator = NULL;
-
 /*******************  FUNCTION  *********************/
-PosixAllocator::PosixAllocator ( void )
-	:mmSource(&registry),internalAlloc(true,&mmSource)
+PosixAllocatorLocal::PosixAllocatorLocal ( void )
+	:mmSource(&registry), mediumAlloc(true,&mmSource), smallAlloc(true,&mmSource)
 {
 	//mark as init
 	isInit = true;
 }
 
 /*******************  FUNCTION  *********************/
-void PosixAllocator::postInit ( void )
+void PosixAllocatorLocal::postInit ( void )
 {
 
 }
 
 /*******************  FUNCTION  *********************/
-IAllocator* PosixAllocator::initLocal ( void )
+void PosixAllocatorLocal::free ( void* ptr )
 {
 	//errors
 	allocAssert(isInit);
-	
-	//alloc memory to store the local allocator
-	void * mm = internalMalloc(sizeof(PosixAllocatorLocal));
-	allocAssume(mm != NULL,"Fail to get memory from internal sub allocator to build the thread local allocator, maybe OOM.");
-	
-	//setup the posix local allocator
-	PosixAllocatorLocal * localAlloc = new (mm)PosixAllocatorLocal();
-	
-	//make it as current default one
-	tlsLocalCurrentAllocator = localAlloc;
-	tlsLocalDefaultAllocator = localAlloc;
-	
-	return localAlloc;
-}
-
-/*******************  FUNCTION  *********************/
-void PosixAllocator::flushRemote ( IAllocator* localAllocator )
-{
-	IAllocator * defaultLocalAllocator = tlsLocalDefaultAllocator;
-
-	//local flush
-	localAllocator->flushRemote();
-	if (defaultLocalAllocator != localAllocator)//maybe this is too much
-		defaultLocalAllocator->flushRemote();
-}
-
-/*******************  FUNCTION  *********************/
-void PosixAllocator::free ( void* ptr )
-{
-	//errors
-	allocAssert(isInit);
-
-	//fetch TLS locally for fast use
-	IAllocator * localAllocator = tlsLocalCurrentAllocator;
-	if (localAllocator != NULL)
-		flushRemote(localAllocator);
 	
 	//trivial
 	if (ptr == NULL)
@@ -76,14 +37,12 @@ void PosixAllocator::free ( void* ptr )
 	allocAssert(chunkManager != NULL);
 	
 	//free it
-	if (isDistantManager(localAllocator,chunkManager))
-		chunkManager->remoteFree(ptr);
-	else if (chunkManager != NULL)
+	if (chunkManager != NULL)
 		chunkManager->free(ptr);
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::malloc ( size_t size )
+void* PosixAllocatorLocal::malloc ( size_t size )
 {
 	//errors
 	allocAssert(isInit);
@@ -99,7 +58,7 @@ void* PosixAllocator::malloc ( size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::aligned_alloc ( size_t alignment, size_t size )
+void* PosixAllocatorLocal::aligned_alloc ( size_t alignment, size_t size )
 {
 	//errors
 	allocAssert(isInit);
@@ -110,7 +69,7 @@ void* PosixAllocator::aligned_alloc ( size_t alignment, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::calloc ( size_t nmemb, size_t size )
+void* PosixAllocatorLocal::calloc ( size_t nmemb, size_t size )
 {
 	//errors
 	allocAssert(isInit);
@@ -122,7 +81,7 @@ void* PosixAllocator::calloc ( size_t nmemb, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-IChunkManager* PosixAllocator::getChunkManager ( void* ptr )
+IChunkManager* PosixAllocatorLocal::getChunkManager ( void* ptr )
 {
 	//errors
 	allocAssert(isInit);
@@ -141,7 +100,7 @@ IChunkManager* PosixAllocator::getChunkManager ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-size_t PosixAllocator::getInnerSize ( void* ptr )
+size_t PosixAllocatorLocal::getInnerSize ( void* ptr )
 {
 	//errors
 	allocAssert(isInit);
@@ -162,7 +121,7 @@ size_t PosixAllocator::getInnerSize ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-size_t PosixAllocator::getRequestedSize ( void* ptr )
+size_t PosixAllocatorLocal::getRequestedSize ( void* ptr )
 {
 	//errors
 	allocAssert(isInit);
@@ -183,7 +142,7 @@ size_t PosixAllocator::getRequestedSize ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-size_t PosixAllocator::getTotalSize ( void* ptr )
+size_t PosixAllocatorLocal::getTotalSize ( void* ptr )
 {
 	//errors
 	allocAssert(isInit);
@@ -204,7 +163,7 @@ size_t PosixAllocator::getTotalSize ( void* ptr )
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::memalign ( size_t alignment, size_t size )
+void* PosixAllocatorLocal::memalign ( size_t alignment, size_t size )
 {
 	//errors
 	allocAssert(isInit);
@@ -217,7 +176,7 @@ void* PosixAllocator::memalign ( size_t alignment, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-int PosixAllocator::posix_memalign ( void** memptr, size_t alignment, size_t size )
+int PosixAllocatorLocal::posix_memalign ( void** memptr, size_t alignment, size_t size )
 {
 	//errors
 	allocAssert(isInit);
@@ -242,27 +201,20 @@ int PosixAllocator::posix_memalign ( void** memptr, size_t alignment, size_t siz
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::internalMalloc ( size_t size, size_t alignement, bool requireZero )
+void* PosixAllocatorLocal::internalMalloc ( size_t size, size_t alignement, bool requireZero )
 {
 	//errors
 	allocAssert(isInit);
-	
-	//fetch TLS locally for fast use
-	IAllocator * localAllocator = tlsLocalCurrentAllocator;
-	
-	//check for flush
-	if (localAllocator != NULL)
-		flushRemote(localAllocator);
-	
-	//check for init of local alloc
-	if (localAllocator == NULL)
-		localAllocator = initLocal();
-	
-	//zero setup
+
+	//var
 	bool zeroStatus = requireZero;
+	void * res = NULL;
 	
-	//call
-	void * res = localAllocator->malloc(size,alignement,&zeroStatus); 
+	//round size
+	if (size <= SMALL_CHUNK_MAX_SIZE)
+		res = smallAlloc.malloc(size,alignement,&zeroStatus);
+	else
+		res = mediumAlloc.malloc(size,alignement,&zeroStatus);
 	
 	//if need reset
 	//TODO use optim here
@@ -275,7 +227,7 @@ void* PosixAllocator::internalMalloc ( size_t size, size_t alignement, bool requ
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::pvalloc ( size_t size )
+void* PosixAllocatorLocal::pvalloc ( size_t size )
 {
 	//errors
 	allocAssert(isInit);
@@ -285,18 +237,13 @@ void* PosixAllocator::pvalloc ( size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-bool PosixAllocator::isDistantManager (IAllocator * localAlloc, IChunkManager* manager )
+bool PosixAllocatorLocal::isDistantManager ( IChunkManager* manager )
 {
-	if (manager->isThreadSafe())
-		return false;
-	else if (localAlloc == NULL)
-		return true;
-	else
-		return localAlloc->isLocalChunkManager(manager);
+	return (manager != &mediumAlloc && manager != &smallAlloc);
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::realloc ( void* ptr, size_t size )
+void* PosixAllocatorLocal::realloc ( void* ptr, size_t size )
 {
 	//vars
 	void * res = NULL;
@@ -311,31 +258,31 @@ void* PosixAllocator::realloc ( void* ptr, size_t size )
 	} else if (size == 0) {
 		this->free(ptr);
 	} else {
-		//get manager and fetch TLS locally for fast use
+		//get manager
 		IChunkManager * chunkManager = getChunkManager(ptr);
-		IAllocator * localAllocator = tlsLocalCurrentAllocator;
 		
 		//manage bad realloc as we can
 		if (chunkManager == NULL)
 		{
-			//TODO : made this cas optional for resistant mode
 			allocWarning("The old segment isn't managed by current memory allocator, try to copy, but create a memory leak and may segfault during unsafe copy.");
-			res = internalMalloc(size);
+			res = malloc(size);
 			memcpy(res,ptr,size);
-		} else if (isDistantManager(localAllocator,chunkManager)) {
-			void * new_ptr = internalMalloc(size);
-			allocAssert(new_ptr != NULL);
-			memcpy(new_ptr,ptr,min(size,chunkManager->getInnerSize(ptr)));
-			chunkManager->free(ptr);
-			res = new_ptr;
 		} else {
-			IChunkManager * parentChunkManager = chunkManager->getParentChunkManager();
-			if (parentChunkManager == NULL)
+			//local and same class realloc, otherwise alloc/copy/free
+			if ((size <= SMALL_CHUNK_MAX_SIZE && chunkManager == &smallAlloc) || (size > SMALL_CHUNK_MAX_SIZE && chunkManager == &mediumAlloc))
 			{
-				res = chunkManager->realloc(ptr,size);
+				if (chunkManager == &smallAlloc)
+				{
+					res = smallAlloc.realloc(ptr,size);
+				} else {
+					res = mediumAlloc.realloc(ptr,size);
+				}
 			} else {
-				allocAssert(parentChunkManager->getParentChunkManager() == NULL);
-				res = parentChunkManager->realloc(ptr,size);
+				void * new_ptr = internalMalloc(size);
+				allocAssert(new_ptr != NULL);
+				memcpy(new_ptr,ptr,min(size,chunkManager->getInnerSize(ptr)));
+				chunkManager->free(ptr);
+				res = new_ptr;
 			}
 		}
 	}
@@ -344,13 +291,73 @@ void* PosixAllocator::realloc ( void* ptr, size_t size )
 }
 
 /*******************  FUNCTION  *********************/
-void* PosixAllocator::valloc ( size_t size )
+void* PosixAllocatorLocal::valloc ( size_t size )
 {
 	//errors
 	allocAssert(isInit);
 
 	allocFatal("Not supported");
 	return NULL;
+}
+
+/*******************  FUNCTION  *********************/
+PosixAllocatorLocal* PosixAllocatorLocal::getFromListHandler ( ListElement* list )
+{
+	char * ptr = (char*)list;
+	ptr -= offsetof(PosixAllocatorLocal,listHandler);
+	PosixAllocatorLocal * res = (PosixAllocatorLocal*)ptr;
+	allocAssert(&res->listHandler == list);
+	return res;
+}
+
+/*******************  FUNCTION  *********************/
+ListElement* PosixAllocatorLocal::getListHandler ( void )
+{
+	return &listHandler;
+}
+
+/*******************  FUNCTION  *********************/
+void PosixAllocatorLocal::flushRemote ( void )
+{
+	//size > MPSCFQueueElement
+	MPSCFQueueElement * cur = rfq.dequeueAll();
+	MPSCFQueueElement * next;
+	while (cur != NULL)
+	{
+		next = cur->next;
+		this->free(cur);
+		cur = next;
+	}
+}
+
+/*******************  FUNCTION  *********************/
+bool PosixAllocatorLocal::isThreadSafe ( void ) const
+{
+	return false;
+}
+
+/*******************  FUNCTION  *********************/
+AllocatorClass PosixAllocatorLocal::getSizeClass ( Size innerSize )
+{
+	allocFatal("TODO");
+}
+
+/*******************  FUNCTION  *********************/
+bool PosixAllocatorLocal::isLocalChunkManager ( IChunkManager* manager )
+{
+	return (manager == &mediumAlloc || manager == &smallAlloc);
+}
+
+/*******************  FUNCTION  *********************/
+void* PosixAllocatorLocal::malloc ( size_t size, size_t align, bool* zeroFilled )
+{
+	return internalMalloc(size,align,zeroFilled);
+}
+
+/*******************  FUNCTION  *********************/
+void PosixAllocatorLocal::remoteFree ( void* ptr )
+{
+	allocFatal("TODO");
 }
 
 };

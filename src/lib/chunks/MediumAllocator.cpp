@@ -306,4 +306,19 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	return new_ptr;
 }
 
+/*******************  FUNCTION  *********************/
+bool MediumAllocator::isThreadSafe ( void ) const
+{
+	return useLocks;
+}
+
+/*******************  FUNCTION  *********************/
+void MediumAllocator::remoteFree ( void* ptr )
+{
+	if (useLocks)
+		free(ptr);
+	else
+		allocFatal("Unsuppported remoteFree() function for medium allocators without locks.");
+}
+
 };
