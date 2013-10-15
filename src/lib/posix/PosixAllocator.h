@@ -33,6 +33,7 @@ class PosixAllocator
 		size_t getRequestedSize ( void* ptr );
 		size_t getTotalSize ( void* ptr );
 		//compat with glibc
+		void resetTLSForTest(void);
 	protected:
 		IAllocator * initLocal(void);
 		void * internalMalloc (size_t size, size_t alignement = BASIC_ALIGN, bool requireZero = false);

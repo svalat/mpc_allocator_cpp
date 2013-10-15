@@ -9,11 +9,12 @@ namespace MPCAllocator
 {
 
 /*******************  FUNCTION  *********************/
-PosixAllocatorLocal::PosixAllocatorLocal ( void )
-	:mmSource(&registry), mediumAlloc(true,&mmSource), smallAlloc(true,&mmSource)
+PosixAllocatorLocal::PosixAllocatorLocal ( RegionRegistry * registry )
+	:mmSource(registry), mediumAlloc(true,&mmSource), smallAlloc(true,&mmSource)
 {
 	//mark as init
-	isInit = true;
+	this->isInit = true;
+	this->registry = registry;
 }
 
 /*******************  FUNCTION  *********************/
@@ -87,7 +88,7 @@ IChunkManager* PosixAllocatorLocal::getChunkManager ( void* ptr )
 	allocAssert(isInit);
 
 	//search region segment
-	RegionSegmentHeader * segment = registry.getSegmentSafe(ptr);
+	RegionSegmentHeader * segment = registry->getSegmentSafe(ptr);
 	allocAssert(segment != NULL);
 	if (segment == NULL)
 		return NULL;

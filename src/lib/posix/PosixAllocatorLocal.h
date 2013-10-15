@@ -24,7 +24,7 @@ enum AllocatorClass
 class PosixAllocatorLocal : public IAllocator
 {
 	public:
-		PosixAllocatorLocal(void);
+		PosixAllocatorLocal(RegionRegistry * registry);
 		virtual void postInit(void);
 		//The posix interface
 		void   free ( void* ptr );
@@ -56,7 +56,7 @@ class PosixAllocatorLocal : public IAllocator
 		bool isDistantManager(IChunkManager * manager);
 		AllocatorClass getSizeClass(Size innerSize);
 	private:
-		RegionRegistry registry;
+		RegionRegistry * registry;
 		CachedMMSource mmSource;
 		MediumAllocator mediumAlloc;
 		SmallAllocator smallAlloc;

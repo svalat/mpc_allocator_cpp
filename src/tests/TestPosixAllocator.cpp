@@ -10,12 +10,15 @@ using namespace MPCAllocator;
 TEST(TestPosixAllocator,setup)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
 }
 
 /*******************  FUNCTION  *********************/
 TEST(TestPosixAllocator,malloc1)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	void * ptr1 = alloc.malloc(16);
 	EXPECT_NE((void*)NULL,ptr1);
 }
@@ -24,6 +27,8 @@ TEST(TestPosixAllocator,malloc1)
 TEST(TestPosixAllocator,malloc2)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	void * ptr1 = alloc.malloc(0);
 	EXPECT_NE((void*)NULL,ptr1);
 }
@@ -32,6 +37,8 @@ TEST(TestPosixAllocator,malloc2)
 TEST(TestPosixAllocator,free1)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	void * ptr1 = alloc.malloc(16);
 	EXPECT_NE((void*)NULL,ptr1);
 	alloc.free(ptr1);
@@ -41,6 +48,8 @@ TEST(TestPosixAllocator,free1)
 TEST(TestPosixAllocator,free2)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	alloc.free(NULL);
 }
 
@@ -48,6 +57,8 @@ TEST(TestPosixAllocator,free2)
 TEST(TestPosixAllocator,calloc_small)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	void * ptr = alloc.malloc(16);
 	memset(ptr,1,16);
 	alloc.free(ptr);
@@ -60,6 +71,8 @@ TEST(TestPosixAllocator,calloc_small)
 TEST(TestPosixAllocator,calloc_big)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	void * ptr = alloc.malloc(2*1024*1024);
 	memset(ptr,1,2*1024*1024);
 	alloc.free(ptr);
@@ -72,6 +85,8 @@ TEST(TestPosixAllocator,calloc_big)
 TEST(TestPosixAllocator, malloc_all_small_sizes)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	for (int i = 0 ; i <= 128 ; i++)
 		alloc.malloc(i);
 }
@@ -80,6 +95,8 @@ TEST(TestPosixAllocator, malloc_all_small_sizes)
 TEST(TestPosixAllocator, malloc_all_medium_sizes)
 {
 	PosixAllocator alloc;
+	alloc.resetTLSForTest();
+
 	for (int i = 256 ; i <= 2*1024*1024 ; i*=2)
 		alloc.malloc(i);
 }

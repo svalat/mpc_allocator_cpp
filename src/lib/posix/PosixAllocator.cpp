@@ -32,11 +32,11 @@ IAllocator* PosixAllocator::initLocal ( void )
 	allocAssert(isInit);
 	
 	//alloc memory to store the local allocator
-	void * mm = internalMalloc(sizeof(PosixAllocatorLocal));
+	void * mm = internalAlloc.malloc(sizeof(PosixAllocatorLocal));
 	allocAssume(mm != NULL,"Fail to get memory from internal sub allocator to build the thread local allocator, maybe OOM.");
 	
 	//setup the posix local allocator
-	PosixAllocatorLocal * localAlloc = new (mm)PosixAllocatorLocal();
+	PosixAllocatorLocal * localAlloc = new (mm)PosixAllocatorLocal(&registry);
 	
 	//make it as current default one
 	tlsLocalCurrentAllocator = localAlloc;
@@ -351,6 +351,13 @@ void* PosixAllocator::valloc ( size_t size )
 
 	allocFatal("Not supported");
 	return NULL;
+}
+
+/*******************  FUNCTION  *********************/
+void PosixAllocator::resetTLSForTest ( void )
+{
+	tlsLocalCurrentAllocator = NULL;
+	tlsLocalDefaultAllocator = NULL;
 }
 
 };

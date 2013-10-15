@@ -29,10 +29,15 @@ void* SmallAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
 	//align is not supported up to now
 	allocAssume(align == sizeof(void*), "TODO : support align");
 	
+	//round if smallest size to avoid checking warning of filling ratio in SmallChunkRun
+	if (size < SMALL_SIZE_CLASSES[0])
+		size = SMALL_SIZE_CLASSES[0];
+	
 	//get related size class
 	int sizeClass = getSizeClass(size);
 	allocAssume(sizeClass >= 0,"Invalid size, not candidate to use small chunk mechnism.");
 	allocAssert(SMALL_SIZE_CLASSES[sizeClass] % align == 0);
+	
 	
 	//take lock for the current function
 	OPTIONAL_CRITICAL(spinlock,useLocks);
