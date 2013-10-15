@@ -79,7 +79,8 @@ void * MediumAllocator::malloc ( size_t size, size_t align, bool * zeroFilled )
 		res = PaddedChunk::setup(chunk,PaddedChunk::calcPadding(chunk,align,size))->getPtr();
 	
 	//final check
-	allocAssert(res == NULL || (Addr)res % align == 0);
+	allocAssert((Addr)res % align == 0);
+	allocAssert(res != NULL && chunk->contain(res) && chunk->contain(addrOffset(res,size-1)));
 	
 	return res;
 }

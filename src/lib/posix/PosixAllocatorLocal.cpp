@@ -15,6 +15,9 @@ PosixAllocatorLocal::PosixAllocatorLocal ( RegionRegistry * registry )
 	//mark as init
 	this->isInit = true;
 	this->registry = registry;
+	//setup current local allocator as resposible for realloc
+	this->mediumAlloc.setParentChunkManager(this);
+	this->smallAlloc.setParentChunkManager(this);
 }
 
 /*******************  FUNCTION  *********************/
@@ -191,7 +194,6 @@ int PosixAllocatorLocal::posix_memalign ( void** memptr, size_t alignment, size_
 	if (memptr == NULL)
 		return -1;
 	
-	allocWarning("Not implemented");
 	*memptr = internalMalloc(size,alignment);
 	
 	//TODO fill perror
@@ -210,6 +212,11 @@ void* PosixAllocatorLocal::internalMalloc ( size_t size, size_t alignement, bool
 	//var
 	bool zeroStatus = requireZero;
 	void * res = NULL;
+	
+	//if alignement is greater that size, set size as align otherwise we may
+	//select the bad size class
+	if (alignement > size)
+		size = alignement;
 	
 	//round size
 	if (size <= SMALL_CHUNK_MAX_SIZE)
@@ -269,15 +276,16 @@ void* PosixAllocatorLocal::realloc ( void* ptr, size_t size )
 			res = malloc(size);
 			memcpy(res,ptr,size);
 		} else {
+			//check if can strictly realloc in one kind of allocation
+			bool isReallocInMedium = (size > SMALL_CHUNK_MAX_SIZE  && chunkManager == &mediumAlloc);
+			bool isReallocInSmall  = (size <= SMALL_CHUNK_MAX_SIZE && chunkManager == &smallAlloc);
+
 			//local and same class realloc, otherwise alloc/copy/free
-			if ((size <= SMALL_CHUNK_MAX_SIZE && chunkManager == &smallAlloc) || (size > SMALL_CHUNK_MAX_SIZE && chunkManager == &mediumAlloc))
+			if (isReallocInMedium)
 			{
-				if (chunkManager == &smallAlloc)
-				{
-					res = smallAlloc.realloc(ptr,size);
-				} else {
-					res = mediumAlloc.realloc(ptr,size);
-				}
+				res = mediumAlloc.realloc(ptr,size);
+			} else if (isReallocInSmall) {
+				res = smallAlloc.realloc(ptr,size);
 			} else {
 				void * new_ptr = internalMalloc(size);
 				allocAssert(new_ptr != NULL);

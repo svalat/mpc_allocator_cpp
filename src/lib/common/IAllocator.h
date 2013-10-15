@@ -24,6 +24,7 @@ class IChunkManager
 		//remote part for thread aware
 		virtual bool isThreadSafe(void) const = 0;
 		virtual void remoteFree(void * ptr) = 0;
+		void setParentChunkManager(IChunkManager * parent) { this->parent = parent;};
 		IChunkManager * getParentChunkManager(void) {return parent;};
 	private:
 		IChunkManager * parent;

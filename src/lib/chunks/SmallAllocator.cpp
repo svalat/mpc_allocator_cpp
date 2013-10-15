@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstddef>
 #include "SmallAllocator.h"
+#include "PaddedChunk.h"
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
@@ -59,6 +60,9 @@ void* SmallAllocator::malloc ( size_t size, size_t align, bool* zeroFilled )
 	
 	if (zeroFilled != NULL)
 		*zeroFilled = false;
+	
+	//final check
+	allocAssert(res == NULL || (Addr)res % align == 0);
 	
 	//return
 	return res;

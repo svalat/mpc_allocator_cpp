@@ -336,4 +336,10 @@ MediumChunk * MediumChunk::getFromListHandler ( ListElement* list )
 	return res;
 }
 
+/*******************  FUNCTION  *********************/
+bool MediumChunk::contain ( void* ptr )
+{
+	return (ptr >= getPtr() && ptr < addrOffset(getPtr(),getInnerSize()));
+}
+
 };

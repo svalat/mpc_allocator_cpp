@@ -42,6 +42,7 @@ class MediumChunk : public IDoubleLinkListeElement
 		void merge( MediumChunk* last );
 		ListElement * getListHandler(void);
 		static MediumChunk * getFromListHandler(ListElement * list);
+		bool contain(void * ptr);
 	private:
 		static MediumChunk * setup(void * ptr);
 	private:
