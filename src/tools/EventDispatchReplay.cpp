@@ -94,6 +94,15 @@ void EventDispatchReplay::realloc ( uint16_t threadId, uint64_t timestamp, uint1
 	checkerTrace.registerSegment((void*)result,newSize);
 	checker.unregisterSegment(inPtr,alloc.getInnerSize(inPtr));
 	
+	//put data in buffer
+	size_t s = 0;
+	if (inPtr != NULL)
+	{
+		s = alloc.getInnerSize(inPtr);
+		for (size_t i = 0 ; i < s ; i++)
+			((char*)inPtr)[i] = (char)i;
+	}
+	
 	//do realloc
 	void * outPtr = alloc.realloc(inPtr,newSize);
 	trace_printf("          => %p , %lu\n",ptr,alloc.getInnerSize(ptr));
@@ -102,7 +111,20 @@ void EventDispatchReplay::realloc ( uint16_t threadId, uint64_t timestamp, uint1
 	//update registration
 	checker.registerSegment(outPtr,alloc.getInnerSize(outPtr));
 	
-	//TODO check value copy
+	//check if content was OK
+	if (outPtr != NULL)
+	{
+		if (newSize < s)
+			s = newSize;
+		for (size_t i = 0 ; i < s ; i++)
+		{
+			if (((char*)outPtr)[i] != (char)i)
+			{
+				allocWarning("Fail to keep content on realloc.");
+				break;
+			}
+		}	
+	}
 	
 	//check usability
 	memset(outPtr,0,newSize);
