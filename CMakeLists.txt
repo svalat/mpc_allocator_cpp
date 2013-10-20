@@ -27,11 +27,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 
 ######################################################
 #Delegate some cmake scripts
+include(${CMAKE_SOURCE_DIR}/cmake/macros.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/enable-options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/cpack-options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/check-deps.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/user-options.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/macros.cmake)
 
 ######################################################
 #some include dirs
