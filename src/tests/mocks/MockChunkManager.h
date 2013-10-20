@@ -17,6 +17,7 @@ class MockChunkManager : public IChunkManager {
 		MOCK_METHOD1(getTotalSize, size_t( void* ptr ));
 		MOCK_METHOD2(realloc,void* ( void* ptr, size_t size ));
 		MOCK_METHOD1(remoteFree,void(void* ptr));
+		MOCK_METHOD0(hardChecking,void(void));
 		MOCK_CONST_METHOD0(isThreadSafe,bool(void));
 };
 

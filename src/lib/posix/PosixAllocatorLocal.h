@@ -50,6 +50,7 @@ class PosixAllocatorLocal : public IAllocator
 		virtual bool isThreadSafe ( void ) const;
 		virtual void* malloc ( size_t size, size_t align, bool* zeroFilled = 0 );
 		virtual void remoteFree ( void* ptr );
+		virtual void hardChecking(void);
 	protected:
 		void * internalMalloc (size_t size, size_t alignement = BASIC_ALIGN, bool requireZero = false);
 		IChunkManager * getChunkManager(void * ptr);

@@ -15,10 +15,7 @@ int main(int argc,char ** argv)
 	TraceEntryComplete entry;
 	EventDispatchPrint printer;
 	
-	while (reader.readNext(entry))
-	{
-		printer.run(entry);
-	}
+	printer.run(reader);
 	
 	return EXIT_SUCCESS;
 }

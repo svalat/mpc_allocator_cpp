@@ -146,6 +146,19 @@ DoubleLinkList<T> * DoubleLinkList<T>::remove(ListElement * value,int /*unused*/
 
 /*******************  FUNCTION  *********************/
 template <class T>
+void DoubleLinkList<T>::hardChecking(void)
+{
+	ListElement * cur = &this->root;
+	
+	do {
+		allocAssert(cur->next->prev == cur);
+		allocAssert(cur->prev->next == cur);
+		cur = cur->next;
+	} while (cur != &this->root);
+}
+
+/*******************  FUNCTION  *********************/
+template <class T>
 void typeToJsonInner(htopml::JsonState& json, std::ostream& stream, const DoubleLinkList<T> & value,const ListElement & elt)
 {
 	json.printField("__mem_address__",(void*)&elt);

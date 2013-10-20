@@ -34,6 +34,13 @@ typedef int64_t SSize;
 // #define DLL_PUBLIC __attribute__ ((visibility ("default")))
 // #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
 
+/*********************  TYPES  **********************/
+typedef void(*AbortHandler)(void);
+
+/*******************  FUNCTION  *********************/
+void abort(void);
+AbortHandler setAbortHandler( MPCAllocator::AbortHandler handler );
+
 /*******************  FUNCTION  *********************/
 static inline Size ceilToPowOf2(Size size,Size align)
 {
@@ -101,6 +108,12 @@ static inline int fastLog2(Size value)
 	#endif
 
 	return (int)res;
+}
+
+/*******************  FUNCTION  *********************/
+static inline bool checkNoOverlap(const void * ptr1, Size size1,const void * ptr2, Size size2)
+{
+	return ((Addr)ptr1 + size1 <= (Addr)ptr2 || (Addr)ptr2 + size2 <= (Addr)ptr1);
 }
 
 };

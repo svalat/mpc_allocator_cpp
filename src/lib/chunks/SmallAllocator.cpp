@@ -390,4 +390,10 @@ void SmallAllocator::remoteFree ( void* ptr )
 		allocFatal("Unsuppported remoteFree() function for medium allocators without locks.");
 }
 
+/*******************  FUNCTION  *********************/
+void SmallAllocator::hardChecking ( void )
+{
+	//TODO
+}
+
 };

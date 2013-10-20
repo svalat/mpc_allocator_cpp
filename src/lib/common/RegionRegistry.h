@@ -50,6 +50,7 @@ struct Region
 {
 	void clear(void);
 	bool isEmpty(void) const;
+	void unmapRegisteredMemory(void);
 	RegionEntry entries[REGION_ENTRIES];
 };
 
@@ -66,6 +67,7 @@ class RegionRegistry
 		bool hasEntry(void * ptr);
 		RegionSegmentHeader * getSegment(void * ptr);
 		RegionSegmentHeader * getSegmentSafe(void * ptr);
+		void unmapAllMemory(void);
 	private:
 		Region * setupNewRegion( Addr ptr );
 		Region * getRegion( Addr ptr );

@@ -68,7 +68,10 @@ void CollisionChecker::registerSegment ( void* ptr, size_t size )
 	std::pair<CheckerMemorySegmentDeque::iterator,bool> res = segments.insert(segment);
 	
 	if (res.second == false)
+	{
 		allocWarning("Collision checker detect that the new segment (%p,%lu,%p) conflit with an old active one (%p,%lu,%p)",ptr,size,((char*)ptr+size),res.first->getBase(),res.first->getSize(),res.first->getBase()+res.first->getSize());
+		throw (int)42;
+	}
 }
 
 /*******************  FUNCTION  *********************/

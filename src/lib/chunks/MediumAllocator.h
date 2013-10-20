@@ -25,6 +25,7 @@ class MediumAllocator : public IChunkManager
 		virtual void* realloc ( void* ptr, size_t size );
 		virtual bool isThreadSafe ( void ) const;
 		virtual void remoteFree ( void* ptr );
+		virtual void hardChecking(void);
 		void fill(void * ptr, size_t size,RegionRegistry * registry);
 	private:
 		MediumChunk * refill(size_t size,bool * zeroFilled = NULL);

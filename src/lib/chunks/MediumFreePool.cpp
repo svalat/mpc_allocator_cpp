@@ -454,4 +454,11 @@ void typeToJson ( htopml::JsonState& json, std::ostream& stream, const MediumFre
 	json.closeStruct();
 }
 
+/*******************  FUNCTION  *********************/
+void MediumFreePool::hardChecking ( void )
+{
+	for (int i = 0 ; i < NB_FREE_LIST ; i++)
+		lists[i].hardChecking();
+}
+
 };

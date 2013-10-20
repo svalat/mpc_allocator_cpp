@@ -369,4 +369,11 @@ void PosixAllocatorLocal::remoteFree ( void* ptr )
 	allocFatal("TODO");
 }
 
+/*******************  FUNCTION  *********************/
+void PosixAllocatorLocal::hardChecking ( void )
+{
+	this->mediumAlloc.hardChecking();
+	this->smallAlloc.hardChecking();
+}
+
 };

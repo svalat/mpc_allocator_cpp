@@ -37,6 +37,7 @@ class MediumFreePool
 		MediumChunk * findChunk(Size innerSize);
 		MediumChunk * merge(MediumChunk * chunk);
 		MediumChunk * tryMergeForSize(MediumChunk * chunk, Size findInnerSize);
+		void hardChecking(void);
 	private:
 		void init(const Size freeSizes[NB_FREE_LIST],ReverseAnalyticFreeSize analyticRevers);
 		ChunkFreeList * getFreeList(Size innerSize);

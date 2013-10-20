@@ -262,6 +262,9 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 		return NULL;
 	}
 	
+	//check if padded
+	ptr = PaddedChunk::unpad(ptr);
+	
 	//get old size
 	MediumChunk * chunk = MediumChunk::getChunkSafe(ptr);
 	allocAssert(chunk != NULL);
@@ -320,6 +323,12 @@ void MediumAllocator::remoteFree ( void* ptr )
 		free(ptr);
 	else
 		allocFatal("Unsuppported remoteFree() function for medium allocators without locks.");
+}
+
+/*******************  FUNCTION  *********************/
+void MediumAllocator::hardChecking ( void )
+{
+	pool.hardChecking();
 }
 
 };

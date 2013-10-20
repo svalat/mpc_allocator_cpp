@@ -357,4 +357,17 @@ void PosixAllocator::resetTLSForTest ( void )
 	tlsLocalDefaultAllocator = NULL;
 }
 
+/*******************  FUNCTION  *********************/
+void PosixAllocator::cleanupRegisterdMemory ( void )
+{
+	registry.unmapAllMemory();
+}
+
+/*******************  FUNCTION  *********************/
+void PosixAllocator::hardChecking ( void )
+{
+	if (tlsLocalDefaultAllocator != NULL)
+		tlsLocalDefaultAllocator->hardChecking();
+}
+
 };

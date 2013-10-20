@@ -40,9 +40,9 @@ class DebugMessage
 
 /********************  MACRO  ***********************/
 #ifndef NDEBUG
-	#define allocAssert(x)      do { if (!(x)) DebugMessage(MESSAGE_ASSERT , MESSAGE_CODE_LOCATION).print("%s",#x);  } while(0)
-	#define allocCondDebug(x,m) do { if (!(x)) DebugMessage(MESSAGE_DEBUG  , MESSAGE_CODE_LOCATION).print("%s",(m)); } while(0)
-	#define allocDebug          DebugMessage(MESSAGE_DEBUG, MESSAGE_CODE_LOCATION).print
+	#define allocAssert(x)      do { if (!(x)) MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_ASSERT , MESSAGE_CODE_LOCATION).print("%s",#x);  } while(0)
+	#define allocCondDebug(x,m) do { if (!(x)) MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_DEBUG  , MESSAGE_CODE_LOCATION).print("%s",(m)); } while(0)
+	#define allocDebug          MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_DEBUG, MESSAGE_CODE_LOCATION).print
 #else
 	#define allocAssert( x )    do{} while(0)
 	#define allocCondDebug(x,m) do{} while(0)
@@ -58,10 +58,10 @@ class DebugMessage
 #endif
 
 /********************  MACRO  ***********************/
-#define allocFatal       DebugMessage(MESSAGE_FATAL       , MESSAGE_CODE_LOCATION).print
-#define allocFatalPerror DebugMessage(MESSAGE_FATAL_PERROR, MESSAGE_CODE_LOCATION).print
-#define allocPerror      DebugMessage(MESSAGE_PERROR      , MESSAGE_CODE_LOCATION).print
-#define allocWarning     DebugMessage(MESSAGE_WARNING     , MESSAGE_CODE_LOCATION).print
+#define allocFatal       MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_FATAL       , MESSAGE_CODE_LOCATION).print
+#define allocFatalPerror MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_FATAL_PERROR, MESSAGE_CODE_LOCATION).print
+#define allocPerror      MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_PERROR      , MESSAGE_CODE_LOCATION).print
+#define allocWarning     MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_WARNING     , MESSAGE_CODE_LOCATION).print
 
 /********************  MACRO  ***********************/
 #define allocAssume(x,m)        do { if (!(x)) allocFatal((m));       } while(0)

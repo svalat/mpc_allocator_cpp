@@ -10,6 +10,15 @@ using namespace MPCAllocator;
 /********************  MACRO  ***********************/
 //make it silent
 #define trace_printf(...) do{} while(0)
+// #define trace_printf printf
+// #define optional_memset(...) do{} while(0)
+#define optional_memset memset
+
+/*******************  FUNCTION  *********************/
+EventDispatchReplay::EventDispatchReplay ( bool checkTrace )
+{
+	this->checkTrace = checkTrace;
+}
 
 /*******************  FUNCTION  *********************/
 void EventDispatchReplay::checkIsZero(void * ptr,size_t size)
@@ -27,35 +36,49 @@ void EventDispatchReplay::malloc ( uint16_t threadId, uint64_t timestamp, uint16
 	trace_printf("%p = malloc(%lu) //timestamp = %lu, thread = %d\n",(void*)result,size,timestamp,(int)threadId);
 
 	//to alloc and print result
+	alloc.hardChecking();
 	void * ptr = alloc.malloc(size);
+	alloc.hardChecking();
 	trace_printf("          => %p , %lu\n",ptr,alloc.getInnerSize(ptr));
 	
 	//register to rememeber the current real addr for free/realloc.
 	ptrs[result] = ptr;
 	
 	//register for checking
-	checkerTrace.registerSegment((void*)result,size);
+	if (checkTrace)
+		checkerTrace.registerSegment((void*)result,size);
 	checker.registerSegment(ptr,alloc.getInnerSize(ptr));
 	
 	//check usability
-	memset(ptr,0,size);
+	optional_memset(ptr,0,size);
+	alloc.hardChecking();
 }
 
 /*******************  FUNCTION  *********************/
 void EventDispatchReplay::free ( uint16_t threadId, uint64_t timestamp, uint16_t type, uint64_t ptr )
 {
 	//search real addr
-	void * realPtr = ptrs[ptr];
+	void * realPtr = getRealPtr(ptr);
 	
 	//debug
 	trace_printf("free(%p) //timestamp = %lu, thread = %d, realptr = %p\n",(void*)ptr,timestamp,(int)threadId,realPtr);
 	
 	//mark as free
-	checkerTrace.unregisterSegment((void*)ptr,1);
-	checker.unregisterSegment(realPtr,alloc.getInnerSize(realPtr));
+	if (realPtr != NULL)
+	{
+		if (checkTrace)
+			checkerTrace.unregisterSegment((void*)ptr,1);
+		checker.unregisterSegment(realPtr,alloc.getInnerSize(realPtr));
+	}
 	
 	//free it
+	alloc.hardChecking();
 	alloc.free(realPtr);
+	alloc.hardChecking();
+	
+	//mark as free
+	if (realPtr != NULL)
+		ptrs.erase(ptr);
 }
 
 /*******************  FUNCTION  *********************/
@@ -65,47 +88,61 @@ void EventDispatchReplay::calloc ( uint16_t threadId, uint64_t timestamp, uint16
 	trace_printf("%p = calloc(%lu,%lu) //timestamp = %lu, thread = %d\n",(void*)result,nmemb,size,timestamp,(int)threadId);
 	
 	//to calloc
+	alloc.hardChecking();
 	void * ptr = alloc.calloc(nmemb,size);
+	alloc.hardChecking();
 	
 	//print and reg real ptr
 	trace_printf("          => %p , %lu\n",ptr,alloc.getInnerSize(ptr));
 	ptrs[result] = ptr;
 	
 	//register for checking
-	checkerTrace.registerSegment((void*)result,nmemb*size);
+	if (checkTrace)
+		checkerTrace.registerSegment((void*)result,nmemb*size);
 	checker.registerSegment(ptr,alloc.getInnerSize(ptr));
 	
 	//check usage and if zero
 	checkIsZero(ptr,nmemb*size);
-	memset(ptr,0,size);
+	optional_memset(ptr,0,size);
+	alloc.hardChecking();
 }
 
 /*******************  FUNCTION  *********************/
 void EventDispatchReplay::realloc ( uint16_t threadId, uint64_t timestamp, uint16_t type, size_t oldPtr, size_t newSize, uint64_t result )
 {
 	//search real ptr
-	void * inPtr = ptrs[oldPtr];
+	void * inPtr = getRealPtr(oldPtr);
 	
 	//print debug
-	trace_printf("%p = relloc(%p,%lu) //timestamp = %lu, thread = %d, realptr = %p\n",(void*)result,(void*)oldPtr,newSize,timestamp,(int)threadId,ptr);
+	trace_printf("%p = relloc(%p,%lu) //timestamp = %lu, thread = %d, realptr = %p\n",(void*)result,(void*)oldPtr,newSize,timestamp,(int)threadId,inPtr);
 	
 	//update registration
-	checkerTrace.unregisterSegment((void*)oldPtr,1);
-	checkerTrace.registerSegment((void*)result,newSize);
-	checker.unregisterSegment(inPtr,alloc.getInnerSize(inPtr));
+	if (inPtr != NULL)
+	{
+		if (checkTrace)
+			checkerTrace.unregisterSegment((void*)oldPtr,1);
+		checker.unregisterSegment(inPtr,alloc.getInnerSize(inPtr));
+		ptrs.erase(oldPtr);
+	}
+	
+	if (checkTrace)
+		checkerTrace.registerSegment((void*)result,newSize);
 	
 	//put data in buffer
 	size_t s = 0;
 	if (inPtr != NULL)
 	{
+		alloc.hardChecking();
 		s = alloc.getInnerSize(inPtr);
 		for (size_t i = 0 ; i < s ; i++)
 			((char*)inPtr)[i] = (char)i;
 	}
 	
 	//do realloc
+	alloc.hardChecking();
 	void * outPtr = alloc.realloc(inPtr,newSize);
-	trace_printf("          => %p , %lu\n",ptr,alloc.getInnerSize(ptr));
+	alloc.hardChecking();
+	trace_printf("          => %p , %lu\n",outPtr,alloc.getInnerSize(outPtr));
 	ptrs[result] = outPtr;
 	
 	//update registration
@@ -127,7 +164,8 @@ void EventDispatchReplay::realloc ( uint16_t threadId, uint64_t timestamp, uint1
 	}
 	
 	//check usability
-	memset(outPtr,0,newSize);
+	optional_memset(outPtr,0,newSize);
+	alloc.hardChecking();
 }
 
 /*******************  FUNCTION  *********************/
@@ -137,14 +175,17 @@ void EventDispatchReplay::mallocAlign ( uint16_t threadId, uint64_t timestamp, u
 	trace_printf("%p = memalign(%lu,%lu) //timestamp = %lu, thread = %d\n",(void*)result,align,size,timestamp,(int)threadId);
 	
 	//do alloc
+	alloc.hardChecking();
 	void * ptr = alloc.memalign(align,size);
+	alloc.hardChecking();
 	
 	//debug and remember ptr
 	trace_printf("          => %p , %lu\n",ptr,alloc.getInnerSize(ptr));
 	ptrs[result] = ptr;
 	
 	//checking
-	checkerTrace.registerSegment((void*)result,size);
+	if (checkTrace)
+		checkerTrace.registerSegment((void*)result,size);
 	checker.registerSegment(ptr,alloc.getInnerSize(ptr));
 	
 	//check align
@@ -152,5 +193,34 @@ void EventDispatchReplay::mallocAlign ( uint16_t threadId, uint64_t timestamp, u
 	assert((Addr)ptr % align == 0);
 	
 	//check usage
-	memset(ptr,0,size);
+	optional_memset(ptr,0,size);
+	alloc.hardChecking();
+}
+
+/*******************  FUNCTION  *********************/
+void EventDispatchReplay::cleanupAllMemory ( void )
+{
+	alloc.cleanupRegisterdMemory();
+}
+
+/*******************  FUNCTION  *********************/
+EventDispatchReplay::~EventDispatchReplay ( void )
+{
+	cleanupAllMemory();
+}
+
+/*******************  FUNCTION  *********************/
+void EventDispatchReplay::resetTLS ( void )
+{
+	alloc.resetTLSForTest();
+}
+
+/*******************  FUNCTION  *********************/
+void* EventDispatchReplay::getRealPtr ( uint64_t ref )
+{
+	std::map<uint64_t,void*>::const_iterator it = ptrs.find(ref);
+	if (it == ptrs.end())
+		return NULL;
+	else
+		return it->second;
 }

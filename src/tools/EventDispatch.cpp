@@ -6,6 +6,17 @@
 using namespace MPCAllocator;
 
 /*******************  FUNCTION  *********************/
+void EventDispatch::run ( TraceReader& reader )
+{
+	TraceEntryComplete entry;
+	
+	while (reader.readNext(entry))
+	{
+		this->run(entry);
+	}
+}
+
+/*******************  FUNCTION  *********************/
 void EventDispatch::run ( MPCAllocator::TraceEntryComplete& entry )
 {
 	//vars

@@ -3,12 +3,14 @@
 
 /********************  HEADERS  *********************/
 #include "AllocTraceStruct.h"
+#include "TraceReader.h"
 
 /*********************  CLASS  **********************/
 class EventDispatch
 {
 	public:
-		void run(MPCAllocator::TraceEntryComplete & entry);
+		virtual void run(TraceReader & reader);
+		virtual void run(MPCAllocator::TraceEntryComplete & entry);
 		virtual ~EventDispatch(void) {};
 	protected:
 		virtual void malloc(uint16_t threadId,uint64_t timestamp,uint16_t type,size_t size,uint64_t result) = 0;

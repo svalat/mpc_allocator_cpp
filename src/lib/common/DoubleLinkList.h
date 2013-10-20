@@ -50,6 +50,7 @@ class DoubleLinkList
 		bool isEmpty(void) const;//checked
 		void putFirst(T * value);//checked
 		void putLast(T * value);//checked
+		void hardChecking(void);
 		static void checkSize(Size size);
 		static DoubleLinkList<T> * remove(T * value);
 		T * popFirst(void);

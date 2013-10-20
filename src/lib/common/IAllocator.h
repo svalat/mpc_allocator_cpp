@@ -21,6 +21,7 @@ class IChunkManager
 		virtual size_t getInnerSize(void * ptr) = 0;
 		virtual size_t getTotalSize(void * ptr) = 0;
 		virtual size_t getRequestedSize(void * ptr) = 0;
+		virtual void hardChecking(void) = 0;
 		//remote part for thread aware
 		virtual bool isThreadSafe(void) const = 0;
 		virtual void remoteFree(void * ptr) = 0;
