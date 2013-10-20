@@ -11,10 +11,6 @@ set -x
 rm -rf build
 mkdir -p build
 cd build
-if [ -f /usr/lib/libgtes* ]; then
-	../configure --enable-debug
-else
-	../configure --enable-debug --disable-tests
-fi
+../configure --enable-debug
 make
 make test
