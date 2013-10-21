@@ -8,7 +8,7 @@
 using namespace testing;
 
 /********************  GLOBALS  *********************/
-#define SIZE (4*1024*1024)
+#define SIZE (4*1024*1024ul)
 static char gblBuffer[SIZE];
 
 /*******************  FUNCTION  *********************/

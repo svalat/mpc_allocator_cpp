@@ -43,7 +43,7 @@ TEST(TestSmallRunContainer,getEmptyRun2)
 {
 	SmallRunContainer * container = SmallRunContainer::setup(gblBuffer,sizeof(gblBuffer));
 	SmallChunkRun * run;
-	int cnt = 0;
+	unsigned int cnt = 0;
 	do {
 		run = container->getEmptyRun();
 		if (run != NULL)

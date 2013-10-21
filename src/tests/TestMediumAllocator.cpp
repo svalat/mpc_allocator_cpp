@@ -79,7 +79,7 @@ TEST(TestMediumAllocator,realloc_basic)
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
 	ptr = alloc.realloc(ptr,16);
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
-	EXPECT_EQ(32,alloc.getInnerSize(ptr));
+	EXPECT_EQ(32u,alloc.getInnerSize(ptr));
 }
 
 /*******************  FUNCTION  *********************/
@@ -94,7 +94,7 @@ TEST(TestMediumAllocator,realloc_to_small_NEED_SOME_WORK)
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
 	ptr = alloc.realloc(ptr,64);
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
-	EXPECT_EQ(64,alloc.getInnerSize(ptr));
+	EXPECT_EQ(64u,alloc.getInnerSize(ptr));
 }
 
 /*******************  FUNCTION  *********************/
@@ -112,7 +112,7 @@ TEST(TestMediumAllocator,realloc_move)
 	EXPECT_EQ(buffer+sizeof(MediumChunk),ptr);
 	ptr = alloc.realloc(ptr,64);
 	EXPECT_EQ(ptr2,ptr);
-	EXPECT_EQ(64,alloc.getInnerSize(ptr));
+	EXPECT_EQ(64u,alloc.getInnerSize(ptr));
 }
 
 /*******************  FUNCTION  *********************/
@@ -184,7 +184,7 @@ TEST(TestMediumAllocator,getTotalSize)
 	char * ptr = (char*)alloc.malloc(32);
 	
 	EXPECT_EQ(32+sizeof(MediumChunk),alloc.getTotalSize(ptr));
-	EXPECT_EQ(0,alloc.getTotalSize(NULL));
+	EXPECT_EQ(0u,alloc.getTotalSize(NULL));
 }
 
 /*******************  FUNCTION  *********************/
@@ -196,8 +196,8 @@ TEST(TestMediumAllocator,getInnerSize)
 	alloc.fill(buffer,sizeof(buffer),NULL);
 	char * ptr = (char*)alloc.malloc(32);
 	
-	EXPECT_EQ(32,alloc.getInnerSize(ptr));
-	EXPECT_EQ(0,alloc.getInnerSize(NULL));
+	EXPECT_EQ(32u,alloc.getInnerSize(ptr));
+	EXPECT_EQ(0u,alloc.getInnerSize(NULL));
 }
 
 /*******************  FUNCTION  *********************/
@@ -252,7 +252,7 @@ TEST(TestMediumAllocator,testMallocAlign_1)
 	{
 		void * ptr = alloc.malloc(32,i);
 		ASSERT_NE((void*)NULL,ptr);
-		ASSERT_EQ(0,(Addr)ptr % i);
+		ASSERT_EQ(0u,(Addr)ptr % i);
 	}
 }
 
@@ -266,7 +266,7 @@ TEST(TestMediumAllocator,testFreeAlign_1)
 	{
 		void * ptr = alloc.malloc(32,i);
 		ASSERT_NE((void*)NULL,ptr);
-		ASSERT_EQ(0,(Addr)ptr % i);
+		ASSERT_EQ(0u,(Addr)ptr % i);
 		alloc.free(ptr);
 	}
 }
@@ -281,7 +281,7 @@ TEST(TestMediumAllocator,testMallocFreeAlign_2)
 	{
 		void * ptr = alloc.malloc(32,i);
 		ASSERT_NE((void*)NULL,ptr);
-		ASSERT_EQ(0,(Addr)ptr % i);
+		ASSERT_EQ(0u,(Addr)ptr % i);
 		alloc.free(ptr);
 	}
 }

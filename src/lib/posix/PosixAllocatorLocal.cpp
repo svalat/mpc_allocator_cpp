@@ -313,7 +313,7 @@ void* PosixAllocatorLocal::valloc ( size_t size )
 PosixAllocatorLocal* PosixAllocatorLocal::getFromListHandler ( ListElement* list )
 {
 	char * ptr = (char*)list;
-	ptr -= offsetof(PosixAllocatorLocal,listHandler);
+	ptr -= allocOffsetOf(PosixAllocatorLocal,listHandler);
 	PosixAllocatorLocal * res = (PosixAllocatorLocal*)ptr;
 	allocAssert(&res->listHandler == list);
 	return res;
@@ -349,6 +349,7 @@ bool PosixAllocatorLocal::isThreadSafe ( void ) const
 AllocatorClass PosixAllocatorLocal::getSizeClass ( Size innerSize )
 {
 	allocFatal("TODO");
+	return ALLOCATOR_CLASS_MEDIUM;
 }
 
 /*******************  FUNCTION  *********************/

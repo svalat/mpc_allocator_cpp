@@ -39,7 +39,7 @@ TEST(TestSmallChunk,getInnerSize)
 {
 	SmallChunkRun run(0,16);
 	void * ptr = run.malloc(16);
-	EXPECT_EQ(16,run.getInnerSize(ptr));
+	EXPECT_EQ(16u,run.getInnerSize(ptr));
 }
 
 /*******************  FUNCTION  *********************/
@@ -47,7 +47,7 @@ TEST(TestSmallChunk,getTotalSize)
 {
 	SmallChunkRun run(0,16);
 	void * ptr = run.malloc(16);
-	EXPECT_EQ(16,run.getTotalSize(ptr));
+	EXPECT_EQ(16u,run.getTotalSize(ptr));
 }
 
 /*******************  FUNCTION  *********************/
@@ -55,7 +55,7 @@ TEST(TestSmallChunk,getRequestSize)
 {
 	SmallChunkRun run(0,16);
 	void * ptr = run.malloc(16);
-	EXPECT_EQ(0,run.getRequestedSize(ptr));
+	EXPECT_EQ(0u,run.getRequestedSize(ptr));
 }
 
 /*******************  FUNCTION  *********************/
@@ -64,25 +64,25 @@ TEST(TestSmallChunk,constructor_3)
 	char buffer[SMALL_RUN_SIZE];
 	SmallChunkRun * run = new (buffer) SmallChunkRun;
 	EXPECT_EQ(buffer,(char*)run);
-	EXPECT_EQ(0,run->getSplitting());
+	EXPECT_EQ(0u,run->getSplitting());
 }
 
 /*******************  FUNCTION  *********************/
 TEST(TestSmallChunk,setSplitting)
 {
 	SmallChunkRun run;
-	EXPECT_EQ(0,run.getSplitting());
+	EXPECT_EQ(0u,run.getSplitting());
 	run.setSplitting(16);
-	EXPECT_EQ(16,run.getSplitting());
+	EXPECT_EQ(16u,run.getSplitting());
 }
 
 /*******************  FUNCTION  *********************/
 TEST(TestSmallChunk,setSplittingNonMultiple)
 {
 	SmallChunkRun run;
-	EXPECT_EQ(0,run.getSplitting());
+	EXPECT_EQ(0u,run.getSplitting());
 	run.setSplitting(15);
-	EXPECT_EQ(15,run.getSplitting());
+	EXPECT_EQ(15u,run.getSplitting());
 	while(run.malloc(15) != NULL);
 }
 
@@ -122,7 +122,7 @@ TEST(TestSmallChunk,free)
 TEST(TestSmallChunk,full)
 {
 	SmallChunkRun run(0,16);
-	int cnt = 0;
+	unsigned int cnt = 0;
 	
 	while ( run.malloc(16) != NULL )
 		cnt++;
@@ -135,20 +135,20 @@ TEST(TestSmallChunk,fullNoOverlap)
 {
 	unsigned char * ptr[SMALL_RUN_SIZE/16];
 	SmallChunkRun run(0,16);
-	int cnt = 0;
+	unsigned int cnt = 0;
 	
 	while ( (ptr[cnt] = (unsigned char*)run.malloc(16)) != NULL )
 		cnt++;
 	
 	ASSERT_EQ(SMALL_RUN_SIZE/16 - 4,cnt);
 	
-	for (int i = 0 ; i < cnt ; i++)
+	for (unsigned int i = 0 ; i < cnt ; i++)
 	{
-		for (int j = 0 ; j < 16 ; j++)
+		for (unsigned int j = 0 ; j < 16 ; j++)
 		{
 			ptr[i][j] = (unsigned char)-1;
 		}
-		for (int j = 0 ; j < i ; j++)
+		for (unsigned int j = 0 ; j < i ; j++)
 			EXPECT_NE(ptr[j],ptr[i]);
 	}
 		
@@ -196,7 +196,7 @@ TEST(TestSmallChunk,isFull)
 TEST(TestSmallChunk,skipedOffset)
 {
 	SmallChunkRun run(32,16);
-	int cnt = 0;
+	unsigned int cnt = 0;
 	void * ptr;
 	
 	while ( (ptr = run.malloc(16)) != NULL )
@@ -212,7 +212,7 @@ TEST(TestSmallChunk,skipedOffset)
 TEST(TestSmallChunk,skipedOffset2)
 {
 	SmallChunkRun run(31,16);
-	int cnt = 0;
+	unsigned int cnt = 0;
 	void * ptr;
 	
 	while ( (ptr = run.malloc(16)) != NULL )
@@ -228,7 +228,7 @@ TEST(TestSmallChunk,skipedOffset2)
 TEST(TestSmallChunk,realloc)
 {
 	SmallChunkRun run(0,16);
-	void  * ptr = run.malloc(16);
+	void * ptr  = run.malloc(16);
 	void * ptr2 = run.realloc(ptr,15);
 	EXPECT_EQ(ptr,ptr2);
 }

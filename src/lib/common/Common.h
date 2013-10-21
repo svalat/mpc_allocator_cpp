@@ -19,11 +19,11 @@ typedef int64_t SSize;
 #define BASIC_ALIGN sizeof(Addr)
 #define MAGICK_VALUE 42
 #define NB_FREE_LIST 50
-#define UNSUPPORTED 0
+#define UNSUPPORTED 0u
 #define ALLOC_MIN_SIZE (2*BASIC_ALIGN)
 //TODO setup value
 #define REALLOC_THREASHOLD 64
-#define MACRO_BLOC_SIZE (2*1024*1024)
+#define MACRO_BLOC_SIZE (2*1024*1024UL)
 #define MEDIUM_MIN_INNER_SIZE 16
 #define ADDR_NULL 0
 #define PAGE_SIZE 4096
@@ -33,6 +33,9 @@ typedef int64_t SSize;
 //TODO check to by use in coordination with -fvisibility=hidden for seom optim
 // #define DLL_PUBLIC __attribute__ ((visibility ("default")))
 // #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+
+/********************  MACRO  ***********************/
+#define allocOffsetOf(className,memberName) ((Addr)&((className *)32)->memberName - (Addr)(32))
 
 /*********************  TYPES  **********************/
 typedef void(*AbortHandler)(void);

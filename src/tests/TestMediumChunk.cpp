@@ -40,7 +40,7 @@ TEST_F(TestMediumChunk, constructor_2) {
 	MediumChunk::setup(chunk->getNext(),chunk,512);
 	
 	EXPECT_EQ(buffer,(void*)chunk);
-	EXPECT_EQ(512,chunk->getTotalSize());
+	EXPECT_EQ(512u,chunk->getTotalSize());
 	EXPECT_EQ(buffer+512,(void*)chunk->getNext());
 	EXPECT_EQ(NULL,chunk->getPrev());
 	chunk->check();
@@ -57,7 +57,7 @@ TEST_F(TestMediumChunk, getTotalSize) {
 TEST_F(TestMediumChunk, getInnerSize) {
 	EXPECT_EQ(buffer,(void*)chunk);
 	EXPECT_EQ(1024-2*sizeof(MediumChunk),chunk->getInnerSize());
-	EXPECT_EQ(0,chunk->getNext()->getInnerSize());
+	EXPECT_EQ(0u,chunk->getNext()->getInnerSize());
 }
 
 /*******************  FUNCTION  *********************/
@@ -94,9 +94,9 @@ TEST_F(TestMediumChunk, split_1) {
 	MediumChunk * last = chunk->getNext();
 	
 	MediumChunk * res = chunk->split(256);
-	EXPECT_EQ(256,chunk->getInnerSize());
+	EXPECT_EQ(256u,chunk->getInnerSize());
 	EXPECT_EQ(256+sizeof(MediumChunk),chunk->getTotalSize());
-	EXPECT_EQ(1024,chunk->getTotalSize() + res->getTotalSize() + last->getTotalSize());
+	EXPECT_EQ(1024u,chunk->getTotalSize() + res->getTotalSize() + last->getTotalSize());
 	res->check();
 	
 	EXPECT_EQ(NULL,chunk->getPrev());

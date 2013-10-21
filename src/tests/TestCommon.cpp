@@ -8,21 +8,21 @@ using namespace MPCAllocator;
 /*******************  FUNCTION  *********************/
 TEST(TestCommon,ceilToPowOf2)
 {
-	EXPECT_EQ(8,ceilToPowOf2(8,8));
-	EXPECT_EQ(8,ceilToPowOf2(9,8));
-	EXPECT_EQ(8,ceilToPowOf2(15,8));
-	EXPECT_EQ(16,ceilToPowOf2(16,8));
-	EXPECT_EQ(0,ceilToPowOf2(8,16));
+	EXPECT_EQ(8u,ceilToPowOf2(8,8));
+	EXPECT_EQ(8u,ceilToPowOf2(9,8));
+	EXPECT_EQ(8u,ceilToPowOf2(15,8));
+	EXPECT_EQ(16u,ceilToPowOf2(16,8));
+	EXPECT_EQ(0u,ceilToPowOf2(8,16));
 }
 
 /*******************  FUNCTION  *********************/
 TEST(TestCommon,upToPowOf2)
 {
-	EXPECT_EQ(8,upToPowOf2(8,8));
-	EXPECT_EQ(16,upToPowOf2(9,8));
-	EXPECT_EQ(16,upToPowOf2(15,8));
-	EXPECT_EQ(16,upToPowOf2(16,8));
-	EXPECT_EQ(16,upToPowOf2(8,16));
+	EXPECT_EQ(8u,upToPowOf2(8,8));
+	EXPECT_EQ(16u,upToPowOf2(9,8));
+	EXPECT_EQ(16u,upToPowOf2(15,8));
+	EXPECT_EQ(16u,upToPowOf2(16,8));
+	EXPECT_EQ(16u,upToPowOf2(8,16));
 }
 
 /*******************  FUNCTION  *********************/

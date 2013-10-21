@@ -19,7 +19,6 @@ int main(int argc,char ** argv)
 {
 	assert(argc == 2);
 	TraceReader reader(argv[1]);
-	TraceEntryComplete entry;
 	BugReproducer reproduce;
 	
 	MPCAllocator::setAbortHandler(abortHandler);

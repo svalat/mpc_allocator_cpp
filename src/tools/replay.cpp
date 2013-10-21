@@ -16,7 +16,6 @@ int main(int argc,char ** argv)
 {
 	assert(argc == 2);
 	TraceReader reader(argv[1]);
-	TraceEntryComplete entry;
 	EventDispatchReplay replay;
 	
 	replay.run(reader);
