@@ -7,13 +7,14 @@
 ######################################################
 
 ######################################################
-add_subdirectory(tools)
-add_subdirectory(lib)
+add_executable(t-test1-no-use-mem t-test1.c)
+target_link_libraries(t-test1-no-use-mem ${CMAKE_THREAD_LIBS_INIT})
 
 ######################################################
-if (NOT DISABLE_TESTS)
-	add_subdirectory(tests)
-endif (NOT DISABLE_TESTS)
+add_executable(t-test1-use-mem t-test1.c)
+target_link_libraries(t-test1-use-mem ${CMAKE_THREAD_LIBS_INIT})
+set_target_properties(t-test1-use-mem PROPERTIES COMPILE_FLAGS "-DDO_MEMSET")
 
 ######################################################
-add_subdirectory(benchs)
+get_property(MPC_ALLOC_PATH_FOR_BENCH TARGET alloc PROPERTY LOCATION)
+configure_file(run.sh.cmake run.sh @ONLY)

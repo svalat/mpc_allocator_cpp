@@ -7,13 +7,4 @@
 ######################################################
 
 ######################################################
-add_subdirectory(tools)
-add_subdirectory(lib)
-
-######################################################
-if (NOT DISABLE_TESTS)
-	add_subdirectory(tests)
-endif (NOT DISABLE_TESTS)
-
-######################################################
-add_subdirectory(benchs)
+add_subdirectory(locklessinc.com)
