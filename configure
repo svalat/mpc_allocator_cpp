@@ -36,6 +36,7 @@ LIB_SUFFIX=''
 GTEST_PREFIX=''
 GMOCK_PREFIX=''
 OPENPA_PREFIX=''
+HWLOC_PREFIX=''
 
 ######################################################
 #Find default source dir
@@ -79,6 +80,7 @@ To find libs and commands :
    --with-gtest={prefix}   Define the GTest prefix if available [/usr].
    --with-gmock={prefix}   Define the GMock prefix if available [/usr].
    --with-openpa={prefix}  Define the OpenPA prefix if available [/usr].
+   --with-hwloc={prefix}   Define the Hwloc prefix if available [/usr].
 
 To get the generated cmake command :
    --show                  Display the cmake command and didn't execute it.
@@ -152,6 +154,9 @@ do
 			;;
 		--with-openpa=*)
 			OPENPA_PREFIX="-DOPENPA_PREFIX=`get_arg_value \"$arg\" --with-openpa`"
+			;;
+		--with-hwloc=*)
+			HWLOC_PREFIX="-DHWLOC_PREFIX=`get_arg_value \"$arg\" --with-hwloc`"
 			;;
 		####################################################################
 		--enable-debug)
@@ -241,8 +246,8 @@ gen_clean_command()
 #Gen final command
 COMMAND="`gen_clean_command "${CMAKE}" "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" "${PREFIX}" "${EXTRA_CXX}" \
 	"${EXTRA_CXXFLAGS}" "${EXTRA_LDFLAGS}" "${EXTRA_CC}" "${EXTRA_CFLAGS}" "${ENABLE_SELF_TEST}" "${ENABLE_JUNIT_OUT}" "${ENABLE_VALGRIND}" \
-	"${ENABLE_GCC_COVERAGE}" "${GTEST_PREFIX}" "${GMOCK_PREFIX}" "${OPENPA_PREFIX}" "${DISABLE_TESTS}" "${DISABLE_CPPUNIT}" "${LIB_SUFFIX}" "${ENABLE_RPATH}" \
-	"${SOURCE_DIR}"`"
+	"${ENABLE_GCC_COVERAGE}" "${GTEST_PREFIX}" "${GMOCK_PREFIX}" "${OPENPA_PREFIX}" "${HWLOC_PREFIX}" "${DISABLE_TESTS}" "${DISABLE_CPPUNIT}" "${ENABLE_RPATH}" \
+	"${LIB_SUFFIX}" "${SOURCE_DIR}"`"
 
 ######################################################
 #execute or display

@@ -44,6 +44,7 @@ include_directories(src/lib/posix)
 include_directories(extern/include)
 #some external include dirs
 include_directories(${HWLOC_INCLUDE_DIRS})
+include_directories(${LIBDL_INCLUDE_DIRS})
 
 ######################################################
 #manage subdirs

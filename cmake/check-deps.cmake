@@ -8,6 +8,7 @@
 
 ######################################################
 #For allocator
+find_package(Libdl   REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Hwloc   REQUIRED)
 find_package(OpenPA  QUIET)

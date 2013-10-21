@@ -12,7 +12,7 @@ const Size cstDefaultFreeSizes[NB_FREE_LIST] = {16, 24,
         352,  384,  416,  448,  480,   512,   544,   576,    608,    640,
         672,  704,  736,  768,  800,   832,   864,   896,    928,    960,
         992, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144,
-        524288, 1048576, 2*1024*1024, -1, -1,-1,-1,-1
+        524288, 1048576, 2*1024*1024, (Size)-1, (Size)-1,(Size)-1,(Size)-1,(Size)-1
 };
 
 int reverseDefaultFreeSizes(Size size,const Size * sizeList,int nbLists)

@@ -101,6 +101,7 @@ bool BugReproducer::isBuggySequence ( TraceReader& reader, size_t startPos, size
 		{
 			bool res = reader.readNext(entry);
 			assert(res == true);
+			allocUnused(res);
 			if (mask == NULL || mask[i - startPos] == true)
 				replay.run(entry);
 		}
@@ -125,10 +126,10 @@ void BugReproducer::printReproducer ( TraceReader& reader, size_t startPos, size
 	replay.resetTLS();
 	MPCAllocator::TraceEntryComplete entry;
 	
-	for (int i = startPos ; i <= bugPos ; i++)
+	for (size_t i = startPos ; i <= bugPos ; i++)
 	{
 		bool res = reader.readNext(entry);
-		assert(res == true);
+		assert(res == true); allocUnused(res);
 		if (mask == NULL || mask[i - startPos] == true)
 		{
 			//allocDebug("Print action ID = %lu, bug is %lu, firstPos is %lu",i,bugPos, startPos);

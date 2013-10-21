@@ -349,7 +349,7 @@ void RegionRegistry::unmapAllMemory ( void )
 {
 	START_CRITICAL(spinlock)
 		//loop on all regions
-		for (int regionId = 0 ; regionId < MAX_REGIONS ; regionId++)
+		for (unsigned int regionId = 0 ; regionId < MAX_REGIONS ; regionId++)
 		{
 			if (regions[regionId] != NULL)
 			{
@@ -368,7 +368,7 @@ void Region::unmapRegisteredMemory ( void )
 	RegionEntry last = NULL;
 
 	//loop on all segments to free them
-	for (int i = 0 ; i < REGION_ENTRIES ; i++ )
+	for (unsigned int i = 0 ; i < REGION_ENTRIES ; i++ )
 	{
 		if (entries[i] != NULL && entries[i] != last)
 			OS::munmap(entries[i],entries[i]->getTotalSize());

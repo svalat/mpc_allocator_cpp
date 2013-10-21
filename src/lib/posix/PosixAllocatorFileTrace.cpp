@@ -39,6 +39,9 @@ PosixAllocatorFileTrace::PosixAllocatorFileTrace ( void )
 	
 	//mark init ok (for debug)
 	gblInit = true;
+
+	//unused vars for assert
+	allocUnused(res);
 }
 
 /*******************  FUNCTION  *********************/
@@ -61,6 +64,9 @@ void PosixAllocatorFileTrace::writeEvent ( TraceEntry& entry, TraceEntryType typ
 	allocAssert(fd >= 0);
 	size_t status = OS::safeWrite(fd,&entry,sizeof(entry));
 	allocAssert(status == sizeof(entry));
+
+	//unused vars for assert
+	allocUnused(status);
 }
 
 /*******************  FUNCTION  *********************/
@@ -68,10 +74,14 @@ void PosixAllocatorFileTrace::writeAnswer ( void* res )
 {
 	//tmp
 	uint64_t formatedRes = (uint64_t)res;
+
 	//write
 	allocAssert(fd >= 0);
 	size_t status = OS::safeWrite(fd,&formatedRes,sizeof(formatedRes));
 	allocAssert(status == sizeof(formatedRes));
+
+	//unsued variables for assert
+	allocUnused(status);
 }
 
 

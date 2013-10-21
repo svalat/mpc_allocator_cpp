@@ -3,12 +3,12 @@ add_library(trace TraceReader.cpp CollisionChecker.cpp EventDispatch.cpp EventDi
 
 ######################################################
 add_executable(trace_reader reader.cpp)
-target_link_libraries(trace_reader alloc_base trace)
+target_link_libraries(trace_reader trace alloc_base)
 
 ######################################################
 add_executable(trace_replay replay.cpp)
-target_link_libraries(trace_replay alloc_base trace)
+target_link_libraries(trace_replay trace alloc_base)
 
 ######################################################
 add_executable(trace_reproduce reproduce.cpp)
-target_link_libraries(trace_reproduce alloc_base trace)
+target_link_libraries(trace_reproduce trace alloc_base)

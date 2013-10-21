@@ -52,7 +52,7 @@ class DebugMessage
 /********************  MACRO  ***********************/
 #define TRACE
 #ifdef TRACE
-	#define allocTrace          DebugMessage(MESSAGE_TRACE, MESSAGE_CODE_LOCATION).print
+	#define allocTrace          MPCAllocator::DebugMessage(MPCAllocator::MESSAGE_TRACE, MESSAGE_CODE_LOCATION).print
 #else
 	#define allocTrace(...)     do{} while(0)
 #endif
@@ -67,6 +67,9 @@ class DebugMessage
 #define allocAssume(x,m)        do { if (!(x)) allocFatal((m));       } while(0)
 #define allocAssumePerror(x,m)  do { if (!(x)) allocFatalPerror((m)); } while(0)
 #define allocCondWarning(x,m)   do { if (!(x)) allocWarning((m));     } while(0)
+
+/********************  MACRO  ***********************/
+#define allocUnused(x)          ((void)x)
 
 };
 
