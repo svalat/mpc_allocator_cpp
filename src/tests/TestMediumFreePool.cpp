@@ -5,9 +5,9 @@
 /**********************  USING  *********************/
 using namespace MPCAllocator;
 
-static const Size TEST_SIZE_LIST[NB_FREE_LIST] = {8,16,32,64,128,1,-1u,-1u,-1u,-1u,-1u,
-	-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,
-	-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u,-1u};
+static const Size TEST_SIZE_LIST[NB_FREE_LIST] = {8,16,32,64,128,1,-1lu,-1lu,-1lu,-1lu,-1lu,
+	-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,
+	-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu,-1lu};
 
 TEST(TestMediumFreePool, constructor_1) {
 	MediumFreePool pool;
@@ -231,7 +231,7 @@ TEST(TestMediumFreePool, analyticFunc) {
 	}
 	
 	EXPECT_EQ(2*1024*1024ul,cstDefaultFreeSizes[44]);
-	EXPECT_EQ(-1u,cstDefaultFreeSizes[45]);
+	EXPECT_EQ(-1lu,cstDefaultFreeSizes[45]);
 	EXPECT_EQ(44,reverseDefaultFreeSizes(2*1024*1024,cstDefaultFreeSizes,45));
 	EXPECT_EQ(45,reverseDefaultFreeSizes(2*1024*1024+1,cstDefaultFreeSizes,45));
 	EXPECT_EQ(45,reverseDefaultFreeSizes(20*1024*1024+1,cstDefaultFreeSizes,45));

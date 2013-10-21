@@ -163,7 +163,7 @@ TEST(TestPosixAllocator, buggy_seq_1)
 	ptrs[0x1c07040] = alloc.malloc(512); //timestamp = 42868161668420, thread = 1
 	ptrs[0x1c07250] = alloc.malloc(512); //timestamp = 42868161686482, thread = 1
 	ptrs[0x1c07460] = alloc.malloc(512); //timestamp = 42868161751396, thread = 1
-	ptrs[0x1c07880] = alloc.malloc(512); //timestamp = 42868161961602, thread = 1
+	ptrs[0x1c07880] = alloc.malloc(512); //timestamp = 42868161961602, thread = 1 <==== OVERLAP
 	void * ptr1 = ptrs[0x1c07880];
 	Size s1 = alloc.getInnerSize(ptr1);
 	ptrs[0x1c07b50] = alloc.malloc(512); //timestamp = 42868162071430, thread = 1
@@ -178,7 +178,7 @@ TEST(TestPosixAllocator, buggy_seq_1)
 	ptrs[0x1c07530] = alloc.calloc(1,252); //timestamp = 42868165456070, thread = 1
 	ptrs[0x1c08100] = alloc.calloc(1,504); //timestamp = 42868165474252, thread = 1
 	ptrs[0x1c08300] = alloc.calloc(1,504); //timestamp = 42868165490954, thread = 1
-	ptrs[0x1c08d00] = alloc.memalign(256,240); //timestamp = 42868165591092, thread = 1
+	ptrs[0x1c08d00] = alloc.memalign(256,240); //timestamp = 42868165591092, thread = 1 <==== OVERLAP
 	void * ptr2 = ptrs[0x1c08d00];
 	Size s2 = alloc.getInnerSize(ptr2);
 

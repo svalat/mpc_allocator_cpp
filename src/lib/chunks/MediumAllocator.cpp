@@ -216,13 +216,16 @@ size_t MediumAllocator::getInnerSize ( void* ptr )
 		return 0;
 	
 	//unpadd
-	ptr = PaddedChunk::unpad(ptr);
+	void * realPtr = PaddedChunk::unpad(ptr);
+	allocAssert(realPtr <= ptr);
+	int delta = addrDelta(ptr,realPtr);
+	allocAssert(delta >= 0);
 	
-	MediumChunk * chunk = MediumChunk::getChunkSafe(ptr);
+	MediumChunk * chunk = MediumChunk::getChunkSafe(realPtr);
 	if (chunk == NULL)	
 		return 0;
 	else
-		return chunk->getInnerSize();
+		return chunk->getInnerSize() - delta;
 }
 
 /*******************  FUNCTION  *********************/

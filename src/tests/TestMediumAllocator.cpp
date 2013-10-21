@@ -1,5 +1,6 @@
 /********************  HEADERS  *********************/
 #include <MediumAllocator.h>
+#include <PaddedChunk.h>
 #include <gtest/gtest.h>
 #include "mocks/MockMMSource.h"
 #include <RegionRegistry.h>
@@ -284,4 +285,23 @@ TEST(TestMediumAllocator,testMallocFreeAlign_2)
 		ASSERT_EQ(0u,(Addr)ptr % i);
 		alloc.free(ptr);
 	}
+}
+
+/*******************  FUNCTION  *********************/
+TEST(TestMediumAllocator,testGetSizeOnAligned)
+{
+	MediumAllocator alloc;
+	alloc.fill(gblBuffer,sizeof(gblBuffer),NULL);
+	
+	alloc.malloc(32);
+	void * ptr2 = alloc.malloc(32,256);
+
+	EXPECT_EQ(0u,(Addr)ptr2 % 256);
+	void * unpadded = PaddedChunk::unpad(ptr2);
+	EXPECT_NE(ptr2,unpadded);
+	
+	Size chunkSize = alloc.getInnerSize(ptr2);
+	Size unpaddedSize = alloc.getInnerSize(unpadded);
+	
+	EXPECT_EQ(unpaddedSize - chunkSize , (Size)addrDelta(ptr2,unpadded));
 }
