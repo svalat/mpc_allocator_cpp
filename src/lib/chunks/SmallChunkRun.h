@@ -1,3 +1,11 @@
+/*****************************************************
+*            PROJECT  : MPC_Allocator_CPP            *
+*            VERSION  : 0.0.0                        *
+*            DATE     : 07/2013                      *
+*            AUTHOR   : Valat Sébastien              *
+*            LICENSE  : CeCILL-C                     *
+*****************************************************/
+
 #ifndef SMALL_CHUNK_RUN_H
 #define SMALL_CHUNK_RUN_H
 

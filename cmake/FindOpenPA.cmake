@@ -1,4 +1,12 @@
-# Find the shelltoolit library
+######################################################
+#            PROJECT  : MPC_Allocator_CPP            #
+#            VERSION  : 0.0.0                        #
+#            DATE     : 07/2013                      #
+#            AUTHOR   : Valat Sébastien              #
+#            LICENSE  : CeCILL-C                     #
+######################################################
+
+# Find the openpa library
 #
 #  This module defines the following variables:
 #     OPENPA_FOUND       - True if OPENPA_INCLUDE_DIR & svUnitTest_LIBRARY are found

@@ -1,10 +1,18 @@
-/********************************* INCLUDES *********************************/
+/*****************************************************
+*            PROJECT  : MPC_Allocator_CPP            *
+*            VERSION  : 0.0.0                        *
+*            DATE     : 07/2013                      *
+*            AUTHOR   : Valat Sébastien              *
+*            LICENSE  : CeCILL-C                     *
+*****************************************************/
+
+/*******************  FUNCTION  *********************/
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
 #include <cstring>
 #include <omp.h>
-#include <RDTSC.h>
+#include <cycle.h>
 #include <MPSCFQueue.h>
 #define TEST_SIZE 20000
 #define REPEAT 100
@@ -15,7 +23,7 @@ using namespace MPCAllocator;
 /*********************  TYPES  **********************/
 typedef unsigned long long ticks;
 
-/********************************* FUNCTION *********************************/
+/*******************  FUNCTION  *********************/
 void test_with_n_threads(int threads)
 {
 	//vars
@@ -66,9 +74,9 @@ void test_with_n_threads(int threads)
 			{
 				for ( size_t i = 0 ; i < test_size ; i++)
 				{
-					t0 = sctk_alloc_rdtsc();
+					t0 = getticks();
 					queue.insert(&entries[i],sizeof(entries[i]));
-					treg += (sctk_alloc_rdtsc() - t0);
+					treg += (getticks() - t0);
 				}
 			}
 
@@ -78,10 +86,10 @@ void test_with_n_threads(int threads)
 				cnt = 0;
 				while (cnt < expected)
 				{
-					t0 = sctk_alloc_rdtsc();
+					t0 = getticks();
 					res = queue.dequeueAll();
 					if (res != NULL)
-						tflush += (sctk_alloc_rdtsc() - t0);
+						tflush += (getticks() - t0);
 					while (res != NULL)
 					{
 						cnt++;
@@ -115,7 +123,7 @@ void test_with_n_threads(int threads)
 	fflush(stdout);
 }
 
-/********************************* FUNCTION *********************************/
+/*******************  FUNCTION  *********************/
 int main(int argc, char ** argv)
 {
 	int i;

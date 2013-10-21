@@ -1,4 +1,12 @@
 ######################################################
+#            PROJECT  : MPC_Allocator_CPP            #
+#            VERSION  : 0.0.0                        #
+#            DATE     : 07/2013                      #
+#            AUTHOR   : Valat Sébastien              #
+#            LICENSE  : CeCILL-C                     #
+######################################################
+
+######################################################
 set(ALLOC_BASE_OBJS $<TARGET_OBJECTS:alloc_mmsource> 
                     $<TARGET_OBJECTS:alloc_medium>
                     $<TARGET_OBJECTS:alloc_json> 

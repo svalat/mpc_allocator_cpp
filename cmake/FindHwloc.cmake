@@ -1,4 +1,12 @@
-# Find the shelltoolit library
+######################################################
+#            PROJECT  : MPC_Allocator_CPP            #
+#            VERSION  : 0.0.0                        #
+#            DATE     : 07/2013                      #
+#            AUTHOR   : Valat Sébastien              #
+#            LICENSE  : CeCILL-C                     #
+######################################################
+
+# Find the hwloc library
 #
 #  This module defines the following variables:
 #     HWLOC_FOUND       - True if HWLOC_INCLUDE_DIR & svUnitTest_LIBRARY are found

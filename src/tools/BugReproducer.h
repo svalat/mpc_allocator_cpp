@@ -1,3 +1,11 @@
+/*****************************************************
+*            PROJECT  : MPC_Allocator_CPP            *
+*            VERSION  : 0.0.0                        *
+*            DATE     : 07/2013                      *
+*            AUTHOR   : Valat Sébastien              *
+*            LICENSE  : CeCILL-C                     *
+*****************************************************/
+
 #ifndef BUG_REPRODUCER_H
 #define BUG_REPRODUCER_H
 
