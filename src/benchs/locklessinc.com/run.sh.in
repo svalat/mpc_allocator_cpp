@@ -187,7 +187,7 @@ function plot_all()
 
 ######################################################
 #main
-run 'results-locklessinc.txt' '-no-use-mem' | tee 'results-locklessinc.txt'
-run 'results-locklessinc-usemem.txt' '-use-mem' | tee 'results-locklessinc-usemem.txt'
+run 'results-locklessinc-no-use-mem.txt' '-no-use-mem' | tee 'results-locklessinc-no-use-mem.txt'
+run 'results-locklessinc-use-mem.txt' '-use-mem' | tee 'results-locklessinc-use-mem.txt'
 plot_all '-no-use-mem'
 plot_all '-use-mem'

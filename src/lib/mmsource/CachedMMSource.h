@@ -19,7 +19,7 @@ namespace MPCAllocator
 {
 
 /********************  MACRO  ***********************/
-#define MMSRC_MAX_SIZE (512*1024*1024)
+#define MMSRC_MAX_SIZE (16*1024*1024)
 #define MMSRC_THREASHOLD (8*1024*1204)
 #define MMSRC_KEEP_RESIDUT false
 
