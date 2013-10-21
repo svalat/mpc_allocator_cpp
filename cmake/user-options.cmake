@@ -73,6 +73,7 @@ ELSE (OPENPA_FOUND)
 	set(PORTABILITY_ATOMICS GCC    )
 ENDIF(OPENPA_FOUND)
 
+######################################################
 #enable features for code
 add_definitions(-DOS_${PORTABILITY_OS} -DLOCKS_${PORTABILITY_LOCKS} -DATOMICS_${PORTABILITY_ATOMICS})
 
@@ -90,4 +91,6 @@ message(STATUS "PORTABILITY_TOPO : ${PORTABILITY_TOPO}")
 message(STATUS "PORTABILITY_LOCKS : ${PORTABILITY_LOCKS}")
 message(STATUS "PORTABILITY_ATOMICS : ${PORTABILITY_ATOMICS}")
 message(STATUS "CXXFLAGS : ${CMAKE_CXX_FLAGS}")
+message(STATUS "HWLOC_LIBRARIES : ${HWLOC_LIBRARIES}")
+message(STATUS "OPENPA_INCLUDE_DIR : ${OPENPA_INCLUDE_DIR}")
 message(STATUS "---------------------------------------------------- --")

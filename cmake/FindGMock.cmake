@@ -84,7 +84,7 @@ if(NOT DEFINED GMOCK_MSVC_SEARCH)
   set(GMOCK_MSVC_SEARCH MD)
 endif()
 
-set(_gmock_libpath_suffixes lib)
+set(_gmock_libpath_suffixes ${LIB_SUFFIX})
 if(MSVC)
   if(GMOCK_MSVC_SEARCH STREQUAL "MD")
     list(APPEND _gmock_libpath_suffixes

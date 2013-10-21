@@ -17,4 +17,4 @@ set_target_properties(t-test1-use-mem PROPERTIES COMPILE_FLAGS "-DDO_MEMSET")
 
 ######################################################
 get_property(MPC_ALLOC_PATH_FOR_BENCH TARGET alloc PROPERTY LOCATION)
-configure_file(run.sh.cmake run.sh @ONLY)
+configure_file(run.sh.in run.sh @ONLY)
