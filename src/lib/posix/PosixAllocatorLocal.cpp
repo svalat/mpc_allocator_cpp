@@ -18,7 +18,7 @@ namespace MPCAllocator
 
 /*******************  FUNCTION  *********************/
 PosixAllocatorLocal::PosixAllocatorLocal ( RegionRegistry * registry )
-	:mmSource(registry), mediumAlloc(true,&mmSource), smallAlloc(true,&mmSource)
+	:mmSource(registry), mediumAlloc(true,&mmSource), smallAlloc(true,&mmSource), hugeAlloc(&mmSource)
 {
 	//mark as init
 	this->isInit = true;
@@ -26,6 +26,7 @@ PosixAllocatorLocal::PosixAllocatorLocal ( RegionRegistry * registry )
 	//setup current local allocator as resposible for realloc
 	this->mediumAlloc.setParentChunkManager(this);
 	this->smallAlloc.setParentChunkManager(this);
+	this->hugeAlloc.setParentChunkManager(this);
 }
 
 /*******************  FUNCTION  *********************/
@@ -229,6 +230,8 @@ void* PosixAllocatorLocal::internalMalloc ( size_t size, size_t alignement, bool
 	//round size
 	if (size <= SMALL_CHUNK_MAX_SIZE)
 		res = smallAlloc.malloc(size,alignement,&zeroStatus);
+	else if (size > HUGE_ALLOC_THREASHOLD)
+		res = mediumAlloc.malloc(size,alignement,&zeroStatus);
 	else
 		res = mediumAlloc.malloc(size,alignement,&zeroStatus);
 	
@@ -287,6 +290,7 @@ void* PosixAllocatorLocal::realloc ( void* ptr, size_t size )
 			//check if can strictly realloc in one kind of allocation
 			bool isReallocInMedium = (size > SMALL_CHUNK_MAX_SIZE  && chunkManager == &mediumAlloc);
 			bool isReallocInSmall  = (size <= SMALL_CHUNK_MAX_SIZE && chunkManager == &smallAlloc);
+			bool isReallocInHuge   = (size > HUGE_ALLOC_THREASHOLD && chunkManager == &hugeAlloc);
 
 			//local and same class realloc, otherwise alloc/copy/free
 			if (isReallocInMedium)
@@ -294,6 +298,8 @@ void* PosixAllocatorLocal::realloc ( void* ptr, size_t size )
 				res = mediumAlloc.realloc(ptr,size);
 			} else if (isReallocInSmall) {
 				res = smallAlloc.realloc(ptr,size);
+			} else if (isReallocInHuge) {
+				res = hugeAlloc.realloc(ptr,size);
 			} else {
 				void * new_ptr = internalMalloc(size);
 				allocAssert(new_ptr != NULL);
@@ -363,7 +369,7 @@ AllocatorClass PosixAllocatorLocal::getSizeClass ( Size innerSize )
 /*******************  FUNCTION  *********************/
 bool PosixAllocatorLocal::isLocalChunkManager ( IChunkManager* manager )
 {
-	return (manager == &mediumAlloc || manager == &smallAlloc);
+	return (manager == &mediumAlloc || manager == &smallAlloc || manager == &hugeAlloc);
 }
 
 /*******************  FUNCTION  *********************/
@@ -383,6 +389,7 @@ void PosixAllocatorLocal::hardChecking ( void )
 {
 	this->mediumAlloc.hardChecking();
 	this->smallAlloc.hardChecking();
+	this->hugeAlloc.hardChecking();
 }
 
 };

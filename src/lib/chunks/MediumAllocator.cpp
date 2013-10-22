@@ -262,6 +262,8 @@ size_t MediumAllocator::getRequestedSize ( void* ptr )
 /*******************  FUNCTION  *********************/
 void* MediumAllocator::realloc ( void* ptr, size_t size )
 {
+	void * oldPtr = ptr;
+	
 	//trivial
 	if (ptr == NULL && size == 0)
 	{
@@ -285,7 +287,7 @@ void* MediumAllocator::realloc ( void* ptr, size_t size )
 	
 	//if can resuse old one without resize
 	if (oldSize >= size && delta <= REALLOC_THREASHOLD)
-		return ptr;
+		return oldPtr;
 	
 	//check if can realloc the next one
 	//TODO maybe find a way to avoid to retake the lock for next malloc call

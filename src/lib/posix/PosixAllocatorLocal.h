@@ -16,6 +16,7 @@
 #include <CachedMMSource.h>
 #include "MediumAllocator.h"
 #include <SmallAllocator.h>
+#include <HugeAllocator.h>
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator
@@ -69,6 +70,7 @@ class PosixAllocatorLocal : public IAllocator
 		CachedMMSource mmSource;
 		MediumAllocator mediumAlloc;
 		SmallAllocator smallAlloc;
+		HugeAllocator hugeAlloc;
 		bool isInit;
 		ListElement listHandler;
 		MPSCFQueue rfq;

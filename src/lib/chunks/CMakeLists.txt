@@ -8,4 +8,4 @@
 
 ######################################################
 my_enable_fpic()
-add_library(alloc_medium OBJECT MediumAllocator.cpp MediumChunk.cpp MediumFreePool.cpp SmallChunkRun.cpp SmallAllocator.cpp PaddedChunk.cpp SmallRunContainer.cpp)
+add_library(alloc_medium OBJECT MediumAllocator.cpp MediumChunk.cpp MediumFreePool.cpp SmallChunkRun.cpp SmallAllocator.cpp PaddedChunk.cpp SmallRunContainer.cpp HugeAllocator.cpp)

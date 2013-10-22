@@ -13,7 +13,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/unittest-macros.cmake)
 set(TEST_LIST TestLinkList TestMediumChunk TestSpinlock TestMediumFreePool 
 	TestCommon TestMediumAllocator TestRegionRegistry TestOS TestDummyMMSource 
 	TestAtomicPtr TestSmallChunk TestSmallAllocator TestPosixAllocator 
-	TestPaddedChunk TestCachedMMSource TestSmallRunContainer)
+	TestPaddedChunk TestCachedMMSource TestSmallRunContainer TestHugeAllocator)
 
 ######################################################
 include_directories(${GMOCK_INCLUDE_DIRS})

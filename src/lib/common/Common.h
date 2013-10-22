@@ -36,6 +36,7 @@ typedef int64_t SSize;
 #define ADDR_NULL 0
 #define PAGE_SIZE 4096
 #define ALLOC_DO_WARNING true
+#define HUGE_ALLOC_THREASHOLD (MACRO_BLOC_SIZE/2)
 
 /********************  MACRO  ***********************/
 //TODO check to by use in coordination with -fvisibility=hidden for seom optim

@@ -8,6 +8,7 @@
 
 /********************  HEADERS  *********************/
 #include "Debug.h"
+#include <RegionRegistry.h>
 #include "MediumChunk.h"
 #include "PaddedChunk.h"
 
@@ -24,6 +25,14 @@ PaddedChunk * PaddedChunk::setup (MediumChunk* parentChunk, MPCAllocator::Size p
 	//errors
 	allocAssert(parentChunk != NULL);
 	return setup(parentChunk->getPtr(),padding,parentChunk->getInnerSize());
+}
+
+/*******************  FUNCTION  *********************/
+PaddedChunk * PaddedChunk::setup (RegionSegmentHeader * segment, MPCAllocator::Size padding )
+{
+	//errors
+	allocAssert(segment != NULL);
+	return setup(segment->getPtr(),padding,segment->getInnerSize());
 }
 
 /*******************  FUNCTION  *********************/
@@ -75,6 +84,28 @@ Size PaddedChunk::calcPadding ( MediumChunk * chunk, Size align, Size requestSiz
 	
 	//check size
 	allocAssert(chunk->getInnerSize() >= delta + requestSize);
+	
+	return delta;	
+}
+
+/*******************  FUNCTION  *********************/
+Size PaddedChunk::calcPadding ( RegionSegmentHeader * segment, Size align, Size requestSize )
+{
+	//errors
+	allocAssert(segment != NULL);
+	
+	//calc current align
+	Size delta = (Addr)segment->getPtr() % align;
+	if (delta != 0)
+	{
+		delta = align - delta;
+		allocAssert(delta >= sizeof(PaddedChunk));
+		/*if (delta < sizeof(PaddedChunk))
+			delta += align;*/
+	}
+	
+	//check size
+	allocAssert(segment->getInnerSize() >= delta + requestSize);
 	
 	return delta;	
 }

@@ -18,15 +18,18 @@ namespace MPCAllocator
 	
 /*********************  TYPES  **********************/
 struct MediumChunk;
+class RegionSegmentHeader;
 
 /*********************  CLASS  **********************/
 class PaddedChunk
 {
 	public:
+		static PaddedChunk * setup(RegionSegmentHeader * parentChunk,Size padding);
 		static PaddedChunk * setup(MediumChunk * parentChunk,Size padding);
 		static PaddedChunk * setup(void * ptr,Size padding,Size chunkSize);
 		static void * pad(void * ptr,Size padding,Size chunkSize);
-		static Size calcPadding( MPCAllocator::MediumChunk* chunk, MPCAllocator::Size align, MPCAllocator::Size requestSize );
+		static Size calcPadding( MediumChunk* chunk, Size align, Size requestSize );
+		static Size calcPadding( RegionSegmentHeader* chunk, Size align, Size requestSize );
 		static void * unpad(void * ptr);
 		void * getPtr(void);
 	private:
