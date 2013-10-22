@@ -13,6 +13,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(mpc_allocator_cpp)
 set(ALLOC_VERSION "0.0.0-dev")
+set(ALLOC_API_VERSION 1)
 
 ######################################################
 #global setup

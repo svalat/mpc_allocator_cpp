@@ -32,10 +32,12 @@ target_link_libraries(alloc_base_internal ${CMAKE_THREAD_LIBS_INIT} ${HWLOC_LIBR
 ######################################################
 add_library(alloc_base SHARED ${ALLOC_BASE_OBJS})
 target_link_libraries(alloc_base ${CMAKE_THREAD_LIBS_INIT} ${HWLOC_LIBRARY} ${LIBDL_LIBRARY})
+set_target_properties(alloc_base PROPERTIES VERSION ${ALLOC_VERSION} SOVERSION ${ALLOC_API_VERSION})
 
 ######################################################
 add_library(alloc SHARED ${ALLOC_BASE_OBJS} $<TARGET_OBJECTS:alloc_posix_export>)
 target_link_libraries(alloc ${CMAKE_THREAD_LIBS_INIT} ${HWLOC_LIBRARY} ${LIBDL_LIBRARY})
+set_target_properties(alloc PROPERTIES VERSION ${ALLOC_VERSION} SOVERSION ${ALLOC_API_VERSION})
 
 ######################################################
 add_subdirectory(chunks)
