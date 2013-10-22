@@ -22,6 +22,9 @@ add_definitions(-D_GNU_SOURCE)
 add_definitions(-DHAVE_COLOR)
 
 ######################################################
+set(DLL_VISIBILITY_TWEAK "-fno-rtti -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -DENABLE_VISIBILITY_TWEAK -DBUILDING_DLL")
+
+######################################################
 #Add internal search path for scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 
@@ -49,8 +52,3 @@ include_directories(${LIBDL_INCLUDE_DIRS})
 ######################################################
 #manage subdirs
 add_subdirectory(src)
-
-######################################################
-#tmp exec for sandbox tests
-add_executable(mpc_allocator_cpp main.cpp)
-target_link_libraries(mpc_allocator_cpp alloc)

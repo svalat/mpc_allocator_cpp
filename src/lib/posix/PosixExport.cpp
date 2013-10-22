@@ -48,7 +48,7 @@ static void allocInit(void)
 }
 
 /*******************  FUNCTION  *********************/
-void *malloc(size_t size)
+DLL_PUBLIC void *malloc(size_t size)
 {
 	//check init
 	if (gblAllocator == NULL)
@@ -63,7 +63,7 @@ void *malloc(size_t size)
 }
 
 /*******************  FUNCTION  *********************/
-void free(void *ptr)
+DLL_PUBLIC void free(void *ptr)
 {
 	//nothing to do
 	if (ptr == NULL)
@@ -78,7 +78,7 @@ void free(void *ptr)
 }
 
 /*******************  FUNCTION  *********************/
-void *calloc(size_t nmemb, size_t size)
+DLL_PUBLIC void *calloc(size_t nmemb, size_t size)
 {
 	//check init
 	if (gblAllocator == NULL)
@@ -94,7 +94,7 @@ void *calloc(size_t nmemb, size_t size)
 }
 
 /*******************  FUNCTION  *********************/
-void *realloc(void *ptr, size_t size)
+DLL_PUBLIC void *realloc(void *ptr, size_t size)
 {
 	//check init
 	if (gblAllocator == NULL)
@@ -109,7 +109,7 @@ void *realloc(void *ptr, size_t size)
 }
 
 /*******************  FUNCTION  *********************/
-int posix_memalign(void **memptr, size_t alignment, size_t size)
+DLL_PUBLIC int posix_memalign(void **memptr, size_t alignment, size_t size)
 {
 	//check init
 	if (gblAllocator == NULL)
@@ -124,7 +124,7 @@ int posix_memalign(void **memptr, size_t alignment, size_t size)
 }
 
 /*******************  FUNCTION  *********************/
-void *aligned_alloc(size_t alignment, size_t size)
+DLL_PUBLIC void *aligned_alloc(size_t alignment, size_t size)
 {
 	//check init
 	if (gblAllocator == NULL)
@@ -140,7 +140,7 @@ void *aligned_alloc(size_t alignment, size_t size)
 }
 
 /*******************  FUNCTION  *********************/
-void *valloc(size_t size)
+DLL_PUBLIC void *valloc(size_t size)
 { 
 	//check init
 	if (gblAllocator == NULL)
@@ -155,7 +155,7 @@ void *valloc(size_t size)
 }
 
 /*******************  FUNCTION  *********************/
-void *memalign(size_t alignment, size_t size)
+DLL_PUBLIC void *memalign(size_t alignment, size_t size)
 {
 	//check init
 	if (gblAllocator == NULL)
@@ -170,7 +170,7 @@ void *memalign(size_t alignment, size_t size)
 }
 
 /*******************  FUNCTION  *********************/
-void *pvalloc(size_t size)
+DLL_PUBLIC void *pvalloc(size_t size)
 {
 	//check init
 	if (gblAllocator == NULL)

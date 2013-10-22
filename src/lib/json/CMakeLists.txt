@@ -7,5 +7,14 @@
 ######################################################
 
 ######################################################
+set(local_srcs JsonState.cpp TypeToJson.cpp)
+
+######################################################
 my_enable_fpic()
-add_library(alloc_json OBJECT JsonState.cpp TypeToJson.cpp)
+
+######################################################
+add_library(alloc_json_internal OBJECT ${local_srcs})
+
+######################################################
+add_library(alloc_json OBJECT ${local_srcs})
+set_target_properties(alloc_json PROPERTIES COMPILE_FLAGS ${DLL_VISIBILITY_TWEAK})

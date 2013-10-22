@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <stdint.h>
+#include "SymbolVisibility.h"
 
 /********************  NAMESPACE  *******************/
 namespace MPCAllocator

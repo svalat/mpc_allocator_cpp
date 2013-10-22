@@ -7,5 +7,14 @@
 ######################################################
 
 ######################################################
+set(local_srcs DummyMMSource.cpp CachedMMSource.cpp)
+
+######################################################
 my_enable_fpic()
-add_library(alloc_mmsource OBJECT DummyMMSource.cpp CachedMMSource.cpp)
+
+######################################################
+add_library(alloc_mmsource_internal OBJECT ${local_srcs})
+
+######################################################
+add_library(alloc_mmsource OBJECT ${local_srcs})
+set_target_properties(alloc_mmsource PROPERTIES COMPILE_FLAGS ${DLL_VISIBILITY_TWEAK})

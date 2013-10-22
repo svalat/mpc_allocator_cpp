@@ -7,12 +7,27 @@
 ######################################################
 
 ######################################################
+add_definitions("-fno-rtti -fno-exceptions -fvisibility=default -fvisibility-inlines-hidden -DENABLE_VISIBILITY_TWEAK -DBUILDING_DLL")
+
+######################################################
 set(ALLOC_BASE_OBJS $<TARGET_OBJECTS:alloc_mmsource> 
                     $<TARGET_OBJECTS:alloc_medium>
                     $<TARGET_OBJECTS:alloc_json> 
                     $<TARGET_OBJECTS:alloc_common> 
                     $<TARGET_OBJECTS:alloc_portability>
                     $<TARGET_OBJECTS:alloc_posix>)
+
+######################################################
+set(ALLOC_BASE_INT_OBJS $<TARGET_OBJECTS:alloc_mmsource_internal> 
+                        $<TARGET_OBJECTS:alloc_medium_internal>
+                        $<TARGET_OBJECTS:alloc_json_internal> 
+                        $<TARGET_OBJECTS:alloc_common_internal> 
+                        $<TARGET_OBJECTS:alloc_portability_internal>
+                        $<TARGET_OBJECTS:alloc_posix_internal>)
+
+######################################################
+add_library(alloc_base_internal SHARED ${ALLOC_BASE_INT_OBJS})
+target_link_libraries(alloc_base_internal ${CMAKE_THREAD_LIBS_INIT} ${HWLOC_LIBRARY} ${LIBDL_LIBRARY})
 
 ######################################################
 add_library(alloc_base SHARED ${ALLOC_BASE_OBJS})
