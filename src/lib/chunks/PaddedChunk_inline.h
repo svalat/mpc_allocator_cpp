@@ -6,9 +6,12 @@
 *            LICENSE  : CeCILL-C                     *
 *****************************************************/
 
+#ifndef PADDED_CHUNK_INLINE_H
+#define PADDED_CHUNK_INLINE_H
+
 /********************  HEADERS  *********************/
 #include "Debug.h"
-#include <RegionRegistry.h>
+#include "RegionRegistry.h"
 #include "MediumChunk.h"
 #include "PaddedChunk.h"
 
@@ -20,7 +23,7 @@ namespace MPCAllocator
 {
 
 /*******************  FUNCTION  *********************/
-PaddedChunk * PaddedChunk::setup (MediumChunk* parentChunk, MPCAllocator::Size padding )
+inline PaddedChunk * PaddedChunk::setup (MediumChunk* parentChunk, MPCAllocator::Size padding )
 {
 	//errors
 	allocAssert(parentChunk != NULL);
@@ -28,7 +31,7 @@ PaddedChunk * PaddedChunk::setup (MediumChunk* parentChunk, MPCAllocator::Size p
 }
 
 /*******************  FUNCTION  *********************/
-PaddedChunk * PaddedChunk::setup (RegionSegmentHeader * segment, MPCAllocator::Size padding )
+inline PaddedChunk * PaddedChunk::setup (RegionSegmentHeader * segment, MPCAllocator::Size padding )
 {
 	//errors
 	allocAssert(segment != NULL);
@@ -36,7 +39,7 @@ PaddedChunk * PaddedChunk::setup (RegionSegmentHeader * segment, MPCAllocator::S
 }
 
 /*******************  FUNCTION  *********************/
-PaddedChunk* PaddedChunk::setup ( void* ptr, Size padding, Size chunkSize )
+inline PaddedChunk* PaddedChunk::setup ( void* ptr, Size padding, Size chunkSize )
 {
 	//errors
 	assert(ptr != NULL);
@@ -58,7 +61,7 @@ PaddedChunk* PaddedChunk::setup ( void* ptr, Size padding, Size chunkSize )
 }
 
 /*******************  FUNCTION  *********************/
-void* PaddedChunk::getPtr ( void )
+inline void* PaddedChunk::getPtr ( void )
 {
 	if (this == NULL)
 		return NULL;
@@ -67,7 +70,7 @@ void* PaddedChunk::getPtr ( void )
 }
 
 /*******************  FUNCTION  *********************/
-Size PaddedChunk::calcPadding ( MediumChunk * chunk, Size align, Size requestSize )
+inline Size PaddedChunk::calcPadding ( MediumChunk * chunk, Size align, Size requestSize )
 {
 	//errors
 	allocAssert(chunk != NULL);
@@ -89,7 +92,7 @@ Size PaddedChunk::calcPadding ( MediumChunk * chunk, Size align, Size requestSiz
 }
 
 /*******************  FUNCTION  *********************/
-Size PaddedChunk::calcPadding ( RegionSegmentHeader * segment, Size align, Size requestSize )
+inline Size PaddedChunk::calcPadding ( RegionSegmentHeader * segment, Size align, Size requestSize )
 {
 	//errors
 	allocAssert(segment != NULL);
@@ -111,14 +114,14 @@ Size PaddedChunk::calcPadding ( RegionSegmentHeader * segment, Size align, Size 
 }
 
 /*******************  FUNCTION  *********************/
-void* PaddedChunk::pad ( void* ptr, Size padding, Size chunkSize )
+inline void* PaddedChunk::pad ( void* ptr, Size padding, Size chunkSize )
 {
 	PaddedChunk * padded = PaddedChunk::setup(ptr,padding,chunkSize);
 	return padded->getPtr();
 }
 
 /*******************  FUNCTION  *********************/
-void * PaddedChunk::unpad( void* ptr )
+inline void * PaddedChunk::unpad( void* ptr )
 {
 	//trivial
 	if (ptr == NULL)
@@ -132,3 +135,5 @@ void * PaddedChunk::unpad( void* ptr )
 }
 
 };
+
+#endif //PADDED_CHUNK_INLINE_H

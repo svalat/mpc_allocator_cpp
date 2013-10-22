@@ -7,7 +7,7 @@
 ######################################################
 
 ######################################################
-set(local_srcs RegionRegistry.cpp Debug.cpp MPSCFQueue.cpp Spinlock.cpp Common.cpp)
+set(local_srcs RegionRegistry.cpp Debug.cpp MPSCFQueue.cpp Common.cpp)
 
 ######################################################
 my_enable_fpic()

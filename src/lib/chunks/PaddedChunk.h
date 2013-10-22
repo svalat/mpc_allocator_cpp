@@ -24,14 +24,14 @@ class RegionSegmentHeader;
 class PaddedChunk
 {
 	public:
-		static PaddedChunk * setup(RegionSegmentHeader * parentChunk,Size padding);
-		static PaddedChunk * setup(MediumChunk * parentChunk,Size padding);
-		static PaddedChunk * setup(void * ptr,Size padding,Size chunkSize);
-		static void * pad(void * ptr,Size padding,Size chunkSize);
-		static Size calcPadding( MediumChunk* chunk, Size align, Size requestSize );
-		static Size calcPadding( RegionSegmentHeader* chunk, Size align, Size requestSize );
-		static void * unpad(void * ptr);
-		void * getPtr(void);
+		static inline PaddedChunk * setup(RegionSegmentHeader * parentChunk,Size padding);
+		static inline PaddedChunk * setup(MediumChunk * parentChunk,Size padding);
+		static inline PaddedChunk * setup(void * ptr,Size padding,Size chunkSize);
+		static inline void * pad(void * ptr,Size padding,Size chunkSize);
+		static inline Size calcPadding( MediumChunk* chunk, Size align, Size requestSize );
+		static inline Size calcPadding( RegionSegmentHeader* chunk, Size align, Size requestSize );
+		static inline void * unpad(void * ptr);
+		inline void * getPtr(void);
 	private:
 		//No public constructor, but be setup by init
 		PaddedChunk(void);
@@ -41,5 +41,8 @@ class PaddedChunk
 };
 
 };
+
+/********************  HEADERS  *********************/
+#include "PaddedChunk_inline.h"
 
 #endif //PADDED_CHUNK_H

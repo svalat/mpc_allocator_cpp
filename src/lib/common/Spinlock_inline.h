@@ -6,6 +6,9 @@
 *            LICENSE  : CeCILL-C                     *
 *****************************************************/
 
+#ifndef ALLOC_SPINLOCK_INLINE_H
+#define ALLOC_SPINLOCK_INLINE_H
+
 /********************  HEADERS  *********************/
 #include "Spinlock.h"
 
@@ -14,31 +17,31 @@ namespace MPCAllocator
 {
 
 /*******************  FUNCTION  *********************/
-Spinlock::Spinlock ( void )
+inline Spinlock::Spinlock ( void )
 {
 	Locks::init(spinlock);
 }
 
 /*******************  FUNCTION  *********************/
-Spinlock::~Spinlock ( void )
+inline Spinlock::~Spinlock ( void )
 {
 	Locks::destroy(spinlock);
 }
 
 /*******************  FUNCTION  *********************/
-void Spinlock::lock ( void )
+inline void Spinlock::lock ( void )
 {
 	Locks::lock(spinlock);
 }
 
 /*******************  FUNCTION  *********************/
-void Spinlock::unlock ( void )
+inline void Spinlock::unlock ( void )
 {
 	Locks::unlock(spinlock);
 }
 
 /*******************  FUNCTION  *********************/
-Spinlock::TakeLock::TakeLock ( Spinlock& lock, bool test )
+inline Spinlock::TakeLock::TakeLock ( Spinlock& lock, bool test )
 {
 	if (test)
 	{
@@ -50,13 +53,13 @@ Spinlock::TakeLock::TakeLock ( Spinlock& lock, bool test )
 }
 
 /*******************  FUNCTION  *********************/
-Spinlock::TakeLock::~TakeLock ( void )
+inline Spinlock::TakeLock::~TakeLock ( void )
 {
 	this->unlock();
 }
 
 /*******************  FUNCTION  *********************/
-void Spinlock::TakeLock::unlock ( void )
+inline void Spinlock::TakeLock::unlock ( void )
 {
 	if (lock != NULL)
 		lock->unlock();
@@ -64,3 +67,5 @@ void Spinlock::TakeLock::unlock ( void )
 }
 
 };
+
+#endif //ALLOC_SPINLOCK_INLINE_H

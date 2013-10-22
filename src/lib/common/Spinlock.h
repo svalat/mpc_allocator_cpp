@@ -24,17 +24,17 @@ class Spinlock
 		class TakeLock
 		{
 			public:
-				TakeLock(Spinlock & lock,bool test = true);
-				~TakeLock(void);
-				void unlock(void);
+				inline TakeLock(Spinlock & lock,bool test = true);
+				inline ~TakeLock(void);
+				inline void unlock(void);
 			private:
 				Spinlock * lock;
 		};
 	public:
-		Spinlock(void);
-		~Spinlock(void);
-		void lock(void);
-		void unlock(void);
+		inline Spinlock(void);
+		inline ~Spinlock(void);
+		inline void lock(void);
+		inline void unlock(void);
 	private:
 		Locks::Spinlock spinlock;
 };
@@ -45,5 +45,8 @@ class Spinlock
 #define END_CRITICAL }while(0);
 
 };
+
+/********************  HEADERS  *********************/
+#include "Spinlock_inline.h"
 
 #endif //LOCKS

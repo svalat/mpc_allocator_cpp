@@ -7,7 +7,7 @@
 ######################################################
 
 ######################################################
-set(local_srcs MediumAllocator.cpp MediumChunk.cpp MediumFreePool.cpp SmallChunkRun.cpp SmallAllocator.cpp PaddedChunk.cpp SmallRunContainer.cpp HugeAllocator.cpp)
+set(local_srcs MediumAllocator.cpp MediumChunk.cpp MediumFreePool.cpp SmallChunkRun.cpp SmallAllocator.cpp SmallRunContainer.cpp HugeAllocator.cpp)
 
 ######################################################
 my_enable_fpic()
