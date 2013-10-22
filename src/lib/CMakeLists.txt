@@ -7,9 +7,6 @@
 ######################################################
 
 ######################################################
-add_definitions("-fno-rtti -fno-exceptions -fvisibility=default -fvisibility-inlines-hidden -DENABLE_VISIBILITY_TWEAK -DBUILDING_DLL")
-
-######################################################
 set(ALLOC_BASE_OBJS $<TARGET_OBJECTS:alloc_mmsource> 
                     $<TARGET_OBJECTS:alloc_medium>
                     $<TARGET_OBJECTS:alloc_json> 

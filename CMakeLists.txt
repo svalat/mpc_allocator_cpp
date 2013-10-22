@@ -23,6 +23,7 @@ add_definitions(-D_GNU_SOURCE)
 add_definitions(-DHAVE_COLOR)
 
 ######################################################
+#TODO : Need to check availability of options
 set(DLL_VISIBILITY_TWEAK "-fno-rtti -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -DENABLE_VISIBILITY_TWEAK -DBUILDING_DLL")
 
 ######################################################
