@@ -5,3 +5,4 @@ structurant et obtenir une meilleure sémantique. L'idée initial est de remettr
 confrontant à une structure forte objet ainsi que comparer les performances d'un code de ce type en C++ versus la version 
 initiale en C.
 
+**WARNING**: This version is not yet runnable.
