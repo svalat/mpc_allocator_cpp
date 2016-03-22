@@ -16,7 +16,7 @@ target_link_libraries(t-test1-use-mem ${CMAKE_THREAD_LIBS_INIT})
 set_target_properties(t-test1-use-mem PROPERTIES COMPILE_FLAGS "-DDO_MEMSET")
 
 ######################################################
-get_property(MPC_ALLOC_PATH_FOR_BENCH TARGET alloc PROPERTY LOCATION)
+set(MPC_ALLOC_PATH_FOR_BENCH $<alloc>)
 configure_file(run.sh.in run.sh @ONLY)
 
 ######################################################

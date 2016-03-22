@@ -17,8 +17,8 @@ namespace MPCAllocator
 {
 
 /*******************  FUNCTION  *********************/
-PosixAllocatorLocal::PosixAllocatorLocal ( RegionRegistry * registry )
-	:mmSource(registry), mediumAlloc(true,&mmSource), smallAlloc(true,&mmSource), hugeAlloc(&mmSource)
+PosixAllocatorLocal::PosixAllocatorLocal ( MPCAllocator::RegionRegistry* registry, MPCAllocator::IMMSource* mmSource )
+	:mediumAlloc(true,mmSource), smallAlloc(true,mmSource), hugeAlloc(mmSource)
 {
 	//mark as init
 	this->isInit = true;
@@ -27,6 +27,8 @@ PosixAllocatorLocal::PosixAllocatorLocal ( RegionRegistry * registry )
 	this->mediumAlloc.setParentChunkManager(this);
 	this->smallAlloc.setParentChunkManager(this);
 	this->hugeAlloc.setParentChunkManager(this);
+	//setup memory source
+	this->mmSource = mmSource;
 }
 
 /*******************  FUNCTION  *********************/

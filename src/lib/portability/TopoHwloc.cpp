@@ -87,6 +87,150 @@ int TopoHwloc::getNbEntities ( int level, int depth ) const
 }
 
 /*******************  FUNCTION  *********************/
+int TopoHwloc::getNbNumaEntities ( void ) const
+{
+	//get number of objs
+	int res = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_NODE);
+	allocAssume(res >= 0, "Invalid nbobjs_by_depth in hwloc for absolute depth ....");//absDepth
+	return res;
+}
+
+/*******************  FUNCTION  *********************/
+int TopoHwloc::getCurentNumaId(void) const
+{
+	//vars
+	int res = -1;
+
+	//try to find by using NUMA bindings
+	res = getCurrentIdFromNUMABinding();
+
+	//if not found try to find with thread binding on cores
+	if (res == -1)
+		res = getCurrentIdFromThreadBinding();
+
+	return res;
+}
+
+/*******************  FUNCTION  *********************/
+int TopoHwloc::getCurrentIdFromNUMABinding(void) const
+{
+	hwloc_nodeset_t nodeset = hwloc_bitmap_alloc();
+	hwloc_cpuset_t cpuset = hwloc_bitmap_alloc();
+	hwloc_membind_policy_t policy;
+	int res = -1;
+	int weight;
+	int status;
+	#if defined(SCTK_ALLOC_DEBUG) && defined(hwloc_bitmap_list_snprintf)
+	char buffer[4096];
+	#endif
+
+	//if no numa node, return immediately
+	if (getNbNumaEntities() == 1)
+		return -1;
+
+	//nodes
+	// flags = 0 fallback on PROCESS if THREAD is not supported (as for windows).
+	status =  hwloc_get_membind_nodeset(topology,nodeset,&policy,0);
+	assert(status == 0);
+	if (status == 0)
+		return -1;
+
+	#if defined(SCTK_ALLOC_DEBUG) && defined(hwloc_bitmap_list_snprintf)
+	status = hwloc_bitmap_list_snprintf(buffer,4096,nodeset);
+	sprintf(stderr,"Current nodes : %s\n",buffer);
+	#endif
+
+	//cores
+	// flags = 0 fallback on PROCESS if THREAD is not supported (as for windows).
+	status =  hwloc_get_membind(topology,cpuset,&policy,0);
+	assert(status == 0);
+	if (status == 0)
+		return -1;
+
+	#if defined(SCTK_ALLOC_DEBUG) && defined(hwloc_bitmap_list_snprintf)
+	status = hwloc_bitmap_list_snprintf(buffer,4096,cpuset);
+	sprintf(stderr,"Current cores : %s\n",buffer);
+	#endif
+
+	//nodes from cores
+	hwloc_cpuset_to_nodeset(topology,cpuset,nodeset);
+
+	#if defined(SCTK_ALLOC_DEBUG) && defined(hwloc_bitmap_list_snprintf)
+	status = hwloc_bitmap_list_snprintf(buffer,4096,nodeset);
+	sprintf(stderr,"Current nodes from cores : %s\n",buffer);
+	#endif
+
+	//calc res
+	weight = hwloc_bitmap_weight(nodeset);
+	assert(weight != 0);
+	if (weight == 1)
+		res = getFirstBitInBitmap(nodeset);
+
+	hwloc_bitmap_free(cpuset);
+	hwloc_bitmap_free(nodeset);
+
+	return res;
+}
+
+/*******************  FUNCTION  *********************/
+int TopoHwloc::getCurrentIdFromThreadBinding(void) const
+{
+	hwloc_nodeset_t nodeset = hwloc_bitmap_alloc();
+	hwloc_cpuset_t cpuset = hwloc_bitmap_alloc();
+	int res = -1;
+	int weight;
+	#if defined(SCTK_ALLOC_DEBUG) && defined(hwloc_bitmap_list_snprintf)
+	char buffer[4096];
+	#endif
+	
+	//get current core binding
+	//for windows use 0 instead of HWLOC_CPUBIND_THREAD
+	int status = hwloc_get_cpubind (topology, cpuset, 0);
+	assert(status == 0);
+	if (status == 0)
+		return -1;
+
+	#if defined(SCTK_ALLOC_DEBUG) && defined(hwloc_bitmap_list_snprintf)
+	status = hwloc_bitmap_list_snprintf(buffer,4096,cpuset);
+	sprintf(stderr,"Current cores : %s\n",buffer);
+	#endif
+
+	//nodes from cores
+	hwloc_cpuset_to_nodeset(topology,cpuset,nodeset);
+
+	#if defined(SCTK_ALLOC_DEBUG) && defined(hwloc_bitmap_list_snprintf)
+	status = hwloc_bitmap_list_snprintf(buffer,4096,nodeset);
+	sprintf(stderr,"Current nodes from cores : %s\n",buffer);
+	#endif
+
+	//calc res
+	weight = hwloc_bitmap_weight(nodeset);
+	assert(weight != 0);
+	if (weight == 1)
+		res = getFirstBitInBitmap(nodeset);
+
+	hwloc_bitmap_free(cpuset);
+	hwloc_bitmap_free(nodeset);
+
+	return res;
+}
+
+/*******************  FUNCTION  *********************/
+int TopoHwloc::getFirstBitInBitmap(hwloc_bitmap_t bitmap) const
+{
+	int last = hwloc_bitmap_last(bitmap);
+	int current = hwloc_bitmap_first(bitmap);
+	assert(current != -1);
+	while (current != last)
+	{
+		if (hwloc_bitmap_isset(bitmap,current))
+			break;
+		current = hwloc_bitmap_next(bitmap,current);
+	}
+	return current;
+}
+
+/*******************  FUNCTION  *********************/
 int TopoHwloc::getAbsDepth ( int level, int depth ) const
 {
 	//vars

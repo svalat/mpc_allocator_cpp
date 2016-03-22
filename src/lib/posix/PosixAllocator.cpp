@@ -44,7 +44,7 @@ IAllocator* PosixAllocator::initLocal ( void )
 	allocAssume(mm != NULL,"Fail to get memory from internal sub allocator to build the thread local allocator, maybe OOM.");
 	
 	//setup the posix local allocator
-	PosixAllocatorLocal * localAlloc = new (mm)PosixAllocatorLocal(&registry);
+	PosixAllocatorLocal * localAlloc = new (mm)PosixAllocatorLocal(&registry,getMMSource());
 	
 	//make it as current default one
 	tlsLocalCurrentAllocator = localAlloc;
@@ -54,13 +54,25 @@ IAllocator* PosixAllocator::initLocal ( void )
 }
 
 /*******************  FUNCTION  *********************/
+void PosixAllocator::resetDefaultAllocator(void)
+{
+	tlsLocalCurrentAllocator = tlsLocalDefaultAllocator;
+}
+
+/*******************  FUNCTION  *********************/
+void PosixAllocator::setCurrentAllocator(IAllocator* alloctor)
+{
+	tlsLocalCurrentAllocator = alloctor;
+}
+
+/*******************  FUNCTION  *********************/
 void PosixAllocator::flushRemote ( IAllocator* localAllocator )
 {
 	IAllocator * defaultLocalAllocator = tlsLocalDefaultAllocator;
 
 	//local flush
 	localAllocator->flushRemote();
-	if (defaultLocalAllocator != localAllocator)//maybe this is too much
+	if (defaultLocalAllocator != localAllocator && defaultLocalAllocator != NULL)//maybe this is too much
 		defaultLocalAllocator->flushRemote();
 }
 
@@ -376,6 +388,12 @@ void PosixAllocator::hardChecking ( void )
 {
 	if (tlsLocalDefaultAllocator != NULL)
 		tlsLocalDefaultAllocator->hardChecking();
+}
+
+/*******************  FUNCTION  *********************/
+IMMSource* PosixAllocator::getMMSource(void)
+{
+	return &mmSource;
 }
 
 };

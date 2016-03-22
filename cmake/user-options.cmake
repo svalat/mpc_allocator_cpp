@@ -75,7 +75,7 @@ ENDIF(OPENPA_FOUND)
 
 ######################################################
 #enable features for code
-add_definitions(-DOS_${PORTABILITY_OS} -DLOCKS_${PORTABILITY_LOCKS} -DATOMICS_${PORTABILITY_ATOMICS})
+add_definitions(-DOS_${PORTABILITY_OS} -DLOCKS_${PORTABILITY_LOCKS} -DATOMICS_${PORTABILITY_ATOMICS} -DTOPO_${PORTABILITY_TOPO})
 
 ######################################################
 message(STATUS "-------------------- SUMMARY ----------------------- --")

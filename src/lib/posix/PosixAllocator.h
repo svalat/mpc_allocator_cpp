@@ -45,13 +45,17 @@ class PosixAllocator
 		void cleanupRegisterdMemory(void);
 		//to help debug
 		void hardChecking(void);
+		//change current allocator
+		void setCurrentAllocator(IAllocator * alloctor);
+		void resetDefaultAllocator(void);
 	protected:
 		IAllocator * initLocal(void);
 		void * internalMalloc (size_t size, size_t alignement = BASIC_ALIGN, bool requireZero = false);
 		IChunkManager * getChunkManager(void * ptr);
 		bool isDistantManager(IAllocator * localAlloc,IChunkManager * manager);
 		void flushRemote(IAllocator * localAllocator);
-	private:
+		virtual IMMSource * getMMSource(void);
+	protected:
 		RegionRegistry registry;
 		CachedMMSource mmSource;
 		MediumAllocator internalAlloc;

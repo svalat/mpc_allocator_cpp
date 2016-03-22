@@ -7,7 +7,7 @@
 ######################################################
 
 ######################################################
-set(local_srcs DummyMMSource.cpp CachedMMSource.cpp)
+set(local_srcs DummyMMSource.cpp CachedMMSource.cpp CachedMMSourceNUMA.cpp)
 
 ######################################################
 my_enable_fpic()

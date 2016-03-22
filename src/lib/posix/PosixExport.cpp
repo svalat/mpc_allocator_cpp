@@ -12,12 +12,14 @@
 #include "PosixAllocatorDebugTrace.h"
 #include "PosixAllocatorFileTrace.h"
 #include "PosixAllocatorStd.h"
+#include "PosixAllocatorNUMA.h"
 
 /**********************  USING  *********************/
 using namespace MPCAllocator;
 
 /*********************  TYPES  **********************/
-typedef PosixAllocator SelectedPosixAllocator;
+typedef PosixAllocatorNUMA SelectedPosixAllocator;
+// typedef PosixAllocator SelectedPosixAllocator;
 // typedef PosixAllocatorDebugTrace SelectedPosixAllocator;
 // typedef PosixAllocatorFileTrace SelectedPosixAllocator;
 // typedef PosixAllocatorStd SelectedPosixAllocator;

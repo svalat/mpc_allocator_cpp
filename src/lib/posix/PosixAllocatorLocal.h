@@ -33,7 +33,7 @@ enum AllocatorClass
 class PosixAllocatorLocal : public IAllocator
 {
 	public:
-		PosixAllocatorLocal(RegionRegistry * registry);
+		PosixAllocatorLocal(RegionRegistry * registry,IMMSource * mmSource);
 		virtual void postInit(void);
 		//The posix interface
 		void   free ( void* ptr );
@@ -67,7 +67,7 @@ class PosixAllocatorLocal : public IAllocator
 		AllocatorClass getSizeClass(Size innerSize);
 	private:
 		RegionRegistry * registry;
-		CachedMMSource mmSource;
+		IMMSource * mmSource;
 		MediumAllocator mediumAlloc;
 		SmallAllocator smallAlloc;
 		HugeAllocator hugeAlloc;

@@ -7,7 +7,7 @@
 ######################################################
 
 ######################################################
-set(local_srcs PosixAllocator.cpp PosixAllocatorDebugTrace.cpp PosixAllocatorFileTrace.cpp PosixAllocatorStd.cpp PosixAllocatorLocal.cpp)
+set(local_srcs PosixAllocator.cpp PosixAllocatorDebugTrace.cpp PosixAllocatorFileTrace.cpp PosixAllocatorStd.cpp PosixAllocatorLocal.cpp PosixAllocatorNUMA.cpp)
 
 ######################################################
 my_enable_fpic()
