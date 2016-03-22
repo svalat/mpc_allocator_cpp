@@ -46,4 +46,4 @@ If you search other good parallel memory allocator I studied for this work :
 This allocator is distributed under CeCILL-C has it's C counterpart.
 
 This was developped by Sébastien Valat. A special thanks to Marc Pérache and William Jalby to
-advice the PhD. who has lead to the original C version of this allocator.
+advice the PhD. leading to the original C version of this allocator.
