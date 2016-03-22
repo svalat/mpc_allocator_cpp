@@ -22,6 +22,7 @@ class PosixAllocatorNUMA : public PosixAllocator
 {
 	public:
 		PosixAllocatorNUMA(bool useStrict = false);
+		  void* numaAlloc(int numaId, size_t size);
 		virtual void postInit(void);
 	protected:
 		virtual IMMSource * getMMSource(void);
@@ -29,6 +30,7 @@ class PosixAllocatorNUMA : public PosixAllocator
 		PosixAllocatorLocal internalAllocator;
 		IMMSource ** numaMMSources;
 		IMMSource ** numaStrictMMSources;
+		IAllocator ** numaStrictAlloc;
 		Topo * topo;
 		int numaTopoId;
 		int numaTopoCnt;

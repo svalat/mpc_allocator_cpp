@@ -15,10 +15,16 @@
 namespace MPCAllocator
 {
 
+/********************  GLOBALS  *********************/
+static PosixAllocatorNUMA * gblNumaAllocator = NULL;
+
 /*******************  FUNCTION  *********************/
 PosixAllocatorNUMA::PosixAllocatorNUMA(bool useStrict)
 	:internalAllocator(&registry,&mmSource)
 {
+	if (gblNumaAllocator != NULL)
+		allocWarning("Replacing an existing instance of NUMA posix allocator :");
+	gblNumaAllocator = this;
 }
 
 /*******************  FUNCTION  *********************/
@@ -55,6 +61,7 @@ void PosixAllocatorNUMA::postInit(void)
 		{
 			this->numaStrictMMSources[i] = new CachedMMSourceNUMA(i,&registry);
 			this->numaMMSources[i] = new CachedMMSource(&registry);
+			this->numaStrictAlloc[i] = new PosixAllocatorLocal(&registry,this->numaStrictMMSources[i]);
 		}
 	} else {
 		this->numaStrictMMSources = NULL;
@@ -86,4 +93,26 @@ IMMSource* PosixAllocatorNUMA::getMMSource(void)
 		return numaMMSources[id];
 }
 
+/*******************  FUNCTION  *********************/
+void * PosixAllocatorNUMA::numaAlloc(int numaId, size_t size)
+{
+	if (this->numaTopoCnt <= 1)
+	{
+		return this->malloc(size);
+	} else {
+		allocAssume(numaId >= 0 && numaId < numaTopoCnt,"Invalid NUMA ID");
+		bool zeroFilled = false;
+		return numaStrictAlloc[numaId]->malloc(size,0,&zeroFilled);
+	}
+}
+
 };
+
+/*******************  FUNCTION  *********************/
+extern "C" {
+	DLL_PUBLIC void * mpc_numa_alloc(int numa_id, size_t size)
+	{
+		MPCAllocator::gblNumaAllocator->numaAlloc(numa_id,size);
+	}
+}
+
