@@ -6,6 +6,9 @@ compiler:
 
 before_install:
   - pip install --user cpp-coveralls
+  - sudo apt-get install hwloc
+  - yes | sudo add-apt-repository ppa:kalakris/cmake
+  - sudo apt-get update -qq
 
 script: 
   - mkdir -p build 
