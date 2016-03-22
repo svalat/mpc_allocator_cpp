@@ -1,7 +1,7 @@
 # MPC Allocator C++
 
 This is a reimplemenation of the C version of MPC\_Allocator embeded into the MPC framework (http://mpc.hpcframework.paratools.com/).
-This memory allocator provided :
+This memory allocator provides :
 
  * Support of NUMA architecture. For binded threads it automatically isolate the data transfers between each NUMA nodes.
  * Large buffer caching and reuse. For HPC application it is an issue to return too much the memory to the OS due to performance issue,
