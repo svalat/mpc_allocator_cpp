@@ -55,6 +55,7 @@ class PosixAllocator
 		bool isDistantManager(IAllocator * localAlloc,IChunkManager * manager);
 		void flushRemote(IAllocator * localAllocator);
 		virtual IMMSource * getMMSource(void);
+		PosixAllocatorLocal * getDefaultLocalAllocator(void);
 	protected:
 		RegionRegistry registry;
 		CachedMMSource mmSource;

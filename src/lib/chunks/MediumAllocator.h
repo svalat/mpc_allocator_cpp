@@ -35,6 +35,7 @@ class MediumAllocator : public IChunkManager
 		virtual void remoteFree ( void* ptr );
 		virtual void hardChecking(void);
 		void fill(void * ptr, size_t size,RegionRegistry * registry);
+		void rebindMMSource(IMMSource * mmSource);
 	private:
 		MediumChunk * refill(size_t size,bool * zeroFilled = NULL);
 		MediumChunk * split( MediumChunk* chunk, size_t innerSize );

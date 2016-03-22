@@ -38,6 +38,15 @@ void PosixAllocatorLocal::postInit ( void )
 }
 
 /*******************  FUNCTION  *********************/
+void PosixAllocatorLocal::rebindMMSource(IMMSource* mmSource)
+{
+	this->mmSource = mmSource;
+	this->smallAlloc.rebindMMSource(mmSource);
+	this->mediumAlloc.rebindMMSource(mmSource);
+	this->hugeAlloc.rebindMMSource(mmSource);
+}
+
+/*******************  FUNCTION  *********************/
 void PosixAllocatorLocal::free ( void* ptr )
 {
 	//errors

@@ -32,6 +32,7 @@ class HugeAllocator : public IChunkManager
 		virtual bool isThreadSafe ( void ) const;
 		virtual void remoteFree ( void* ptr );
 		virtual void hardChecking(void);
+		void rebindMMSource(IMMSource * mmSource);
 	private:
 		IMMSource * memorySource;
 };

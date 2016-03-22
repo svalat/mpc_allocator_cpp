@@ -404,4 +404,10 @@ void SmallAllocator::hardChecking ( void )
 	//TODO
 }
 
+/*******************  FUNCTION  *********************/
+void SmallAllocator::rebindMMSource(IMMSource* mmSource)
+{
+	this->memorySource = mmSource;
+}
+
 };

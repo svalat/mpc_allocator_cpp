@@ -144,6 +144,12 @@ MediumChunk* MediumAllocator::refill ( size_t size, bool * zeroFilled )
 }
 
 /*******************  FUNCTION  *********************/
+void MediumAllocator::rebindMMSource(IMMSource* mmSource)
+{
+	this->memorySource = mmSource;
+}
+
+/*******************  FUNCTION  *********************/
 void MediumAllocator::fill ( void* ptr, size_t size, RegionRegistry * registry )
 {
 	//vars

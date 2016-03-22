@@ -3,7 +3,8 @@
 This is a reimplemenation of the C version of MPC\_Allocator embeded into the MPC framework (http://mpc.hpcframework.paratools.com/).
 This memory allocator provides :
 
- * Support of NUMA architecture. For binded threads it automatically isolate the data transfers between each NUMA nodes.
+ * Support of NUMA architecture. For binded threads it automatically isolate the data transfers between each NUMA nodes. Your threads need to be binded
+ before first call to malloc or call `mpc_alloc_numa_rebind` after binding your threads.
  * Large buffer caching and reuse. For HPC application it is an issue to return too much the memory to the OS due to performance issue,
  MPC allocator reuse them as much as possible with some caching technics and mremap usage to avoid large fragmentation.
  * Isolation of thread sub-allocators. Each thread run his own lock free allocator.

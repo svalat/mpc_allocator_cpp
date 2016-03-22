@@ -23,6 +23,12 @@ HugeAllocator::HugeAllocator ( IMMSource* memorySource )
 }
 
 /*******************  FUNCTION  *********************/
+void HugeAllocator::rebindMMSource(IMMSource* mmSource)
+{
+	this->memorySource = mmSource;
+}
+
+/*******************  FUNCTION  *********************/
 void HugeAllocator::free ( void* ptr )
 {
 	//trivial

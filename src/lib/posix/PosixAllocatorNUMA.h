@@ -24,6 +24,7 @@ class PosixAllocatorNUMA : public PosixAllocator
 		PosixAllocatorNUMA(bool useStrict = false);
 		  void* numaAlloc(int numaId, size_t size);
 		virtual void postInit(void);
+		void migrate(void);
 	protected:
 		virtual IMMSource * getMMSource(void);
 	private:

@@ -106,6 +106,13 @@ void * PosixAllocatorNUMA::numaAlloc(int numaId, size_t size)
 	}
 }
 
+/*******************  FUNCTION  *********************/
+void PosixAllocatorNUMA::migrate(void)
+{
+	IMMSource * source = getMMSource();
+	getDefaultLocalAllocator()->rebindMMSource(source);
+}
+
 };
 
 /*******************  FUNCTION  *********************/
@@ -116,3 +123,10 @@ extern "C" {
 	}
 }
 
+/*******************  FUNCTION  *********************/
+extern "C" {
+	DLL_PUBLIC void * mpc_alloc_numa_migrate(void)
+	{
+		MPCAllocator::gblNumaAllocator->migrate();
+	}
+}

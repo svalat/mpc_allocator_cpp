@@ -45,6 +45,7 @@ class SmallAllocator : public IChunkManager
 		virtual bool isThreadSafe ( void ) const;
 		virtual void remoteFree ( void* ptr );
 		virtual void hardChecking(void);
+		void rebindMMSource(IMMSource * mmSource);
 	private:
 		void fill(void * ptr, size_t size, RegionRegistry * registry,bool lock);
 		int getSizeClass(size_t size) const;

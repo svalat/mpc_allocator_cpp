@@ -17,7 +17,7 @@ namespace MPCAllocator
 
 /********************  GLOBALS  *********************/
 __thread IAllocator * tlsLocalCurrentAllocator = NULL;
-__thread IAllocator * tlsLocalDefaultAllocator = NULL;
+__thread PosixAllocatorLocal * tlsLocalDefaultAllocator = NULL;
 
 /*******************  FUNCTION  *********************/
 PosixAllocator::PosixAllocator ( void )
@@ -394,6 +394,16 @@ void PosixAllocator::hardChecking ( void )
 IMMSource* PosixAllocator::getMMSource(void)
 {
 	return &mmSource;
+}
+
+/*******************  FUNCTION  *********************/
+PosixAllocatorLocal* PosixAllocator::getDefaultLocalAllocator(void)
+{
+	//check for init of local alloc
+	if (tlsLocalDefaultAllocator == NULL)
+		initLocal();
+
+	return tlsLocalDefaultAllocator;
 }
 
 };

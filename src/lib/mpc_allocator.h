@@ -21,8 +21,14 @@ extern "C" {
 **/
 void * mpc_numa_alloc(int numa_id, size_t size);
 
+/**
+ * To be used if you move your thread to another NUMA node after doing some memory allocations.
+ * It also ensure that the future allocation will be performed with the good memory source.
+**/
+void mpc_alloc_numa_migrate(void);
+
 #ifdef __cplusplus
-extern "C" }
+}
 #endif
 
 #endif //MPC_ALLOCATOR_C_API_H
