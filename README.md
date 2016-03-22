@@ -22,6 +22,7 @@ If you want more details about the research work behind this allocator you can r
 
  * PhD. manuscript (in french) : https://tel.archives-ouvertes.fr/tel-01253537
  * PhD. defense slides (in english) : http://fr.slideshare.net/SbastienValat1/2014-valatphddefenseslides
+ * A reserch paper about page zeroing performance issue : http://dl.acm.org/citation.cfm?id=2492414&CFID=764041395&CFTOKEN=78061783
 
 ## Other parallel allocators
 
