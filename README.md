@@ -1,6 +1,6 @@
 # MPC Allocator C++
 
-[![Build Status](ttps://travis-ci.org/svalat/mpc_allocator_cpp.svg?branch=master)](https://travis-ci.org/svalat/mpc_allocator_cpp?branch=master)
+[![Build Status](https://travis-ci.org/svalat/mpc_allocator_cpp.png?branch=master)](https://travis-ci.org/svalat/mpc_allocator_cpp)
 [![Coverage Status](https://coveralls.io/repos/github/svalat/mpc_allocator_cpp/badge.svg?branch=master)](https://coveralls.io/github/svalat/mpc_allocator_cpp?branch=master)
 
 This is a reimplemenation of the C version of MPC\_Allocator embeded into the MPC framework (http://mpc.hpcframework.paratools.com/).
