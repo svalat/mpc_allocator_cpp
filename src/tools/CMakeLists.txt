@@ -11,12 +11,12 @@ add_library(trace TraceReader.cpp CollisionChecker.cpp EventDispatch.cpp EventDi
 
 ######################################################
 add_executable(trace_reader reader.cpp)
-target_link_libraries(trace_reader trace alloc_base_internal)
+target_link_libraries(trace_reader trace mpc_alloc_base_internal)
 
 ######################################################
 add_executable(trace_replay replay.cpp)
-target_link_libraries(trace_replay trace alloc_base_internal)
+target_link_libraries(trace_replay trace mpc_alloc_base_internal)
 
 ######################################################
 add_executable(trace_reproduce reproduce.cpp)
-target_link_libraries(trace_reproduce trace alloc_base_internal)
+target_link_libraries(trace_reproduce trace mpc_alloc_base_internal)

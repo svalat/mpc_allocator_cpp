@@ -21,4 +21,4 @@ configure_file(run.sh.in run.sh @ONLY)
 
 ######################################################
 add_executable(t-test1-no-use-mem-mpcalloc t-test1.c)
-target_link_libraries(t-test1-no-use-mem-mpcalloc ${CMAKE_THREAD_LIBS_INIT} alloc)
+target_link_libraries(t-test1-no-use-mem-mpcalloc ${CMAKE_THREAD_LIBS_INIT} mpc_alloc)
