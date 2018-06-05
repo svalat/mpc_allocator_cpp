@@ -106,7 +106,7 @@ size_t HugeAllocator::getInnerSize ( void* ptr )
 	int delta = addrDelta(ptr,realPtr);
 	allocAssert(delta >= 0);
 	
-	RegionSegmentHeader * segment = RegionSegmentHeader::getSegment(ptr);
+	RegionSegmentHeader * segment = RegionSegmentHeader::getSegment(realPtr);
 	if (segment == NULL)	
 		return 0;
 	else
